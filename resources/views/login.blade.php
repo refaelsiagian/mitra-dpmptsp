@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Mitra DPMPTSP - Registrasi</title>
+    <title>Mitra DPMPTSP - Login</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style data-purpose="custom-utilities">
         /* Geometric background pattern for the right side */
@@ -22,10 +22,9 @@
 <body class="font-sans text-text bg-surface antialiased flex h-screen overflow-hidden">
 
 <!-- BEGIN: Left Section (Form Container) -->
-<main class="w-full lg:w-1/2 flex flex-col p-8 sm:p-12 lg:p-16 xl:p-24 bg-white h-full overflow-y-auto relative" data-purpose="registration-form-section">
+<main class="w-full lg:w-1/2 flex flex-col p-8 sm:p-12 lg:p-16 xl:p-24 bg-white h-full overflow-y-auto relative" data-purpose="login-form-section">
   
     <!-- Logo Section -->
-    <!-- PERUBAHAN: Menambahkan 'w-full max-w-md mx-auto' agar logo sejajar dengan form yang ada di tengah -->
     <div class="mb-8 flex-shrink-0 w-full max-w-md mx-auto">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl">M</div>
@@ -37,10 +36,9 @@
     </div>
 
     <!-- Middle Area: Form Content -->
-    <!-- PERUBAHAN: Menghapus class 'xl:mx-0' sehingga 'mx-auto' berlaku di semua ukuran layar (center sumbu X) -->
     <div class="w-full max-w-md mx-auto my-auto">
         <div class="mb-8">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Daftar Akun</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Login Akun</h2>
         </div>
         <form action="#" class="space-y-6" method="POST">
         <!-- Account Credentials Section -->
@@ -55,33 +53,37 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Password <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Create a secure password" required="" type="password"/>
+                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Enter your password" required="" type="password"/>
                         <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" type="button">
                             <i class="ph ph-eye-slash text-xl"></i>
                         </button>
                     </div>
-                </div> <!-- PENUTUP YANG DITAMBAHKAN -->
-                
-                <!-- Confirm Password -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="confirm-password">Confirm Password <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required="" type="password"/>
-                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-confirm-password" type="button">
-                            <i class="ph ph-eye-slash text-xl"></i>
-                        </button>
+                </div>
+
+                <!-- Forgot Password -->
+                <div class="flex items-center justify-between mt-2">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+                            Remember me
+                        </label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                            Forgot your password?
+                        </a>
                     </div>
                 </div>
             </fieldset>
             <!-- Submit Button -->
             <div>
                 <button class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors" type="submit">
-                Register Entity
+                Log in
                 </button>
             </div>
             <div class="text-center text-sm mt-4">
-                <span class="text-gray-500">Already have an account?</span>
-                <a class="font-medium text-blue-600 hover:underline" href="/login">Log in here</a>
+                <span class="text-gray-500">Don't have an account?</span>
+                <a class="font-medium text-blue-600 hover:underline" href="/">Register here</a>
             </div>
         </form>
     </div>
