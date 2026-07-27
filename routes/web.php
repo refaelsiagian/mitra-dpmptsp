@@ -41,3 +41,11 @@ Route::get('/project/subcon', function () {
 Route::get('/project/kso', function () {
     return view('project-kso');
 });
+
+Route::get('/project/kso/2', function () {
+    return view('project-kso-2');
+});
+
+Route::get('/project/kso/3', function () {
+    return view('project-kso-3');
+});
