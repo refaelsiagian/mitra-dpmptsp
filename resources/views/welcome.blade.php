@@ -42,7 +42,7 @@
         <div class="mb-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Daftar Akun</h2>
         </div>
-        <form action="#" class="space-y-6" method="POST">
+        <form action="/verify-email" class="space-y-6" method="GET">
         <!-- Account Credentials Section -->
             <fieldset class="space-y-4">
                 <!-- Email -->

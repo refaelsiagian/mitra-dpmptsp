@@ -72,7 +72,7 @@
 
             <!-- Form Card -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                <form action="#" method="POST" id="verify-form" enctype="multipart/form-data">
+                <form action="/review" method="GET" id="verify-form" enctype="multipart/form-data">
                     
                     <!-- STEP 1: Profil Usaha -->
                     <div id="step-1" class="p-6 sm:p-10 step-section">

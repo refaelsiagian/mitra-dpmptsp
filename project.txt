@@ -1,0 +1,77 @@
+1. Prompt untuk Halaman "Proyek Utuh (Tender Resmi / RFP)"
+Halaman ini membutuhkan tata letak (layout) 2 kolom: konten utama di kiri dan kartu aksi ringkasan di kanan yang melayang (sticky).
+
+Copy-paste teks ini:
+"Act as an expert frontend developer. Create a modern, clean, and responsive B2B Procurement Detail Page using HTML and Tailwind CSS. The color theme should be professional corporate blue (using bg-slate-50 for the background, text-slate-800 for text, and blue-600 to blue-800 for accents and buttons).
+
+Layout structure:
+
+A top breadcrumb navigation.
+
+A two-column grid layout (grid-cols-1 md:grid-cols-3 with a gap).
+
+Left Column (col-span-2):
+
+Header: Project Title (Large, bold), Issuer Company Name (blue text, clickable), and standard badges (e.g., 'Wajib PKP', 'KBLI Konstruksi').
+
+Section: 'Ruang Lingkup Pekerjaan (SOW)' with dummy paragraphs.
+
+Section: 'Linimasa & Termin Pembayaran' using a simple Tailwind timeline or list format.
+
+Section: 'Dokumen Lampiran' showing downloadable file items with PDF icons.
+
+Right Column (col-span-1):
+
+A sticky summary card with a white background and subtle shadow.
+
+Content inside the card: Maximum Budget (Large, green text), Countdown timer (e.g., 'Ditutup dalam 5 Hari'), and a large block primary button saying 'Ajukan Penawaran'.
+
+Ensure the design is accessible, uses ample padding, and looks like a premium SaaS dashboard. The content language must be in Indonesian."
+
+2. Prompt untuk Halaman "Sub-Proyek (Sub-contracting)"
+Halaman ini lebih ringkas, fokus pada kejelasan tugas, dengan antarmuka yang mendorong pengguna untuk langsung melamar.
+
+Copy-paste teks ini:
+"Act as an expert frontend developer. Create a responsive detail page for a 'Sub-Contracting Task' using HTML and Tailwind CSS. The design should be clean and task-oriented, using a blue and slate color palette.
+
+Layout structure (Single column centered, max-width max-w-4xl):
+
+Header Card: White background, shadow-sm, rounded-lg. Include Task Title, Main Contractor Name, a small 'Sub-Pekerjaan' badge, and the Target Start Date.
+
+Task Specs Grid: A 2x2 grid showing quick facts: 'Volume/Kuantitas', 'Lokasi Kerja', 'Estimasi Nilai', and 'Batas Waktu'.
+
+Content Section:
+
+'Deskripsi Tugas' (Brief description).
+
+'Pembagian Tanggung Jawab': Use a split visual or two distinct lists. List 1: 'Disediakan oleh Kontraktor Utama' (e.g., Material, Heavy Machinery). List 2: 'Kewajiban Sub-kon' (e.g., Labor, Hand tools).
+
+Action Area (Bottom Sticky bar or Footer Card):
+
+Input field for 'Harga Penawaran Anda (Rp)' and a primary button 'Lamar Cepat (Quick Apply)'.
+
+Use modern Tailwind utility classes, rounded corners (rounded-xl), and clear visual hierarchy. The content language must be in Indonesian."
+
+3. Prompt untuk Halaman "Kemitraan (KSO / Joint Venture)"
+Halaman ini bersifat "bercerita" dan kolaboratif. Tata letaknya harus bisa membandingkan secara jelas antara aset yang sudah ada dan yang sedang dicari.
+
+Copy-paste teks ini:
+"Act as an expert frontend developer. Create a responsive B2B Partnership (KSO / Joint Venture) Detail Page using HTML and Tailwind CSS. The vibe should be visionary, professional, and inviting, using a dominant blue and white theme.
+
+Layout structure:
+
+Hero Section: A soft blue background (bg-blue-50) header with the Vision/Project Title, Initiator Name, and a 'Kemitraan/KSO' badge.
+
+Main Content (Two-Column Comparison):
+
+Use a side-by-side flex or grid layout (md:grid-cols-2).
+
+Column 1: 'Apa yang Kami Miliki' (What We Have). Create a list with green checkmark icons showing existing assets (e.g., Land, Permits, 30% Capital).
+
+Column 2: 'Apa yang Kami Cari' (What We Need). Create a list with blue search or target icons showing the required partner specs (e.g., Construction Partner, 70% Funding).
+
+Details Section: Below the columns, add a section for 'Skema Bagi Hasil (Profit Sharing)' and 'Dokumen Rencana Bisnis' (Pitch Deck download button).
+
+Action Card: A centered, prominent section at the bottom asking 'Tertarik untuk berkolaborasi?'. Include a large primary button 'Ajukan Diskusi / Pitching' and a secondary outline button 'Kirim Pesan'.
+
+Ensure the UI feels like a modern startup matchmaking platform. The content language must be in Indonesian."
