@@ -49,3 +49,23 @@ Route::get('/project/kso/2', function () {
 Route::get('/project/kso/3', function () {
     return view('project-kso-3');
 });
+
+Route::get('/vendor/inovasi-properti', function () {
+    return view('vendor-inovasi');
+});
+
+Route::get('/vendor/waskita', function () {
+    return view('vendor-waskita');
+});
+
+Route::get('/vendor/nusantara-wisata', function () {
+    return view('vendor-wisata');
+});
+
+Route::get('/vendor/agro-kopi', function () {
+    return view('vendor-agro');
+});
+
+Route::get('/vendor/logistik-maritim', function () {
+    return view('vendor-logistik');
+});
