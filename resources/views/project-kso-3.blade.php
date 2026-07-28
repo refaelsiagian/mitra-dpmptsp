@@ -3,26 +3,11 @@
 @section('content')
 <div class="max-w-6xl mx-auto pb-10">
     
-    <!-- Breadcrumb -->
-    <nav class="flex text-sm text-slate-500 mb-6 font-medium" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-            <li class="inline-flex items-center">
-                <a href="#" class="hover:text-blue-600 transition-colors">Eksplorasi Proyek</a>
-            </li>
-            <li>
-                <div class="flex items-center">
-                    <svg class="w-4 h-4 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    <a href="#" class="hover:text-blue-600 transition-colors">Kemitraan (KSO)</a>
-                </div>
-            </li>
-            <li aria-current="page">
-                <div class="flex items-center">
-                    <svg class="w-4 h-4 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    <span class="text-slate-800 font-semibold">Utilisasi Fasilitas Rantai Pendingin & Gudang Logistik</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
+    <!-- Back to Discovery Hub -->
+    <a href="/explore?tab=projects" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-5 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
+        <span>Kembali ke Eksplorasi Proyek & KSO</span>
+    </a>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         
