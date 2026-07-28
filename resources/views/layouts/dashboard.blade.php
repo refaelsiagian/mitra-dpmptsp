@@ -15,10 +15,18 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 antialiased h-screen flex overflow-hidden">
+<body class="bg-slate-50 text-slate-900 antialiased h-screen flex overflow-hidden relative">
+
+    <!-- Mobile Overlay -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden transition-opacity"></div>
 
     <!-- Sidebar (Left) - Fixed Width & Full Height -->
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0 h-full">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col h-full transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
+        <!-- Close Button (Mobile Only) -->
+        <button onclick="toggleSidebar()" class="md:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+
         <!-- Logo -->
         <div class="h-16 flex items-center px-6 border-b border-slate-200">
             <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -53,20 +61,18 @@
             
             <!-- User Info & Notifications Widget -->
             <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="relative flex-shrink-0">
-                        <img src="https://ui-avatars.com/api/?name=Budi+Santoso&background=eff6ff&color=1d4ed8&bold=true" alt="Budi Santoso" class="h-9 w-9 rounded-full object-cover border border-blue-100">
-                        <!-- Active Status Dot -->
-                        <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200">
+                        <img src="https://images.unsplash.com/photo-1541888087588-82cc68dd6279?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-full h-full object-cover">
                     </div>
-                    <div class="min-w-0">
-                        <p class="text-xs font-bold text-slate-900 truncate">Budi Santoso</p>
-                        <p class="text-[11px] font-medium text-slate-500 truncate">PT Inovasi Mandiri</p>
+                    <div>
+                        <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5">PT Waskita Karya</p>
+                        <p class="text-[10px] text-slate-500 font-medium leading-none">BUMN • Konstruksi</p>
                     </div>
                 </div>
-
-                <!-- Notification Bell -->
-                <button class="relative p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500" title="Notifikasi (3 Baru)">
+                
+                <!-- Bell Icon -->
+                <button class="relative p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                     <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-1 ring-white"></span>
                 </button>
@@ -80,13 +86,38 @@
         </div>
     </aside>
 
-    <!-- Main Wrapper (No Topbar - Full Height Canvas!) -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+    <!-- Main Wrapper (Full Height Canvas!) -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 relative">
+        
+        <!-- Mobile Topbar (Visible only on md and below) -->
+        <div class="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 z-30">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                <span class="font-bold text-slate-900">Mitra DPMPTSP</span>
+            </div>
+            <button onclick="toggleSidebar()" class="p-2 -mr-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+
         <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 custom-scrollbar">
             @yield('content', '<div class="h-full flex items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl bg-white/50"><p class="text-slate-400 font-medium">Content goes here</p></div>')
         </main>
     </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            // Toggle translate-x-full to slide in/out
+            sidebar.classList.toggle('-translate-x-full');
+            
+            // Toggle overlay visibility
+            overlay.classList.toggle('hidden');
+        }
+    </script>
 
     <style>
         .custom-scrollbar::-webkit-scrollbar {
