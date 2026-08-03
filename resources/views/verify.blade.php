@@ -278,23 +278,32 @@
                             <!-- Kantor Utama -->
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2"><i class="ph ph-office-chair text-xl text-gray-500"></i> Alamat Kantor Utama</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Provinsi <span class="text-red-500">*</span></label>
+                                        <select id="provinsi-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadRegencies(this.value, 'kabupaten-kantor')">
+                                            <option selected disabled value="">Pilih Provinsi...</option>
+                                            @foreach($provinces as $prov)
+                                                <option value="{{ $prov->id }}">{{ $prov->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-600 mb-1">Kabupaten/Kota <span class="text-red-500">*</span></label>
-                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white">
-                                            <option selected disabled>Pilih Kabupaten...</option>
+                                        <select id="kabupaten-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadDistricts(this.value, 'kecamatan-kantor')" disabled>
+                                            <option selected disabled value="">Pilih Kabupaten...</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-600 mb-1">Kecamatan <span class="text-red-500">*</span></label>
-                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white">
-                                            <option selected disabled>Pilih Kecamatan...</option>
+                                        <select id="kecamatan-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadVillages(this.value, 'desa-kantor')" disabled>
+                                            <option selected disabled value="">Pilih Kecamatan...</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-600 mb-1">Desa/Kelurahan <span class="text-red-500">*</span></label>
-                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white">
-                                            <option selected disabled>Pilih Desa...</option>
+                                        <select id="desa-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" disabled>
+                                            <option selected disabled value="">Pilih Desa...</option>
                                         </select>
                                     </div>
                                 </div>
@@ -315,23 +324,32 @@
                                 </div>
                                 
                                 <div id="usaha-location-fields" class="transition-opacity duration-300">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Provinsi <span class="text-red-500">*</span></label>
+                                            <select id="provinsi-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadRegencies(this.value, 'kabupaten-usaha')">
+                                                <option selected disabled value="">Pilih Provinsi...</option>
+                                                @foreach($provinces as $prov)
+                                                    <option value="{{ $prov->id }}">{{ $prov->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">Kabupaten/Kota <span class="text-red-500">*</span></label>
-                                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600">
-                                                <option selected disabled>Pilih Kabupaten...</option>
+                                            <select id="kabupaten-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadDistricts(this.value, 'kecamatan-usaha')" disabled>
+                                                <option selected disabled value="">Pilih Kabupaten...</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">Kecamatan <span class="text-red-500">*</span></label>
-                                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600">
-                                                <option selected disabled>Pilih Kecamatan...</option>
+                                            <select id="kecamatan-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadVillages(this.value, 'desa-usaha')" disabled>
+                                                <option selected disabled value="">Pilih Kecamatan...</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label class="block text-xs font-medium text-gray-600 mb-1">Desa/Kelurahan <span class="text-red-500">*</span></label>
-                                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600">
-                                                <option selected disabled>Pilih Desa...</option>
+                                            <select id="desa-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" disabled>
+                                                <option selected disabled value="">Pilih Desa...</option>
                                             </select>
                                         </div>
                                     </div>
@@ -704,17 +722,176 @@
                 });
             }
 
-            // KBLI Multiselect Logic
-            const kbliData = [
-                { id: '62019', nama: 'Aktivitas Pemrograman Komputer Lainnya' },
-                { id: '47411', nama: 'Perdagangan Eceran Komputer dan Perlengkapannya' },
-                { id: '62029', nama: 'Aktivitas Konsultasi Komputer dan Manajemen Fasilitas Komputer Lainnya' },
-                { id: '63122', nama: 'Portal Web dan/atau Platform Digital dengan Tujuan Komersial' },
-                { id: '46511', nama: 'Perdagangan Besar Komputer dan Perlengkapan Komputer' },
-                { id: '70209', nama: 'Aktivitas Konsultasi Manajemen Lainnya' },
-                { id: '10799', nama: 'Industri Produk Makanan Lainnya' },
-                { id: '56101', nama: 'Restoran dan Penyediaan Makanan Keliling' },
+            // Custom Searchable Dropdown Logic
+            function makeSearchable(selectId) {
+                const select = document.getElementById(selectId);
+                if (!select) return;
+
+                select.style.display = 'none';
+
+                if (select.nextElementSibling && select.nextElementSibling.classList.contains('custom-search-wrapper')) {
+                    select.nextElementSibling.remove();
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'relative custom-search-wrapper w-full';
+                
+                const getSelectedText = () => {
+                    const opt = select.options[select.selectedIndex];
+                    return opt ? opt.text : 'Pilih...';
+                };
+
+                const isDisabled = select.disabled;
+
+                wrapper.innerHTML = `
+                    <div class="search-select-trigger flex items-center justify-between w-full px-3 py-2 border border-gray-300 rounded-md text-sm transition-colors ${isDisabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white cursor-pointer hover:border-blue-400'}">
+                        <span class="truncate display-text">${getSelectedText()}</span>
+                        <i class="ph ph-caret-down text-gray-400"></i>
+                    </div>
+                    <div class="search-select-dropdown absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-xl hidden flex flex-col">
+                        <div class="p-2 border-b border-gray-100 sticky top-0 bg-white z-10">
+                            <div class="relative">
+                                <i class="ph ph-magnifying-glass absolute left-2 top-2 text-gray-400"></i>
+                                <input type="text" class="w-full text-sm outline-none pl-7 pr-2 py-1.5 bg-gray-50 rounded border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 search-input" placeholder="Cari...">
+                            </div>
+                        </div>
+                        <ul class="py-1 text-sm text-gray-700 max-h-48 overflow-y-auto option-list">
+                        </ul>
+                    </div>
+                `;
+
+                select.parentNode.insertBefore(wrapper, select.nextSibling);
+
+                const trigger = wrapper.querySelector('.search-select-trigger');
+                const dropdown = wrapper.querySelector('.search-select-dropdown');
+                const searchInput = wrapper.querySelector('.search-input');
+                const optionList = wrapper.querySelector('.option-list');
+                const displayText = wrapper.querySelector('.display-text');
+
+                function renderOptions(filter = '') {
+                    optionList.innerHTML = '';
+                    const lowerFilter = filter.toLowerCase();
+                    let hasOptions = false;
+
+                    Array.from(select.options).forEach((opt, index) => {
+                        if (opt.disabled || opt.value === '') return;
+
+                        if (opt.text.toLowerCase().includes(lowerFilter)) {
+                            hasOptions = true;
+                            const li = document.createElement('li');
+                            li.className = 'px-3 py-2 hover:bg-blue-50 cursor-pointer transition-colors';
+                            if (select.selectedIndex === index) {
+                                li.className += ' bg-blue-100 text-blue-700 font-medium';
+                            }
+                            li.textContent = opt.text;
+                            li.addEventListener('mousedown', (e) => {
+                                e.preventDefault(); // prevent input blur
+                                select.selectedIndex = index;
+                                displayText.textContent = opt.text;
+                                closeDropdown();
+                                select.dispatchEvent(new Event('change'));
+                            });
+                            optionList.appendChild(li);
+                        }
+                    });
+
+                    if (!hasOptions) {
+                        optionList.innerHTML = '<li class="px-3 py-2 text-gray-400 italic text-center">Tidak ditemukan</li>';
+                    }
+                }
+
+                function openDropdown() {
+                    if (select.disabled) return;
+                    dropdown.classList.remove('hidden');
+                    renderOptions();
+                    searchInput.value = '';
+                    setTimeout(() => searchInput.focus(), 10);
+                }
+
+                function closeDropdown() {
+                    dropdown.classList.add('hidden');
+                }
+
+                trigger.addEventListener('click', (e) => {
+                    if (dropdown.classList.contains('hidden')) {
+                        document.querySelectorAll('.search-select-dropdown:not(.hidden)').forEach(d => d.classList.add('hidden'));
+                        openDropdown();
+                    } else {
+                        closeDropdown();
+                    }
+                });
+
+                searchInput.addEventListener('input', (e) => {
+                    renderOptions(e.target.value);
+                });
+
+                document.addEventListener('mousedown', (e) => {
+                    if (!wrapper.contains(e.target)) {
+                        closeDropdown();
+                    }
+                });
+            }
+
+            // Region Cascading Logic
+            const selectIds = [
+                'provinsi-kantor', 'kabupaten-kantor', 'kecamatan-kantor', 'desa-kantor',
+                'provinsi-usaha', 'kabupaten-usaha', 'kecamatan-usaha', 'desa-usaha'
             ];
+            
+            // Initialize on load
+            selectIds.forEach(id => makeSearchable(id));
+
+            function updateDropdown(id, html, disabled) {
+                const el = document.getElementById(id);
+                el.innerHTML = html;
+                el.disabled = disabled;
+                makeSearchable(id);
+            }
+
+            window.loadRegencies = async function(provinceId, targetSelectId) {
+                updateDropdown(targetSelectId, '<option selected disabled value="">Loading...</option>', true);
+                
+                let isKantor = targetSelectId.includes('kantor');
+                updateDropdown(isKantor ? 'kecamatan-kantor' : 'kecamatan-usaha', '<option selected disabled value="">Pilih Kecamatan...</option>', true);
+                updateDropdown(isKantor ? 'desa-kantor' : 'desa-usaha', '<option selected disabled value="">Pilih Desa...</option>', true);
+                
+                const response = await fetch(`/api/regencies/${provinceId}`);
+                const data = await response.json();
+                
+                let html = '<option selected disabled value="">Pilih Kabupaten...</option>';
+                data.forEach(item => html += `<option value="${item.id}">${item.name}</option>`);
+                updateDropdown(targetSelectId, html, false);
+            };
+
+            window.loadDistricts = async function(regencyId, targetSelectId) {
+                updateDropdown(targetSelectId, '<option selected disabled value="">Loading...</option>', true);
+                
+                let isKantor = targetSelectId.includes('kantor');
+                updateDropdown(isKantor ? 'desa-kantor' : 'desa-usaha', '<option selected disabled value="">Pilih Desa...</option>', true);
+                
+                const response = await fetch(`/api/districts/${regencyId}`);
+                const data = await response.json();
+                
+                let html = '<option selected disabled value="">Pilih Kecamatan...</option>';
+                data.forEach(item => html += `<option value="${item.id}">${item.name}</option>`);
+                updateDropdown(targetSelectId, html, false);
+            };
+
+            window.loadVillages = async function(districtId, targetSelectId) {
+                updateDropdown(targetSelectId, '<option selected disabled value="">Loading...</option>', true);
+                
+                const response = await fetch(`/api/villages/${districtId}`);
+                const data = await response.json();
+                
+                let html = '<option selected disabled value="">Pilih Desa...</option>';
+                data.forEach(item => html += `<option value="${item.id}">${item.name}</option>`);
+                updateDropdown(targetSelectId, html, false);
+            };
+
+            // KBLI Multiselect Logic
+            const kbliData = @json($kblis->map(function($kbli) {
+                return ['id' => $kbli->code, 'nama' => $kbli->name];
+            }));
             let selectedKbli = [];
             
             const kbliContainer = document.getElementById('kbli-container');

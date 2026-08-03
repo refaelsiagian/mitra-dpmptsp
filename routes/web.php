@@ -35,8 +35,21 @@ Route::post('/email/verification-notification', function (Request $request) {
 // Protected Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/verify', function () {
-        return view('verify');
+        $provinces = \App\Models\Province::orderBy('name')->get();
+        $kblis = \App\Models\Kbli::orderBy('code')->get();
+        return view('verify', compact('provinces', 'kblis'));
     })->name('verify');
+});
+
+// API Region Routes
+Route::get('/api/regencies/{province_id}', function ($province_id) {
+    return \App\Models\Regency::where('province_id', $province_id)->orderBy('name')->get();
+});
+Route::get('/api/districts/{regency_id}', function ($regency_id) {
+    return \App\Models\District::where('regency_id', $regency_id)->orderBy('name')->get();
+});
+Route::get('/api/villages/{district_id}', function ($district_id) {
+    return \App\Models\Village::where('district_id', $district_id)->orderBy('name')->get();
 });
 
 
