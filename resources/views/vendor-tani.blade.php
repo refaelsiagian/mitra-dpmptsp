@@ -82,6 +82,13 @@
 
         <!-- Right Column: Sidebar (1/3 width) -->
         <div class="w-full lg:w-1/3 space-y-6">
+
+            <div class="besar-only">
+                <button onclick="openInviteModal()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-600/20 focus:ring-4 focus:ring-blue-100 focus:outline-none flex justify-center items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5c-1.1 0-2 .9-2 2v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                    Undang ke Proyek Anda
+                </button>
+            </div>
             
             <!-- Status Verifikasi OSS -->
             <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
@@ -126,4 +133,5 @@
         </div>
     </div>
 </div>
+@include('components.invite-modal')
 @endsection

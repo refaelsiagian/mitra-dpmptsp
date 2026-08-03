@@ -13,7 +13,15 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        /* Role-based visibility toggles */
+        html.role_umkm .besar-only { display: none !important; }
+        html.role_besar .umkm-only { display: none !important; }
     </style>
+    <script>
+        // Set the initial role BEFORE rendering the body to prevent layout shift
+        const userRole = localStorage.getItem('userRole') || 'role_besar';
+        document.documentElement.classList.add(userRole);
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased h-screen flex overflow-hidden relative">
 
@@ -62,12 +70,22 @@
             <!-- User Info & Notifications Widget -->
             <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200">
+                    <!-- Besar Profile -->
+                    <div class="besar-only w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200">
                         <img src="https://images.unsplash.com/photo-1541888087588-82cc68dd6279?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-full h-full object-cover">
                     </div>
-                    <div>
+                    <div class="besar-only">
                         <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5">PT Waskita Karya</p>
                         <p class="text-[10px] text-slate-500 font-medium leading-none">BUMN • Konstruksi</p>
+                    </div>
+
+                    <!-- UMKM Profile -->
+                    <div class="umkm-only w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 text-sm overflow-hidden border border-emerald-200">
+                        CV
+                    </div>
+                    <div class="umkm-only">
+                        <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5">CV Baja Nusantara</p>
+                        <p class="text-[10px] text-slate-500 font-medium leading-none">Usaha Kecil • Konstruksi</p>
                     </div>
                 </div>
                 
@@ -76,6 +94,15 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                     <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-1 ring-white"></span>
                 </button>
+            </div>
+
+            <!-- Role Toggle -->
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-100 border border-slate-200/50 mt-2 mb-2">
+                <span class="text-[10px] font-bold text-slate-600">Simulasi Akun:</span>
+                <select id="roleSelect" onchange="switchRole(this.value)" class="bg-white border border-slate-300 text-slate-700 font-semibold text-[10px] rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                    <option value="role_besar">Usaha Besar</option>
+                    <option value="role_umkm">UMKM Lokal</option>
+                </select>
             </div>
 
             <!-- Logout Button -->
@@ -111,11 +138,21 @@
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             
-            // Toggle translate-x-full to slide in/out
             sidebar.classList.toggle('-translate-x-full');
-            
-            // Toggle overlay visibility
             overlay.classList.toggle('hidden');
+        }
+
+        // Initialize role toggle dropdown
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('userRole') || 'role_besar';
+            const select = document.getElementById('roleSelect');
+            if(select) select.value = role;
+        });
+
+        // Switch role function
+        function switchRole(role) {
+            localStorage.setItem('userRole', role);
+            window.location.reload(); // Hard reload to ensure CSS applies flawlessly everywhere
         }
     </script>
 

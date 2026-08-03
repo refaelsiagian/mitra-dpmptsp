@@ -7,11 +7,19 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
             <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Manajemen RFP & KSO</h1>
-            <p class="text-slate-500 font-medium">Kelola proyek yang Anda terbitkan dan pantau status proposal yang Anda kirimkan.</p>
+            <!-- Dynamic Role Descriptions -->
+            <p class="besar-only text-slate-500 font-medium">Kelola tender yang Anda terbitkan dan pantau status proposal vendor yang masuk.</p>
+            <p class="umkm-only text-slate-500 font-medium">Kelola tawaran KSO Anda dan pantau status proposal yang Anda kirimkan ke perusahaan besar.</p>
         </div>
-        <button class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+        
+        <!-- Dynamic Role Buttons -->
+        <button class="besar-only px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-            Buat Proyek / Penawaran Baru
+            Buat Tender / Pengadaan Baru
+        </button>
+        <button class="umkm-only px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            Tawarkan KSO / Suplai
         </button>
     </div>
 
