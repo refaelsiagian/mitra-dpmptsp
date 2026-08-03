@@ -87,14 +87,62 @@
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1" for="jenis-usaha">Jenis Pelaku Usaha <span class="text-red-500">*</span></label>
-                                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="jenis-usaha">
-                                    <option value="" disabled selected>Pilih Jenis Usaha...</option>
-                                    <option value="perorangan">Perorangan</option>
-                                    <option value="badan-usaha">Badan Usaha (PT, CV, Firma, dll)</option>
-                                    <option value="koperasi">Koperasi</option>
-                                    <option value="yayasan">Yayasan</option>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="pelaku-usaha">Pelaku Usaha <span class="text-red-500">*</span></label>
+                                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="pelaku-usaha">
+                                    <option value="" disabled selected>Pilih Pelaku Usaha...</option>
+                                    <option value="orang-perseorangan">Orang Perseorangan</option>
+                                    <option value="badan-usaha">Badan Usaha</option>
+                                    <option value="kantor-perwakilan">Kantor Perwakilan</option>
+                                    <option value="badan-usaha-luar-negeri">Badan Usaha Luar Negeri</option>
                                 </select>
+                            </div>
+                            
+                            <div id="sub-pelaku-usaha-container" class="hidden">
+                                <div id="container-nik" class="hidden mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="nik-perseorangan">NIK <span class="text-red-500">*</span></label>
+                                    <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="nik-perseorangan" type="text" placeholder="Masukkan 16 digit NIK">
+                                </div>
+                                <div id="container-badan-usaha" class="hidden mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="jenis-badan-usaha">Jenis Badan Usaha <span class="text-red-500">*</span></label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="jenis-badan-usaha">
+                                        <option value="" disabled selected>Pilih Jenis Badan Usaha...</option>
+                                        <option value="Perseroan Terbatas (PT)">Perseroan Terbatas (PT)</option>
+                                        <option value="Perseroan Terbatas (PT) Perorangan">Perseroan Terbatas (PT) Perorangan</option>
+                                        <option value="Persekutuan Komanditer (CV / Commanditaire Vennootschap)">Persekutuan Komanditer (CV / Commanditaire Vennootschap)</option>
+                                        <option value="Persekutuan Firma (FA / Venootschap Onder Firma)">Persekutuan Firma (FA / Venootschap Onder Firma)</option>
+                                        <option value="Persekutuan Perdata">Persekutuan Perdata</option>
+                                        <option value="Perusahaan Umum (Perum)">Perusahaan Umum (Perum)</option>
+                                        <option value="Perusahaan Umum Daerah (Perumda)">Perusahaan Umum Daerah (Perumda)</option>
+                                        <option value="Badan Hukum Lainnya">Badan Hukum Lainnya</option>
+                                        <option value="Koperasi">Koperasi</option>
+                                        <option value="Persekutuan dan Perkumpulan">Persekutuan dan Perkumpulan</option>
+                                        <option value="Yayasan">Yayasan</option>
+                                        <option value="Badan Layanan Umum">Badan Layanan Umum</option>
+                                        <option value="BUM Desa">BUM Desa</option>
+                                        <option value="BUM Desa Bersama">BUM Desa Bersama</option>
+                                        <option value="Bentuk Usaha Tetap (BUT)">Bentuk Usaha Tetap (BUT)</option>
+                                    </select>
+                                </div>
+                                <div id="container-kantor-perwakilan" class="hidden mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="jenis-kantor-perwakilan">Jenis Kantor Perwakilan <span class="text-red-500">*</span></label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="jenis-kantor-perwakilan">
+                                        <option value="" disabled selected>Pilih Jenis Kantor Perwakilan...</option>
+                                        <option value="KPPA">KPPA</option>
+                                        <option value="KPJPTLA">KPJPTLA</option>
+                                        <option value="KP3A">KP3A</option>
+                                        <option value="KP3A PMSE">KP3A PMSE</option>
+                                        <option value="BUJKA">BUJKA</option>
+                                    </select>
+                                </div>
+                                <div id="container-badan-usaha-luar-negeri" class="hidden mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="jenis-badan-usaha-luar-negeri">Jenis Badan Usaha Luar Negeri <span class="text-red-500">*</span></label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="jenis-badan-usaha-luar-negeri">
+                                        <option value="" disabled selected>Pilih Jenis Badan Usaha Luar Negeri...</option>
+                                        <option value="Pemberi Waralaba (STPW)">Pemberi Waralaba (STPW)</option>
+                                        <option value="Pedagang Berjangka Asing">Pedagang Berjangka Asing</option>
+                                        <option value="PSE Asing">PSE Asing</option>
+                                    </select>
+                                </div>
                             </div>
                             
                             <div class="relative">
@@ -126,14 +174,48 @@
                             <!-- Pimpinan Section -->
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2"><i class="ph ph-user-circle text-xl text-gray-500"></i> Informasi Penanggung Jawab</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                
+                                <!-- WNI/WNA Radio for Kantor Perwakilan / BULN -->
+                                <div id="container-kewarganegaraan-radio" class="mb-4 hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kewarganegaraan Penanggung Jawab <span class="text-red-500">*</span></label>
+                                    <div class="flex gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="kewarganegaraan" value="WNI" class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" checked>
+                                            <span class="text-sm text-gray-700">WNI (Warga Negara Indonesia)</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="kewarganegaraan" value="WNA" class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                            <span class="text-sm text-gray-700">WNA (Warga Negara Asing)</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div id="pimpinan-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1" for="nama-pimpinan">Nama Lengkap <span class="text-red-500">*</span></label>
-                                        <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white" id="nama-pimpinan" type="text" placeholder="Sesuai KTP">
+                                        <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white" id="nama-pimpinan" type="text" placeholder="Sesuai KTP / Paspor">
                                     </div>
-                                    <div>
+                                    <div id="container-jabatan">
                                         <label class="block text-sm font-medium text-gray-700 mb-1" for="jabatan-pimpinan">Jabatan <span class="text-red-500">*</span></label>
                                         <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white" id="jabatan-pimpinan" type="text" placeholder="Contoh: Direktur Utama / Pemilik">
+                                    </div>
+                                    <div id="container-nik-pimpinan" class="hidden">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1" id="label-nik-pimpinan" for="nik-pimpinan">NIK <span class="text-red-500">*</span></label>
+                                        <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white" id="nik-pimpinan" type="text" placeholder="16 Digit NIK">
+                                    </div>
+                                    <div id="container-nationality" class="hidden">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1" for="nationality-pimpinan">Kewarganegaraan (Nationality) <span class="text-red-500">*</span></label>
+                                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white" id="nationality-pimpinan">
+                                            <option value="" disabled selected>Pilih Negara...</option>
+                                            <option value="Malaysia">Malaysia</option>
+                                            <option value="Singapura">Singapura</option>
+                                            <option value="Jepang">Jepang</option>
+                                            <option value="Korea Selatan">Korea Selatan</option>
+                                            <option value="Amerika Serikat">Amerika Serikat</option>
+                                            <option value="Tiongkok">Tiongkok</option>
+                                            <option value="Inggris">Inggris</option>
+                                            <option value="Lainnya">Lainnya...</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -147,32 +229,32 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1" for="nib-number">Nomor Induk Berusaha (NIB) <span class="text-red-500">*</span></label>
                                     <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3" id="nib-number" type="text" placeholder="13 Digit Nomor NIB">
                                     
-                                    <div class="relative group mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors cursor-pointer bg-white">
-                                        <input id="nib-file" name="nib-file" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png">
-                                        <div class="space-y-1 text-center">
-                                            <i class="ph ph-upload-simple text-3xl text-gray-400 group-hover:text-blue-500 transition-colors"></i>
-                                            <div class="flex text-sm text-gray-600 justify-center">
-                                                <span class="font-medium text-blue-600 group-hover:text-blue-700">Upload Dokumen NIB</span>
-                                            </div>
-                                            <p class="text-xs text-gray-500 mt-2">Format PDF/JPG/PNG (Max 5MB)</p>
+                                    <div class="mt-1 relative rounded-lg shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="ph ph-link text-gray-400 text-lg"></i>
                                         </div>
+                                        <input type="url" id="nib-link" name="nib-link" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white transition-colors text-sm" placeholder="Link Google Drive Dokumen NIB">
                                     </div>
                                 </div>
                                 
                                 <!-- NPWP -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="npwp-number">Nomor NPWP Perusahaan <span class="text-red-500">*</span></label>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-sm font-medium text-gray-700" for="npwp-number">Nomor NPWP <span id="label-npwp-perusahaan">Perusahaan </span><span class="text-red-500">*</span></label>
+                                        <div id="container-sama-dengan-nik" class="hidden flex items-center">
+                                            <input id="sama-dengan-nik" type="checkbox" class="ml-1 h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer">
+                                            <label for="sama-dengan-nik" class="ml-2 block text-xs font-medium text-gray-700 cursor-pointer select-none">
+                                                Sama dengan NIK
+                                            </label>
+                                        </div>
+                                    </div>
                                     <input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3" id="npwp-number" type="text" placeholder="15 Digit Nomor NPWP">
                                     
-                                    <div class="relative group mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors cursor-pointer bg-white">
-                                        <input id="npwp-file" name="npwp-file" type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png">
-                                        <div class="space-y-1 text-center">
-                                            <i class="ph ph-upload-simple text-3xl text-gray-400 group-hover:text-blue-500 transition-colors"></i>
-                                            <div class="flex text-sm text-gray-600 justify-center">
-                                                <span class="font-medium text-blue-600 group-hover:text-blue-700">Upload Kartu NPWP</span>
-                                            </div>
-                                            <p class="text-xs text-gray-500 mt-2">Format PDF/JPG/PNG (Max 5MB)</p>
+                                    <div class="mt-1 relative rounded-lg shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="ph ph-link text-gray-400 text-lg"></i>
                                         </div>
+                                        <input type="url" id="npwp-link" name="npwp-link" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white transition-colors text-sm" placeholder="Link Google Drive Kartu NPWP">
                                     </div>
                                 </div>
                             </div>
@@ -434,8 +516,25 @@
                     // If moving to step 4, populate summary
                     if (currentStep === 3) {
                         document.getElementById('summary-company-name').textContent = document.getElementById('company-name').value || '-';
-                        const selectUsaha = document.getElementById('jenis-usaha');
-                        document.getElementById('summary-jenis-usaha').textContent = selectUsaha.options[selectUsaha.selectedIndex]?.text || '-';
+                        const pelakuUsahaSelectEl = document.getElementById('pelaku-usaha');
+                        const pelakuUsahaVal = pelakuUsahaSelectEl.value;
+                        let pelakuUsahaText = pelakuUsahaSelectEl.options[pelakuUsahaSelectEl.selectedIndex]?.text || '-';
+                        let detailUsahaText = '';
+                        
+                        if (pelakuUsahaVal === 'orang-perseorangan') {
+                            detailUsahaText = ' (NIK: ' + (document.getElementById('nik-perseorangan').value || '-') + ')';
+                        } else if (pelakuUsahaVal === 'badan-usaha') {
+                            const detailSelect = document.getElementById('jenis-badan-usaha');
+                            detailUsahaText = detailSelect.value ? (' - ' + (detailSelect.options[detailSelect.selectedIndex]?.text || '')) : '';
+                        } else if (pelakuUsahaVal === 'kantor-perwakilan') {
+                            const detailSelect = document.getElementById('jenis-kantor-perwakilan');
+                            detailUsahaText = detailSelect.value ? (' - ' + (detailSelect.options[detailSelect.selectedIndex]?.text || '')) : '';
+                        } else if (pelakuUsahaVal === 'badan-usaha-luar-negeri') {
+                            const detailSelect = document.getElementById('jenis-badan-usaha-luar-negeri');
+                            detailUsahaText = detailSelect.value ? (' - ' + (detailSelect.options[detailSelect.selectedIndex]?.text || '')) : '';
+                        }
+                        
+                        document.getElementById('summary-jenis-usaha').textContent = pelakuUsahaText + detailUsahaText;
                         const kbliSummaryContainer = document.getElementById('summary-kode-kbli');
                         if (selectedKbli.length > 0) {
                             kbliSummaryContainer.innerHTML = selectedKbli.map(k => `<div class="mb-1 leading-tight"><span class="font-semibold">${k.id}</span> - <span class="text-xs text-gray-500 block">${k.nama}</span></div>`).join('');
@@ -486,6 +585,120 @@
                 });
             }
             
+            // Pelaku Usaha Logic
+            const pelakuUsahaSelect = document.getElementById('pelaku-usaha');
+            const subPelakuUsahaContainer = document.getElementById('sub-pelaku-usaha-container');
+            const containerNik = document.getElementById('container-nik');
+            const containerBadanUsaha = document.getElementById('container-badan-usaha');
+            const containerKantorPerwakilan = document.getElementById('container-kantor-perwakilan');
+            const containerBadanUsahaLuarNegeri = document.getElementById('container-badan-usaha-luar-negeri');
+            const pimpinanGrid = document.getElementById('pimpinan-grid');
+            const containerJabatan = document.getElementById('container-jabatan');
+            const containerSamaDenganNik = document.getElementById('container-sama-dengan-nik');
+            const labelNpwpPerusahaan = document.getElementById('label-npwp-perusahaan');
+            
+            // New UI Elements
+            const containerKewarganegaraanRadio = document.getElementById('container-kewarganegaraan-radio');
+            const containerNikPimpinan = document.getElementById('container-nik-pimpinan');
+            const wniRadio = document.querySelector('input[name="kewarganegaraan"][value="WNI"]');
+            
+            // Kewarganegaraan Logic
+            const kewarganegaraanRadios = document.querySelectorAll('input[name="kewarganegaraan"]');
+            const labelNikPimpinan = document.getElementById('label-nik-pimpinan');
+            const inputNikPimpinan = document.getElementById('nik-pimpinan');
+            const containerNationality = document.getElementById('container-nationality');
+
+            function triggerKewarganegaraanChange() {
+                const selected = document.querySelector('input[name="kewarganegaraan"]:checked');
+                if (!selected) return;
+                
+                if (selected.value === 'WNA') {
+                    if (labelNikPimpinan) labelNikPimpinan.innerHTML = 'Nomor Paspor / Passport <span class="text-red-500">*</span>';
+                    if (inputNikPimpinan) inputNikPimpinan.placeholder = 'Nomor Paspor / Passport Number';
+                    if (containerNationality) containerNationality.classList.remove('hidden');
+                } else {
+                    if (labelNikPimpinan) labelNikPimpinan.innerHTML = 'NIK <span class="text-red-500">*</span>';
+                    if (inputNikPimpinan) inputNikPimpinan.placeholder = '16 Digit NIK';
+                    if (containerNationality) containerNationality.classList.add('hidden');
+                }
+            }
+
+            if (kewarganegaraanRadios) {
+                kewarganegaraanRadios.forEach(radio => {
+                    radio.addEventListener('change', triggerKewarganegaraanChange);
+                });
+            }
+
+            if (pelakuUsahaSelect) {
+                pelakuUsahaSelect.addEventListener('change', function() {
+                    const val = this.value;
+                    
+                    subPelakuUsahaContainer.classList.remove('hidden');
+                    containerNik.classList.add('hidden');
+                    containerBadanUsaha.classList.add('hidden');
+                    containerKantorPerwakilan.classList.add('hidden');
+                    containerBadanUsahaLuarNegeri.classList.add('hidden');
+                    
+                    // Reset step 2 fields
+                    if (containerJabatan) containerJabatan.classList.remove('hidden');
+                    if (pimpinanGrid) pimpinanGrid.classList.add('md:grid-cols-2');
+                    if (containerSamaDenganNik) containerSamaDenganNik.classList.add('hidden');
+                    if (labelNpwpPerusahaan) labelNpwpPerusahaan.style.display = 'inline';
+                    
+                    // Reset New UI Elements
+                    if (containerKewarganegaraanRadio) containerKewarganegaraanRadio.classList.add('hidden');
+                    if (containerNikPimpinan) containerNikPimpinan.classList.add('hidden');
+                    if (wniRadio) wniRadio.checked = true;
+                    triggerKewarganegaraanChange();
+                    
+                    if (val === 'orang-perseorangan') {
+                        containerNik.classList.remove('hidden');
+                        if (containerJabatan) containerJabatan.classList.add('hidden');
+                        if (pimpinanGrid) pimpinanGrid.classList.remove('md:grid-cols-2');
+                        if (containerSamaDenganNik) containerSamaDenganNik.classList.remove('hidden');
+                        if (labelNpwpPerusahaan) labelNpwpPerusahaan.style.display = 'none';
+                    } else {
+                        // All non-perseorangan have NIK pimpinan
+                        if (containerNikPimpinan) containerNikPimpinan.classList.remove('hidden');
+
+                        if (val === 'badan-usaha') {
+                            containerBadanUsaha.classList.remove('hidden');
+                        } else if (val === 'kantor-perwakilan') {
+                            containerKantorPerwakilan.classList.remove('hidden');
+                            if (containerKewarganegaraanRadio) containerKewarganegaraanRadio.classList.remove('hidden');
+                        } else if (val === 'badan-usaha-luar-negeri') {
+                            containerBadanUsahaLuarNegeri.classList.remove('hidden');
+                            if (containerKewarganegaraanRadio) containerKewarganegaraanRadio.classList.remove('hidden');
+                        }
+                    }
+                });
+            }
+            
+            // Sama dengan NIK Logic
+            const samaDenganNik = document.getElementById('sama-dengan-nik');
+            const nikInput = document.getElementById('nik-perseorangan');
+            const npwpInput = document.getElementById('npwp-number');
+
+            if (samaDenganNik && nikInput && npwpInput) {
+                samaDenganNik.addEventListener('change', function() {
+                    if (this.checked) {
+                        npwpInput.value = nikInput.value;
+                        npwpInput.readOnly = true;
+                        npwpInput.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                    } else {
+                        npwpInput.value = '';
+                        npwpInput.readOnly = false;
+                        npwpInput.classList.remove('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
+                    }
+                });
+                
+                nikInput.addEventListener('input', function() {
+                    if (samaDenganNik.checked) {
+                        npwpInput.value = this.value;
+                    }
+                });
+            }
+
             // KBLI Multiselect Logic
             const kbliData = [
                 { id: '62019', nama: 'Aktivitas Pemrograman Komputer Lainnya' },
