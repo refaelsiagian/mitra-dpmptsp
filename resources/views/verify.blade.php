@@ -7,6 +7,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 <body class="font-sans text-text bg-surface-muted antialiased min-h-screen flex flex-col">
 
@@ -364,16 +368,17 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Koordinat Maps Lokasi Usaha <span class="text-red-500">*</span></label>
                                 <div class="flex gap-2">
-                                    <input class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600" type="text" placeholder="-6.200000, 106.816666" id="coordinate-input">
-                                    <button type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg border border-gray-300 flex items-center gap-2 transition-colors font-medium text-sm whitespace-nowrap">
+                                    <input class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 bg-white" type="text" placeholder="-6.200000, 106.816666" id="coordinate-input">
+                                    <button type="button" id="btn-open-map" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg border border-gray-300 flex items-center gap-2 transition-colors font-medium text-sm whitespace-nowrap">
                                         <i class="ph ph-map-pin-plus"></i> Ambil Titik Maps
                                     </button>
                                 </div>
-                                <div class="w-full h-48 bg-gray-100 rounded-lg mt-3 flex flex-col items-center justify-center text-gray-500 border border-gray-300 relative overflow-hidden">
-                                    <i class="ph ph-map text-4xl mb-2 opacity-50"></i>
-                                    <span class="text-sm">Preview peta akan muncul setelah memilih koordinat</span>
-                                    <!-- This div would hold the actual map preview when implemented -->
-                                    <!-- <div class="absolute inset-0 bg-cover bg-center" style="..."></div> -->
+                                <div id="map-preview-container" class="w-full h-48 bg-gray-100 rounded-lg mt-3 flex flex-col items-center justify-center text-gray-500 border border-gray-300 relative overflow-hidden z-0">
+                                    <div id="map-preview-placeholder" class="flex flex-col items-center justify-center z-10 absolute inset-0 bg-gray-100">
+                                        <i class="ph ph-map text-4xl mb-2 opacity-50"></i>
+                                        <span class="text-sm">Tekan di sini atau Enter setelah tiap memasukkan koordinat untuk menampilkan preview, atau Ambil Titik Maps</span>
+                                    </div>
+                                    <div id="map-preview" class="w-full h-full absolute inset-0 opacity-0 z-0 transition-opacity duration-300"></div>
                                 </div>
                             </div>
 
@@ -466,6 +471,34 @@
             
         </div>
     </main>
+
+    <!-- Map Picker Modal -->
+    <div id="map-picker-modal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[80vh] mx-4 relative z-50">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">Pilih Titik Koordinat Usaha</h3>
+                    <p class="text-sm text-gray-500">Geser peta atau klik pada lokasi untuk menentukan koordinat.</p>
+                </div>
+                <button type="button" id="btn-close-map" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+            </div>
+            <div class="flex-grow relative bg-gray-200">
+                <div id="interactive-map" class="w-full h-full absolute inset-0 z-0"></div>
+                <div class="absolute top-4 right-4 z-[400] bg-white px-3 py-2 rounded-lg shadow-md border border-gray-200 text-sm font-medium flex items-center gap-2">
+                    <i class="ph ph-crosshair text-blue-600"></i>
+                    <span id="temp-coordinate" class="font-mono text-gray-700">-</span>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 bg-white flex justify-end items-center gap-3">
+                <button type="button" id="btn-cancel-map" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Batal</button>
+                <button type="button" id="btn-save-map" class="px-6 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-colors flex items-center gap-2">
+                    <i class="ph ph-check-circle text-lg"></i> Simpan Lokasi
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -974,6 +1007,162 @@
                     kbliDropdown.classList.add('hidden');
                 });
             }
+            
+            // Map Implementation Logic
+            let interactiveMap = null;
+            let previewMap = null;
+            let marker = null;
+            let previewMarker = null;
+            let currentLat = -0.789275; // Default center (Indonesia)
+            let currentLng = 113.921327;
+            
+            const btnOpenMap = document.getElementById('btn-open-map');
+            const mapModal = document.getElementById('map-picker-modal');
+            const btnCloseMap = document.getElementById('btn-close-map');
+            const btnCancelMap = document.getElementById('btn-cancel-map');
+            const btnSaveMap = document.getElementById('btn-save-map');
+            const tempCoordinate = document.getElementById('temp-coordinate');
+            const coordinateInput = document.getElementById('coordinate-input');
+            const previewPlaceholder = document.getElementById('map-preview-placeholder');
+            const previewContainer = document.getElementById('map-preview');
+
+            function initMaps() {
+                // Initialize Preview Map
+                previewMap = L.map('map-preview', {
+                    zoomControl: false,
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    touchZoom: false,
+                    dragging: false
+                }).setView([currentLat, currentLng], 5);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(previewMap);
+
+                // Initialize Interactive Map
+                interactiveMap = L.map('interactive-map').setView([currentLat, currentLng], 5);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(interactiveMap);
+
+                // Add marker on click
+                interactiveMap.on('click', function(e) {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+                    
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng).addTo(interactiveMap);
+                    }
+                    
+                    currentLat = lat;
+                    currentLng = lng;
+                    tempCoordinate.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                });
+            }
+
+            function openMapModal() {
+                mapModal.classList.remove('hidden');
+                
+                // Parse existing input if available
+                if(coordinateInput.value) {
+                    const parts = coordinateInput.value.split(',');
+                    if(parts.length === 2) {
+                        currentLat = parseFloat(parts[0].trim());
+                        currentLng = parseFloat(parts[1].trim());
+                        tempCoordinate.textContent = `${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}`;
+                    }
+                }
+
+                // Leaflet requires invalidateSize when container changes visibility
+                setTimeout(() => {
+                    interactiveMap.invalidateSize();
+                    interactiveMap.setView([currentLat, currentLng], marker ? 15 : 5);
+                    if(coordinateInput.value && !marker) {
+                        marker = L.marker([currentLat, currentLng]).addTo(interactiveMap);
+                    } else if (marker) {
+                        marker.setLatLng([currentLat, currentLng]);
+                    }
+                }, 100);
+            }
+
+            function closeMapModal() {
+                mapModal.classList.add('hidden');
+            }
+
+            function saveCoordinates() {
+                if (marker) {
+                    coordinateInput.value = `${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}`;
+                    
+                    // Safe check if summary field exists (it doesn't currently)
+                    const summaryKoor = document.getElementById('summary-koordinat');
+                    if (summaryKoor) {
+                        summaryKoor.textContent = coordinateInput.value;
+                    }
+                    
+                    // Update preview map
+                    previewPlaceholder.style.opacity = '0';
+                    setTimeout(() => previewPlaceholder.classList.add('hidden'), 300);
+                    
+                    previewContainer.style.opacity = '1';
+                    previewMap.invalidateSize();
+                    previewMap.setView([currentLat, currentLng], 15);
+                    
+                    if (previewMarker) {
+                        previewMarker.setLatLng([currentLat, currentLng]);
+                    } else {
+                        previewMarker = L.marker([currentLat, currentLng]).addTo(previewMap);
+                    }
+                }
+                closeMapModal();
+            }
+
+            // Bind Events
+            if (btnOpenMap) btnOpenMap.addEventListener('click', openMapModal);
+            if (btnCloseMap) btnCloseMap.addEventListener('click', closeMapModal);
+            if (btnCancelMap) btnCancelMap.addEventListener('click', closeMapModal);
+            if (btnSaveMap) btnSaveMap.addEventListener('click', saveCoordinates);
+            
+            // Allow manual input formatting
+            if (coordinateInput) {
+                const processManualInput = function(val) {
+                    if(val) {
+                        const parts = val.split(',');
+                        if(parts.length === 2) {
+                            currentLat = parseFloat(parts[0].trim());
+                            currentLng = parseFloat(parts[1].trim());
+                            if(!isNaN(currentLat) && !isNaN(currentLng)) {
+                                coordinateInput.value = `${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}`;
+                                
+                                // Create or update the real Leaflet marker
+                                if (!marker) {
+                                    marker = L.marker([currentLat, currentLng]).addTo(interactiveMap);
+                                } else {
+                                    marker.setLatLng([currentLat, currentLng]);
+                                }
+                                
+                                saveCoordinates();
+                            }
+                        }
+                    }
+                };
+
+                coordinateInput.addEventListener('blur', function() {
+                    processManualInput(this.value);
+                });
+
+                coordinateInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); // Prevent form submission
+                        processManualInput(this.value);
+                    }
+                });
+            }
+
+            // Initialize maps on load
+            initMaps();
         });
     </script>
 </body>
