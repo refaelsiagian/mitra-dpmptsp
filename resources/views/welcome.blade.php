@@ -42,9 +42,21 @@
         <div class="mb-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Daftar Akun</h2>
         </div>
-        <form action="/verify-email" class="space-y-6" method="GET">
+        <form action="/register" class="space-y-6" method="POST">
+            @csrf
         <!-- Account Credentials Section -->
             <fieldset class="space-y-4">
+                <!-- Validation Errors -->
+                @if ($errors->any())
+                    <div class="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
+                        <ul class="list-disc pl-4 space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <!-- Email -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Email Address <span class="text-red-500">*</span></label>

@@ -58,18 +58,28 @@
                 </div>
             </div>
             
+            @if (session('message'))
+                <div class="mb-4 font-medium text-sm text-green-600 bg-green-50 rounded-lg p-3">
+                    {{ session('message') }}
+                </div>
+            @endif
+            
             <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <a href="/login" class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-blue-600 transition-colors flex items-center justify-center w-full sm:w-auto text-center">
-                    Masuk ke Akun
-                </a>
-                <button type="button" class="px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto" onclick="alert('Email verifikasi telah dikirim ulang ke alamat email Anda.')">
-                    <i class="ph ph-paper-plane-tilt"></i> Kirim Ulang Email
-                </button>
+                <form method="POST" action="{{ route('logout') }}" class="w-full sm:w-auto">
+                    @csrf
+                    <button type="submit" class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-red-600 transition-colors flex items-center justify-center w-full text-center">
+                        <i class="ph ph-sign-out mr-2 text-lg"></i> Logout Akun
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('verification.send') }}">
+                    @csrf
+                    <button type="submit" class="px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
+                        <i class="ph ph-paper-plane-tilt"></i> Kirim Ulang Email
+                    </button>
+                </form>
             </div>
             
-            <div class="mt-6">
-                <a href="/" class="text-sm text-gray-500 hover:text-blue-600 font-medium underline underline-offset-4">Kembali ke pendaftaran</a>
-            </div>
+
         </div>
     </div>
 

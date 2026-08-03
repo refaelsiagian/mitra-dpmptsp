@@ -22,8 +22,13 @@
                     <span class="text-sm font-medium text-gray-500">Verifikasi Data Perusahaan</span>
                 </div>
                 <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <i class="ph ph-user-circle text-2xl"></i>
-                    <span class="hidden sm:block">Akun Baru</span>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-2 hover:text-red-600 transition-colors">
+                            <i class="ph ph-sign-out text-2xl"></i>
+                            <span class="hidden sm:block font-medium">Logout</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

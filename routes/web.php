@@ -2,24 +2,47 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+use App\Http\Controllers\AuthController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+
+// Auth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::get('/login', function () {
-    return view('login');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Email Verification Routes
+Route::get('/email/verify', function () {
+    return view('verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/verify');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+// Protected Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/verify', function () {
+        return view('verify');
+    })->name('verify');
 });
 
-Route::get('/verify', function () {
-    return view('verify');
-});
+
 
 Route::get('/review', function () {
     return view('review');
-});
-
-Route::get('/verify-email', function () {
-    return view('verify-email');
 });
 
 Route::get('/explore', function () {
