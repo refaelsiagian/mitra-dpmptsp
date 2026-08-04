@@ -45,6 +45,30 @@
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">Lengkapi Data Usaha</h1>
                 <p class="text-gray-500">Mohon isi data berikut dengan benar untuk keperluan verifikasi DPMPTSP.</p>
             </div>
+            
+            @if ($errors->any())
+                <div class="mb-10 max-w-2xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                    <i class="ph ph-warning-circle text-red-500 text-xl mt-0.5"></i>
+                    <div>
+                        <h3 class="text-sm font-semibold text-red-800 mb-1">Gagal mengirimkan data:</h3>
+                        <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
+            
+            @if (session('error'))
+                <div class="mb-10 max-w-2xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                    <i class="ph ph-warning-circle text-red-500 text-xl mt-0.5"></i>
+                    <div>
+                        <h3 class="text-sm font-semibold text-red-800 mb-1">Terjadi Kesalahan Sistem:</h3>
+                        <p class="text-sm text-red-600">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
 
             <!-- Progress Bar -->
             <div class="mb-10 max-w-2xl mx-auto">

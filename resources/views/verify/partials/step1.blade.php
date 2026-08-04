@@ -20,6 +20,17 @@
                                 </select>
                             </div>
                             
+                            <div id="container-skala-usaha" class="hidden">
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="skala-usaha">Skala Usaha (sesuai NIB) <span class="text-red-500">*</span></label>
+                                <select name="skala_usaha" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white disabled:bg-gray-100 disabled:text-gray-500" id="skala-usaha">
+                                    <option value="" disabled selected>Pilih Skala Usaha...</option>
+                                    <option value="mikro">Usaha Mikro</option>
+                                    <option value="kecil">Usaha Kecil</option>
+                                    <option value="menengah">Usaha Menengah</option>
+                                    <option value="besar">Usaha Besar</option>
+                                </select>
+                            </div>
+                            
                             <div id="sub-pelaku-usaha-container" class="hidden">
                                 <div id="container-nik" class="hidden mb-4">
                                     <label class="block text-sm font-medium text-gray-700 mb-1" for="nik-perseorangan">NIK <span class="text-red-500">*</span></label>

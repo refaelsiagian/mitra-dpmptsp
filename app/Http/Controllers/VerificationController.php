@@ -15,9 +15,13 @@ class VerificationController extends Controller
     public function store(VerifyStoreRequest $request)
     {
         try {
-            DB::beginTransaction();
-
             $user = Auth::user();
+
+            if ($user->company()->exists()) {
+                return redirect('/review')->with('error', 'Anda sudah mengirimkan data verifikasi.');
+            }
+
+            DB::beginTransaction();
 
             // Determine pelaku_usaha_detail
             $pelakuUsaha = $request->input('pelaku_usaha');
@@ -42,6 +46,8 @@ class VerificationController extends Controller
                 'npwp_number' => $request->input('npwp_number'),
                 'npwp_link' => $request->input('npwp_link'),
                 'is_npwp_same_as_nik' => $request->has('sama_dengan_nik'),
+                'is_usaha_same_as_office' => $request->boolean('same_as_office'),
+                'skala_usaha' => $request->input('skala_usaha'),
                 'status' => 'pending'
             ]);
 
@@ -53,10 +59,10 @@ class VerificationController extends Controller
             CompanyRepresentative::create([
                 'company_id' => $company->id,
                 'name' => $request->input('nama_pimpinan'),
-                'position' => $request->input('jabatan_pimpinan'),
+                'position' => $request->input('pelaku_usaha') === 'orang-perseorangan' ? 'Pemilik' : $request->input('jabatan_pimpinan'),
                 'citizenship_type' => $request->input('kewarganegaraan'),
                 'identity_type' => $request->input('kewarganegaraan') === 'WNI' ? 'NIK' : 'PASPOR',
-                'identity_number' => $request->input('nik_pimpinan'),
+                'identity_number' => $request->input('pelaku_usaha') === 'orang-perseorangan' ? $request->input('nik_perseorangan') : $request->input('nik_pimpinan'),
                 'nationality' => $request->input('nationality_pimpinan'),
             ]);
 

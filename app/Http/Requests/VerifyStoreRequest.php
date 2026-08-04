@@ -37,6 +37,19 @@ class VerifyStoreRequest extends FormRequest
         return [
             'company_name' => ['required', 'string', 'max:255'],
             'pelaku_usaha' => ['required', 'in:orang-perseorangan,badan-usaha,kantor-perwakilan,badan-usaha-luar-negeri'],
+            'skala_usaha' => [
+                'required',
+                'in:mikro,kecil,menengah,besar',
+                function ($attribute, $value, $fail) {
+                    $pelaku = $this->input('pelaku_usaha');
+                    if ($pelaku === 'orang-perseorangan' && !in_array($value, ['mikro', 'kecil'])) {
+                        $fail('Skala usaha untuk perseorangan harus Mikro atau Kecil.');
+                    }
+                    if (in_array($pelaku, ['kantor-perwakilan', 'badan-usaha-luar-negeri']) && $value !== 'besar') {
+                        $fail('Skala usaha untuk entitas luar negeri / perwakilan harus Besar.');
+                    }
+                }
+            ],
             
             'nik_perseorangan' => ['required_if:pelaku_usaha,orang-perseorangan', 'nullable', 'digits:16'],
             'jenis_badan_usaha' => ['required_if:pelaku_usaha,badan-usaha', 'nullable', 'string'],
@@ -48,17 +61,21 @@ class VerifyStoreRequest extends FormRequest
             
             'kewarganegaraan' => ['required', 'in:WNI,WNA'],
             'nama_pimpinan' => ['required', 'string', 'max:255'],
-            'jabatan_pimpinan' => ['required', 'string', 'max:255'],
+            'jabatan_pimpinan' => ['required_unless:pelaku_usaha,orang-perseorangan', 'nullable', 'string', 'max:255'],
             
             'nik_pimpinan' => [
-                'required',
+                'required_unless:pelaku_usaha,orang-perseorangan',
+                'nullable',
                 function ($attribute, $value, $fail) {
+                    if ($this->input('pelaku_usaha') === 'orang-perseorangan' || is_null($value)) {
+                        return;
+                    }
                     if ($this->input('kewarganegaraan') === 'WNI') {
-                        if (!preg_match('/^\d{16}$/', $value)) {
+                        if (!preg_match('/^\d{16}$/', (string)$value)) {
                             $fail('The '.$attribute.' must be exactly 16 digits for WNI.');
                         }
                     } else {
-                        if (strlen($value) < 5) {
+                        if (strlen((string)$value) < 5) {
                             $fail('The '.$attribute.' must be at least 5 characters for WNA Passport.');
                         }
                     }

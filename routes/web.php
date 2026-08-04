@@ -35,6 +35,9 @@ Route::post('/email/verification-notification', function (Request $request) {
 // Protected Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/verify', function () {
+        if (auth()->user()->company()->exists()) {
+            return redirect('/review');
+        }
         $provinces = \App\Models\Province::orderBy('name')->get();
         $kblis = \App\Models\Kbli::orderBy('code')->get();
         return view('verify.index', compact('provinces', 'kblis'));

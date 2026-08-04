@@ -125,12 +125,21 @@
                     if (selectedKbli.length === 0) {
                         showError('kbli-search', 'Pilih setidaknya satu kode KBLI', 'kbli-container');
                     }
+                    
+                    const skalaUsaha = document.getElementById('skala-usaha').value;
+                    if (!skalaUsaha) {
+                        showError('skala-usaha', 'Pilih skala usaha');
+                    }
                 }
                 else if (step === 2) {
                     const nationality = document.querySelector('input[name="kewarganegaraan"]:checked');
                     
                     if (!document.getElementById('nama-pimpinan').value.trim()) showError('nama-pimpinan', 'Nama pimpinan wajib diisi');
-                    if (!document.getElementById('jabatan-pimpinan').value.trim()) showError('jabatan-pimpinan', 'Jabatan pimpinan wajib diisi');
+                    
+                    const containerJabatan = document.getElementById('container-jabatan');
+                    if (containerJabatan && !containerJabatan.classList.contains('hidden')) {
+                        if (!document.getElementById('jabatan-pimpinan').value.trim()) showError('jabatan-pimpinan', 'Jabatan pimpinan wajib diisi');
+                    }
                     
                     if (nationality && nationality.value === 'WNA') {
                         const pasporVal = document.getElementById('nik-pimpinan').value.trim();
@@ -357,6 +366,36 @@
                     if (containerNikPimpinan) containerNikPimpinan.classList.add('hidden');
                     if (wniRadio) wniRadio.checked = true;
                     triggerKewarganegaraanChange();
+
+                    // Skala Usaha Logic
+                    const skalaUsahaContainer = document.getElementById('container-skala-usaha');
+                    const skalaUsahaSelect = document.getElementById('skala-usaha');
+                    
+                    if (skalaUsahaContainer && skalaUsahaSelect) {
+                        skalaUsahaContainer.classList.remove('hidden');
+                        skalaUsahaSelect.disabled = false;
+                        
+                        // Enable all options first
+                        Array.from(skalaUsahaSelect.options).forEach(opt => opt.disabled = false);
+                        
+                        if (val === 'orang-perseorangan') {
+                            // Only allow mikro and kecil
+                            Array.from(skalaUsahaSelect.options).forEach(opt => {
+                                if (opt.value === 'menengah' || opt.value === 'besar') opt.disabled = true;
+                            });
+                            // If current selection is invalid, reset it
+                            if (['menengah', 'besar'].includes(skalaUsahaSelect.value)) {
+                                skalaUsahaSelect.value = '';
+                            }
+                        } else if (val === 'kantor-perwakilan' || val === 'badan-usaha-luar-negeri') {
+                            // Force besar and lock
+                            skalaUsahaSelect.value = 'besar';
+                            skalaUsahaSelect.disabled = true;
+                        } else {
+                            // Badan Usaha: all open
+                            // No options disabled
+                        }
+                    }
                     
                     if (val === 'orang-perseorangan') {
                         containerNik.classList.remove('hidden');
