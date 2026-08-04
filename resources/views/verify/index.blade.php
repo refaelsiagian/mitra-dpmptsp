@@ -81,7 +81,7 @@
 
             <!-- Form Card -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                <form action="{{ route('verify.store') }}" method="POST" id="verify-form" enctype="multipart/form-data">
+                <form action="{{ route('verify.store') }}" method="POST" id="verify-form" enctype="multipart/form-data" novalidate>
                     @csrf
                     <!-- STEP 1: Profil Usaha -->
                             @include('verify.partials.step1')

@@ -46,7 +46,8 @@
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-2 flex items-center gap-2"><i class="ph ph-storefront text-xl text-gray-500"></i> Lokasi Usaha/Proyek</h3>
                                 <div class="flex items-center mb-4">
-                                    <input name="same_as_office"  id="same-as-office" type="checkbox" class="ml-1 h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer">
+                                    <input type="hidden" name="same_as_office" value="0">
+                                    <input name="same_as_office" id="same-as-office" type="checkbox" value="1" class="ml-1 h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer">
                                     <label for="same-as-office" class="ml-2 block text-sm font-medium text-gray-700 cursor-pointer select-none">
                                         Sama dengan kantor utama
                                     </label>

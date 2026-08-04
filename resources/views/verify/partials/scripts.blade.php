@@ -106,8 +106,13 @@
                     if (!pelakuUsaha) {
                         showError('pelaku-usaha', 'Pilih jenis pelaku usaha');
                     } else {
-                        if (pelakuUsaha === 'orang-perseorangan' && !document.getElementById('nik-perseorangan').value.trim()) {
-                            showError('nik-perseorangan', 'NIK wajib diisi');
+                        if (pelakuUsaha === 'orang-perseorangan') {
+                            const nikVal = document.getElementById('nik-perseorangan').value.trim();
+                            if (!nikVal) {
+                                showError('nik-perseorangan', 'NIK wajib diisi');
+                            } else if (!/^\d{16}$/.test(nikVal)) {
+                                showError('nik-perseorangan', 'NIK harus berupa 16 digit angka');
+                            }
                         } else if (pelakuUsaha === 'badan-usaha' && !document.getElementById('jenis-badan-usaha').value) {
                             showError('jenis-badan-usaha', 'Pilih jenis badan usaha');
                         } else if (pelakuUsaha === 'kantor-perwakilan' && !document.getElementById('jenis-kantor-perwakilan').value) {
@@ -128,20 +133,52 @@
                     if (!document.getElementById('jabatan-pimpinan').value.trim()) showError('jabatan-pimpinan', 'Jabatan pimpinan wajib diisi');
                     
                     if (nationality && nationality.value === 'WNA') {
-                        if (!document.getElementById('nik-pimpinan').value.trim()) showError('nik-pimpinan', 'Nomor paspor wajib diisi');
+                        const pasporVal = document.getElementById('nik-pimpinan').value.trim();
+                        if (!pasporVal) {
+                            showError('nik-pimpinan', 'Nomor paspor wajib diisi');
+                        } else if (pasporVal.length < 5) {
+                            showError('nik-pimpinan', 'Nomor paspor minimal 5 karakter');
+                        }
                         if (!document.getElementById('nationality-pimpinan').value) showError('nationality-pimpinan', 'Pilih negara kewarganegaraan');
                     } else {
                         const pimpinanContainer = document.getElementById('container-nik-pimpinan');
-                        if (pimpinanContainer && !pimpinanContainer.classList.contains('hidden') && !document.getElementById('nik-pimpinan').value.trim()) {
-                            showError('nik-pimpinan', 'NIK wajib diisi');
+                        if (pimpinanContainer && !pimpinanContainer.classList.contains('hidden')) {
+                            const nikPimVal = document.getElementById('nik-pimpinan').value.trim();
+                            if (!nikPimVal) {
+                                showError('nik-pimpinan', 'NIK wajib diisi');
+                            } else if (!/^\d{16}$/.test(nikPimVal)) {
+                                showError('nik-pimpinan', 'NIK harus berupa 16 digit angka');
+                            }
                         }
                     }
                     
-                    if (!document.getElementById('nib-number').value.trim()) showError('nib-number', 'NIB wajib diisi');
-                    if (!document.getElementById('nib-link').value.trim()) showError('nib-link', 'Link dokumen NIB wajib diisi');
+                    const nibVal = document.getElementById('nib-number').value.trim();
+                    if (!nibVal) {
+                        showError('nib-number', 'NIB wajib diisi');
+                    } else if (!/^\d{13}$/.test(nibVal)) {
+                        showError('nib-number', 'NIB harus berupa 13 digit angka');
+                    }
                     
-                    if (!document.getElementById('npwp-number').value.trim()) showError('npwp-number', 'NPWP wajib diisi');
-                    if (!document.getElementById('npwp-link').value.trim()) showError('npwp-link', 'Link dokumen NPWP wajib diisi');
+                    const nibLink = document.getElementById('nib-link').value.trim();
+                    if (!nibLink) {
+                        showError('nib-link', 'Link dokumen NIB wajib diisi');
+                    } else if (!/^(https?:\/\/)/i.test(nibLink)) {
+                        showError('nib-link', 'Masukkan URL yang valid (harus diawali http:// atau https://)');
+                    }
+                    
+                    const npwpVal = document.getElementById('npwp-number').value.trim();
+                    if (!npwpVal) {
+                        showError('npwp-number', 'NPWP wajib diisi');
+                    } else if (!/^\d{15,16}$/.test(npwpVal)) {
+                        showError('npwp-number', 'NPWP harus berupa 15 atau 16 digit angka');
+                    }
+                    
+                    const npwpLink = document.getElementById('npwp-link').value.trim();
+                    if (!npwpLink) {
+                        showError('npwp-link', 'Link dokumen NPWP wajib diisi');
+                    } else if (!/^(https?:\/\/)/i.test(npwpLink)) {
+                        showError('npwp-link', 'Masukkan URL yang valid (harus diawali http:// atau https://)');
+                    }
                 }
                 else if (step === 3) {
                     if (!document.getElementById('provinsi-kantor').value) showError('provinsi-kantor', 'Provinsi wajib dipilih');
@@ -159,7 +196,19 @@
                         if (!document.getElementById('alamat-usaha').value.trim()) showError('alamat-usaha', 'Alamat lengkap usaha wajib diisi');
                     }
                     
-                    if (!document.getElementById('coordinate-input').value.trim()) showError('coordinate-input', 'Koordinat lokasi wajib diisi');
+                    const coordVal = document.getElementById('coordinate-input').value.trim();
+                    if (!coordVal) {
+                        showError('coordinate-input', 'Koordinat lokasi wajib diisi');
+                    } else if (!/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(coordVal)) {
+                        showError('coordinate-input', 'Format koordinat tidak valid (contoh: -6.200000, 106.816666)');
+                    } else {
+                        const parts = coordVal.split(',');
+                        const lat = parseFloat(parts[0]);
+                        const lng = parseFloat(parts[1]);
+                        if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                            showError('coordinate-input', 'Nilai latitude (-90 s/d 90) atau longitude (-180 s/d 180) tidak valid');
+                        }
+                    }
                 }
                 
                 return isValid;
