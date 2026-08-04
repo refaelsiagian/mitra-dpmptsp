@@ -27,4 +27,9 @@ class Company extends Model
     {
         return $this->belongsToMany(Kbli::class, 'company_kbli', 'company_id', 'kbli_code', 'id', 'code');
     }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(VerificationFeedback::class);
+    }
 }

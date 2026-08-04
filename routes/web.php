@@ -51,6 +51,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'index'])->name('company.profile');
 });
 
+// Admin Routes
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/review/{company}', [\App\Http\Controllers\AdminController::class, 'review'])->name('review');
+    Route::post('/review/{company}/feedback', [\App\Http\Controllers\AdminController::class, 'storeFeedback'])->name('feedback.store');
+    Route::post('/review/{company}/feedback/remove', [\App\Http\Controllers\AdminController::class, 'removeFeedback'])->name('feedback.remove');
+    Route::post('/review/{company}/approve', [\App\Http\Controllers\AdminController::class, 'approve'])->name('approve');
+    Route::post('/review/{company}/reject', [\App\Http\Controllers\AdminController::class, 'reject'])->name('reject');
+});
+
 // API Region Routes
 Route::get('/api/regencies/{province_id}', function ($province_id) {
     return \App\Models\Regency::where('province_id', $province_id)->orderBy('name')->get();
