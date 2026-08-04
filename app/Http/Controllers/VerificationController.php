@@ -12,7 +12,48 @@ use Illuminate\Support\Facades\DB;
 
 class VerificationController extends Controller
 {
+    public function index()
+    {
+        $company = auth()->user()->company;
+        
+        if ($company) {
+            if ($company->status === 'pending') {
+                return redirect('/review');
+            } elseif ($company->status === 'verified') {
+                return redirect('/rfp-saya');
+            }
+        }
+        
+        $provinces = \App\Models\Province::orderBy('name')->get();
+        $kblis = \App\Models\Kbli::orderBy('code')->get();
+        
+        // Pass company and feedbacks to view if they are in revision mode
+        if ($company && $company->status === 'rejected') {
+            $company->load(['locations', 'representatives', 'kblis', 'feedbacks']);
+            $feedbacks = $company->feedbacks->keyBy('field_name');
+            return view('verify.index', compact('provinces', 'kblis', 'company', 'feedbacks'));
+        }
+        
+        return view('verify.index', compact('provinces', 'kblis'));
+    }
+
+    public function review()
+    {
+        $company = auth()->user()->company;
+        if (!$company) {
+            return redirect('/verify');
+        }
+        if ($company->status === 'rejected') {
+            return redirect('/verify');
+        }
+        if ($company->status === 'verified') {
+            return redirect('/rfp-saya');
+        }
+        return view('review');
+    }
+
     public function store(VerifyStoreRequest $request)
+
     {
         try {
             $user = Auth::user();
