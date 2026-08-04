@@ -38,17 +38,40 @@ Route::post('/email/verification-notification', function (Request $request) {
 // Protected Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/verify', function () {
-        if (auth()->user()->company()->exists()) {
+        $company = auth()->user()->company;
+        
+        // If company exists and is NOT rejected, send them to dashboard
+        if ($company && $company->status !== 'rejected') {
             return redirect('/review');
         }
+        
         $provinces = \App\Models\Province::orderBy('name')->get();
         $kblis = \App\Models\Kbli::orderBy('code')->get();
+        
+        // Pass company and feedbacks to view if they are in revision mode
+        if ($company && $company->status === 'rejected') {
+            $company->load(['locations', 'representatives', 'kblis', 'feedbacks']);
+            $feedbacks = $company->feedbacks->keyBy('field_name');
+            return view('verify.index', compact('provinces', 'kblis', 'company', 'feedbacks'));
+        }
+        
         return view('verify.index', compact('provinces', 'kblis'));
     })->name('verify');
 
     Route::post('/verify', [\App\Http\Controllers\VerificationController::class, 'store'])->name('verify.store');
 
     Route::get('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'index'])->name('company.profile');
+    
+    Route::get('/review', function () {
+        $company = auth()->user()->company;
+        if (!$company) {
+            return redirect('/verify');
+        }
+        if ($company->status === 'rejected') {
+            return redirect('/verify');
+        }
+        return view('review');
+    })->name('review');
 });
 
 // Admin Routes
@@ -74,9 +97,6 @@ Route::get('/api/villages/{district_id}', function ($district_id) {
 
 
 
-Route::get('/review', function () {
-    return view('review');
-});
 
 Route::get('/explore', function () {
     return view('explore');

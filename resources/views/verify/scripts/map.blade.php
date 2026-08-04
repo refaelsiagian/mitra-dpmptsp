@@ -153,3 +153,22 @@
 
             // Initialize maps on load
             initMaps();
+            
+            // Auto-load pre-filled coordinates
+            if (coordinateInput && coordinateInput.value) {
+                const parts = coordinateInput.value.split(',');
+                if(parts.length === 2) {
+                    currentLat = parseFloat(parts[0].trim());
+                    currentLng = parseFloat(parts[1].trim());
+                    if(!isNaN(currentLat) && !isNaN(currentLng)) {
+                        marker = L.marker([currentLat, currentLng]).addTo(interactiveMap);
+                        
+                        // Update preview map right away (will render when step 3 is shown)
+                        previewPlaceholder.style.opacity = '0';
+                        previewPlaceholder.classList.add('hidden');
+                        previewContainer.style.opacity = '1';
+                        previewMap.setView([currentLat, currentLng], 15);
+                        previewMarker = L.marker([currentLat, currentLng]).addTo(previewMap);
+                    }
+                }
+            }

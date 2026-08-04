@@ -19,7 +19,7 @@
                         p.className = 'text-red-500 text-xs mt-1 error-msg';
                         p.textContent = message;
                         
-                        if (elementId === 'nib-link' || elementId === 'npwp-link') {
+                        if (elementId === 'nib-link' || elementId === 'npwp-link' || elementId === 'pkp-link') {
                             targetEl.parentNode.parentNode.insertBefore(p, targetEl.parentNode.nextSibling);
                         } else if (elementId === 'coordinate-input') {
                             targetEl.parentNode.parentNode.insertBefore(p, targetEl.parentNode.nextSibling);

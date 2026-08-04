@@ -164,3 +164,39 @@
                 data.forEach(item => html += `<option value="${item.id}">${item.name}</option>`);
                 updateDropdown(targetSelectId, html, false);
             };
+
+            // Initialize from old data
+            async function initializePreFilledRegions() {
+                async function loadChain(type) {
+                    const prov = document.getElementById('provinsi-' + type);
+                    if (!prov || !prov.value) return;
+                    
+                    const kab = document.getElementById('kabupaten-' + type);
+                    const kec = document.getElementById('kecamatan-' + type);
+                    const desa = document.getElementById('desa-' + type);
+                    
+                    if (kab && kab.dataset.old) {
+                        await window.loadRegencies(prov.value, 'kabupaten-' + type);
+                        kab.value = kab.dataset.old;
+                        makeSearchable('kabupaten-' + type);
+                        
+                        if (kec && kec.dataset.old) {
+                            await window.loadDistricts(kab.value, 'kecamatan-' + type);
+                            kec.value = kec.dataset.old;
+                            makeSearchable('kecamatan-' + type);
+                            
+                            if (desa && desa.dataset.old) {
+                                await window.loadVillages(kec.value, 'desa-' + type);
+                                desa.value = desa.dataset.old;
+                                makeSearchable('desa-' + type);
+                            }
+                        }
+                    }
+                }
+                
+                await loadChain('kantor');
+                await loadChain('usaha');
+            }
+            
+            // Start the initialization chain
+            initializePreFilledRegions();

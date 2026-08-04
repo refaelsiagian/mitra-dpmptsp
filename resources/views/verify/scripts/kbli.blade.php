@@ -2,7 +2,19 @@
             const kbliData = @json($kblis->map(function($kbli) {
                 return ['id' => $kbli->code, 'nama' => $kbli->name];
             }));
-            let selectedKbli = [];
+            
+            let existingKblis = @json(old('kblis', isset($company) ? $company->kblis->pluck('code')->toArray() : []));
+            if (typeof existingKblis === 'string') {
+                try {
+                    existingKblis = JSON.parse(existingKblis);
+                } catch (e) {
+                    existingKblis = [];
+                }
+            }
+            
+            let selectedKbli = existingKblis.map(code => {
+                return kbliData.find(k => k.id == code) || { id: code, nama: 'Unknown' };
+            });
             
             const kbliContainer = document.getElementById('kbli-container');
             const kbliSearch = document.getElementById('kbli-search');
@@ -89,4 +101,9 @@
                 kbliSearch.addEventListener('blur', () => {
                     kbliDropdown.classList.add('hidden');
                 });
+            }
+            
+            // Initialize on load
+            if (selectedKbli.length > 0) {
+                renderKbliChips();
             }

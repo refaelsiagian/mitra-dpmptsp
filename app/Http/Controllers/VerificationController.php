@@ -16,8 +16,9 @@ class VerificationController extends Controller
     {
         try {
             $user = Auth::user();
+            $existingCompany = $user->company;
 
-            if ($user->company()->exists()) {
+            if ($existingCompany && $existingCompany->status !== 'rejected') {
                 return redirect('/review')->with('error', 'Anda sudah mengirimkan data verifikasi.');
             }
 
@@ -33,9 +34,8 @@ class VerificationController extends Controller
             } elseif ($pelakuUsaha === 'badan-usaha-luar-negeri') {
                 $detail = $request->input('jenis_badan_usaha_luar_negeri');
             }
-
-            // Create Company
-            $company = Company::create([
+            
+            $companyData = [
                 'user_id' => $user->id,
                 'name' => $request->input('company_name'),
                 'pelaku_usaha_type' => $pelakuUsaha,
@@ -46,16 +46,30 @@ class VerificationController extends Controller
                 'npwp_number' => $request->input('npwp_number'),
                 'npwp_link' => $request->input('npwp_link'),
                 'is_pkp' => filter_var($request->input('is_pkp'), FILTER_VALIDATE_BOOLEAN),
-                'pkp_link' => $request->input('pkp_link'),
+                'pkp_link' => filter_var($request->input('is_pkp'), FILTER_VALIDATE_BOOLEAN) ? $request->input('pkp_link') : null,
                 'is_npwp_same_as_nik' => $request->has('sama_dengan_nik'),
                 'is_usaha_same_as_office' => $request->boolean('same_as_office'),
                 'skala_usaha' => $request->input('skala_usaha'),
                 'status' => 'pending'
-            ]);
+            ];
+
+            if ($existingCompany && $existingCompany->status === 'rejected') {
+                // Update existing
+                $existingCompany->update($companyData);
+                $company = $existingCompany;
+                
+                // Clear old relations and feedbacks
+                $company->representatives()->delete();
+                $company->locations()->delete();
+                \App\Models\VerificationFeedback::where('company_id', $company->id)->delete();
+            } else {
+                // Create new
+                $company = Company::create($companyData);
+            }
 
             // Sync KBLIs
             $kblis = $request->input('kblis');
-            $company->kblis()->attach($kblis);
+            $company->kblis()->sync($kblis);
 
             // Create Representative
             CompanyRepresentative::create([
@@ -65,7 +79,7 @@ class VerificationController extends Controller
                 'citizenship_type' => $request->input('kewarganegaraan'),
                 'identity_type' => $request->input('kewarganegaraan') === 'WNI' ? 'NIK' : 'PASPOR',
                 'identity_number' => $request->input('pelaku_usaha') === 'orang-perseorangan' ? $request->input('nik_perseorangan') : $request->input('nik_pimpinan'),
-                'nationality' => $request->input('nationality_pimpinan'),
+                'nationality' => $request->input('kewarganegaraan') === 'WNI' ? null : $request->input('nationality_pimpinan'),
             ]);
 
             // Coordinates
@@ -82,8 +96,6 @@ class VerificationController extends Controller
                 'district_id' => $request->input('kecamatan_kantor'),
                 'village_id' => $request->input('desa_kantor'),
                 'address' => $request->input('alamat_kantor'),
-                // The map coordinate is collected in Lokasi Usaha block, 
-                // but we will assign it to both or just use it here.
                 'latitude' => $lat,
                 'longitude' => $lng,
             ]);

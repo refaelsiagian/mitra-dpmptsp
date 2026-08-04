@@ -114,6 +114,11 @@
                     currentStep++;
                     updateUI();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    // Fix map rendering issue when becoming visible
+                    if (currentStep === 3 && typeof previewMap !== 'undefined' && previewMap) {
+                        setTimeout(() => previewMap.invalidateSize(), 100);
+                    }
                 }
             });
             

@@ -46,6 +46,16 @@
                 <p class="text-gray-500">Mohon isi data berikut dengan benar untuk keperluan verifikasi DPMPTSP.</p>
             </div>
             
+            @if(isset($company) && $company->status === 'rejected')
+                <div class="mb-10 max-w-2xl mx-auto p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+                    <i class="ph ph-warning text-amber-500 text-xl mt-0.5"></i>
+                    <div>
+                        <h3 class="text-sm font-bold text-amber-800 mb-1">Data Anda Dikembalikan untuk Direvisi</h3>
+                        <p class="text-sm text-amber-700">Mohon perbaiki data Anda berdasarkan catatan revisi yang ditandai dengan kotak berwarna merah muda di bawah ini, kemudian kirimkan ulang form ini.</p>
+                    </div>
+                </div>
+            @endif
+            
             @if ($errors->any())
                 <div class="mb-10 max-w-2xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
                     <i class="ph ph-warning-circle text-red-500 text-xl mt-0.5"></i>
