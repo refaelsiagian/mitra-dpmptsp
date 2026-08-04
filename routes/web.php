@@ -37,8 +37,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/verify', function () {
         $provinces = \App\Models\Province::orderBy('name')->get();
         $kblis = \App\Models\Kbli::orderBy('code')->get();
-        return view('verify', compact('provinces', 'kblis'));
+        return view('verify.index', compact('provinces', 'kblis'));
     })->name('verify');
+
+    Route::post('/verify/store', [App\Http\Controllers\VerificationController::class, 'store'])->name('verify.store');
 });
 
 // API Region Routes
