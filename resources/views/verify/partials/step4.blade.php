@@ -35,6 +35,9 @@
                                     
                                     <div class="text-gray-500">Nomor NPWP</div>
                                     <div class="font-medium text-gray-900" id="summary-npwp">-</div>
+
+                                    <div class="text-gray-500">Status PKP</div>
+                                    <div class="font-medium text-gray-900" id="summary-pkp">-</div>
                                 </div>
                             </div>
                             

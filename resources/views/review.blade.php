@@ -59,10 +59,13 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="/" class="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-blue-600 transition-colors flex items-center justify-center gap-2">
-                    <i class="ph ph-house"></i> Kembali ke Beranda
-                </a>
-                <a href="#" class="px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 transition-colors flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" title="Fitur ini akan terbuka setelah verifikasi" onclick="event.preventDefault();">
+                <form method="POST" action="{{ route('logout') }}" class="w-full sm:w-auto">
+                    @csrf
+                    <button type="submit" class="w-full px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-red-600 transition-colors flex items-center justify-center gap-2">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </form>
+                <a href="/rfp-saya" class="w-full sm:w-auto px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
                     <i class="ph ph-squares-four"></i> Dashboard Sementara
                 </a>
             </div>

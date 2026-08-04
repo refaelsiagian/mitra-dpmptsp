@@ -188,6 +188,20 @@
                     } else if (!/^(https?:\/\/)/i.test(npwpLink)) {
                         showError('npwp-link', 'Masukkan URL yang valid (harus diawali http:// atau https://)');
                     }
+
+                    // PKP Validation
+                    const pkpYesCheck = document.getElementById('pkp-yes').checked;
+                    const pkpNoCheck = document.getElementById('pkp-no').checked;
+                    if (!pkpYesCheck && !pkpNoCheck) {
+                        showError('pkp-yes', 'Pilih status PKP perusahaan');
+                    } else if (pkpYesCheck) {
+                        const pkpLinkVal = document.getElementById('pkp-link').value.trim();
+                        if (!pkpLinkVal) {
+                            showError('pkp-link', 'Link dokumen SPPKP wajib diisi');
+                        } else if (!/^(https?:\/\/)/i.test(pkpLinkVal)) {
+                            showError('pkp-link', 'Masukkan URL yang valid (harus diawali http:// atau https://)');
+                        }
+                    }
                 }
                 else if (step === 3) {
                     if (!document.getElementById('provinsi-kantor').value) showError('provinsi-kantor', 'Provinsi wajib dipilih');
@@ -228,6 +242,9 @@
                 
                 if (currentStep < totalSteps) {
                     // normally validate form fields here
+                    if (currentStep === 1 && typeof enforcePKPRules === 'function') {
+                        enforcePKPRules();
+                    }
                     
                     // If moving to step 4, populate summary
                     if (currentStep === 3) {
@@ -262,6 +279,13 @@
                         document.getElementById('summary-jabatan').textContent = document.getElementById('jabatan-pimpinan').value || '-';
                         document.getElementById('summary-nib').textContent = document.getElementById('nib-number').value || '-';
                         document.getElementById('summary-npwp').textContent = document.getElementById('npwp-number').value || '-';
+                        
+                        const pkpCheckYes = document.getElementById('pkp-yes');
+                        if (pkpCheckYes && pkpCheckYes.checked) {
+                            document.getElementById('summary-pkp').innerHTML = `<span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded border border-green-200 font-bold">SUDAH PKP</span>`;
+                        } else {
+                            document.getElementById('summary-pkp').innerHTML = `<span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded border border-gray-200 font-bold">BELUM PKP</span>`;
+                        }
                         
                         document.getElementById('summary-alamat-kantor').textContent = document.getElementById('alamat-kantor').value || '-';
                         
@@ -443,6 +467,46 @@
                         npwpInput.value = this.value;
                     }
                 });
+            }
+
+            // PKP Logic
+            const pkpYes = document.getElementById('pkp-yes');
+            const pkpNo = document.getElementById('pkp-no');
+            const pkpLinkContainer = document.getElementById('container-pkp-link');
+            const pkpHelperText = document.getElementById('pkp-helper-text');
+            const pkpLinkInput = document.getElementById('pkp-link');
+            const skalaUsahaSelectPKP = document.getElementById('skala-usaha');
+
+            function updatePKPVisibility() {
+                if (pkpYes && pkpYes.checked) {
+                    pkpLinkContainer.classList.remove('hidden');
+                } else {
+                    pkpLinkContainer.classList.add('hidden');
+                }
+            }
+            
+            window.enforcePKPRules = function() {
+                if (skalaUsahaSelectPKP && pkpYes && pkpNo) {
+                    const skala = skalaUsahaSelectPKP.value;
+                    if (skala === 'menengah' || skala === 'besar') {
+                        pkpYes.checked = true;
+                        pkpNo.disabled = true;
+                        pkpHelperText.classList.remove('hidden');
+                        updatePKPVisibility();
+                    } else {
+                        pkpNo.disabled = false;
+                        pkpHelperText.classList.add('hidden');
+                    }
+                }
+            };
+
+            if (pkpYes && pkpNo) {
+                pkpYes.addEventListener('change', updatePKPVisibility);
+                pkpNo.addEventListener('change', updatePKPVisibility);
+            }
+            
+            if (skalaUsahaSelectPKP) {
+                skalaUsahaSelectPKP.addEventListener('change', window.enforcePKPRules);
             }
 
             // Custom Searchable Dropdown Logic

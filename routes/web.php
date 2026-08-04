@@ -18,7 +18,10 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Email Verification Routes
-Route::get('/email/verify', function () {
+Route::get('/email/verify', function (\Illuminate\Http\Request $request) {
+    if ($request->user()->hasVerifiedEmail()) {
+        return redirect('/verify');
+    }
     return view('verify-email');
 })->middleware('auth')->name('verification.notice');
 
@@ -43,7 +46,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('verify.index', compact('provinces', 'kblis'));
     })->name('verify');
 
-    Route::post('/verify/store', [App\Http\Controllers\VerificationController::class, 'store'])->name('verify.store');
+    Route::post('/verify', [\App\Http\Controllers\VerificationController::class, 'store'])->name('verify.store');
+
+    Route::get('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'index'])->name('company.profile');
 });
 
 // API Region Routes

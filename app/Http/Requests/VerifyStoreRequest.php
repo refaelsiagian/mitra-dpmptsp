@@ -89,6 +89,20 @@ class VerifyStoreRequest extends FormRequest
             
             'npwp_link' => ['required', 'url'],
             
+            'is_pkp' => [
+                'required', 
+                'boolean', 
+                function ($attribute, $value, $fail) {
+                    $skala = $this->input('skala_usaha');
+                    // Boolean value from request might be "1" or "0" or boolean true/false
+                    $isPkp = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                    if (in_array($skala, ['menengah', 'besar']) && !$isPkp) {
+                        $fail('Status PKP wajib Ya (True) untuk skala usaha Menengah dan Besar.');
+                    }
+                }
+            ],
+            'pkp_link' => ['required_if:is_pkp,1,true', 'nullable', 'url'],
+            
             'provinsi_kantor' => ['required', 'exists:provinces,id'],
             'kabupaten_kantor' => ['required', 'exists:regencies,id'],
             'kecamatan_kantor' => ['required', 'exists:districts,id'],

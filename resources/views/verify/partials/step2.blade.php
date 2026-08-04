@@ -91,8 +91,30 @@
                                     </div>
                                 </div>
                             </div>
-                            </div>
 
+                            <!-- PKP Section -->
+                            <div class="mt-6 border-t border-gray-100 pt-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Apakah Perusahaan Anda PKP (Pengusaha Kena Pajak)? <span class="text-red-500">*</span></label>
+                                <div class="flex gap-4 mb-3">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="is_pkp" value="1" id="pkp-yes" class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                        <span class="text-sm text-gray-700">Ya, Sudah PKP</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="is_pkp" value="0" id="pkp-no" class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                        <span class="text-sm text-gray-700">Belum PKP</span>
+                                    </label>
+                                </div>
+                                <div id="container-pkp-link" class="hidden mt-3 relative rounded-lg shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="ph ph-link text-gray-400 text-lg"></i>
+                                    </div>
+                                    <input type="url" id="pkp-link" name="pkp_link" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-white transition-colors text-sm" placeholder="Link Google Drive Dokumen / SPPKP">
+                                </div>
+                                <p id="pkp-helper-text" class="text-xs text-amber-600 mt-2 hidden"><i class="ph ph-info"></i> Skala usaha Menengah/Besar wajib memiliki status PKP.</p>
+                            </div>
+                            
+                            </div>
                         </div>
                     </div>
 

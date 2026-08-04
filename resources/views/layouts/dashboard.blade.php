@@ -69,25 +69,21 @@
             
             <!-- User Info & Notifications Widget -->
             <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                <div class="flex items-center gap-2">
-                    <!-- Besar Profile -->
-                    <div class="besar-only w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200">
-                        <img src="https://images.unsplash.com/photo-1541888087588-82cc68dd6279?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Avatar" class="w-full h-full object-cover">
+                <a href="/company/profile" class="flex items-center gap-2 flex-1 group">
+                    @php
+                        $company = auth()->user()->company;
+                        $initials = $company ? strtoupper(substr($company->name, 0, 2)) : 'UK';
+                        $typeName = $company ? ucwords(str_replace('-', ' ', $company->pelaku_usaha_type)) : 'Lengkapi Profil';
+                        $statusName = $company ? ucfirst($company->skala_usaha) : '';
+                    @endphp
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        {{ $initials }}
                     </div>
-                    <div class="besar-only">
-                        <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5">PT Waskita Karya</p>
-                        <p class="text-[10px] text-slate-500 font-medium leading-none">BUMN • Konstruksi</p>
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5 max-w-[120px] truncate group-hover:text-blue-700 transition-colors">{{ $company->name ?? 'Belum ada data' }}</p>
+                        <p class="text-[10px] text-slate-500 font-medium leading-none truncate">{{ $typeName }} {{ $statusName ? '• ' . $statusName : '' }}</p>
                     </div>
-
-                    <!-- UMKM Profile -->
-                    <div class="umkm-only w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 text-sm overflow-hidden border border-emerald-200">
-                        CV
-                    </div>
-                    <div class="umkm-only">
-                        <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5">CV Baja Nusantara</p>
-                        <p class="text-[10px] text-slate-500 font-medium leading-none">Usaha Kecil • Konstruksi</p>
-                    </div>
-                </div>
+                </a>
                 
                 <!-- Bell Icon -->
                 <button class="relative p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
