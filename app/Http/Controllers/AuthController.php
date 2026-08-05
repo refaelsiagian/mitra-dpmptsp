@@ -29,6 +29,11 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
+            $user = Auth::user();
+            if ($user->role === 'admin') {
+                return redirect()->intended('/admin/dashboard');
+            }
+
             return redirect()->intended('/verify'); // Redirect to dashboard or verify page
         }
 

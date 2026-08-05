@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mitra DPMPTSP - Dashboard</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- AlpineJS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +51,11 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 Beranda (RFP Saya)
             </a>
+
+            <a href="/company/profile" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->is('company/profile') ? 'bg-blue-50 text-blue-700 font-semibold shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+                Data Legalitas
+            </a>
             
             <a href="/explore" class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'bg-blue-50 text-blue-700 font-semibold shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium' }}">
                 <div class="flex items-center gap-3">
@@ -68,44 +75,67 @@
         <div class="p-3.5 border-t border-slate-200 bg-slate-50/50 space-y-2.5">
             
             <!-- User Info & Notifications Widget -->
-            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                <a href="/company/profile" class="flex items-center gap-2 flex-1 group">
-                    @php
-                        $company = auth()->user()->company;
-                        $initials = $company ? strtoupper(substr($company->name, 0, 2)) : 'UK';
-                        $typeName = $company ? ucwords(str_replace('-', ' ', $company->pelaku_usaha_type)) : 'Lengkapi Profil';
-                        $statusName = $company ? ucfirst($company->skala_usaha) : '';
-                    @endphp
-                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                        {{ $initials }}
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open" @click.away="open = false" class="w-full flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-blue-300 hover:ring-1 hover:ring-blue-100 transition-all text-left">
+                    <div class="flex items-center gap-2 flex-1 overflow-hidden">
+                        @php
+                            $company = auth()->check() ? auth()->user()->company : null;
+                            $initials = $company ? strtoupper(substr($company->name, 0, 2)) : 'UK';
+                            $typeName = $company ? ucwords(str_replace('-', ' ', $company->pelaku_usaha_type)) : 'Lengkapi Profil';
+                            $statusName = $company ? ucfirst($company->skala_usaha) : '';
+                        @endphp
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex shrink-0 items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200">
+                            {{ $initials }}
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5 truncate">{{ $company->name ?? 'Belum ada data' }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium leading-none truncate">{{ $typeName }} {{ $statusName ? '• ' . $statusName : '' }}</p>
+                        </div>
                     </div>
-                    <div class="flex-1 overflow-hidden">
-                        <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5 max-w-[120px] truncate group-hover:text-blue-700 transition-colors">{{ $company->name ?? 'Belum ada data' }}</p>
-                        <p class="text-[10px] text-slate-500 font-medium leading-none truncate">{{ $typeName }} {{ $statusName ? '• ' . $statusName : '' }}</p>
-                    </div>
-                </a>
-                
-                <!-- Bell Icon -->
-                <button class="relative p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                    <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-1 ring-white"></span>
+                    <!-- Dots Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                 </button>
+
+                <!-- Dropdown Menu -->
+                <div x-show="open" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="transform opacity-0 scale-95"
+                     x-transition:enter-end="transform opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="transform opacity-100 scale-100"
+                     x-transition:leave-end="transform opacity-0 scale-95"
+                     class="absolute bottom-full left-0 w-full mb-2 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-50 py-1"
+                     style="display: none;">
+                    
+                    @if($company)
+                        <a href="{{ route('vendor.show', $company->id) }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Lihat Profil Publik
+                        </a>
+                    @endif
+                    <a href="#" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        Pengaturan Akun
+                    </a>
+                    <div class="border-t border-slate-100 my-1"></div>
+                    <form method="POST" action="{{ route('logout') }}" class="m-0">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                            Keluar dari Akun
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <!-- Role Toggle -->
-            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-100 border border-slate-200/50 mt-2 mb-2">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-100 border border-slate-200/50 mt-2 mb-2 hidden">
                 <span class="text-[10px] font-bold text-slate-600">Simulasi Akun:</span>
                 <select id="roleSelect" onchange="switchRole(this.value)" class="bg-white border border-slate-300 text-slate-700 font-semibold text-[10px] rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
                     <option value="role_besar">Usaha Besar</option>
                     <option value="role_umkm">UMKM Lokal</option>
                 </select>
             </div>
-
-            <!-- Logout Button -->
-            <a href="#" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50/80 transition-colors border border-transparent hover:border-red-200/60">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                Keluar dari Akun
-            </a>
         </div>
     </aside>
 

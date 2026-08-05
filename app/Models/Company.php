@@ -8,9 +8,25 @@ class Company extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'is_pkp' => 'boolean',
+        'is_usaha_same_as_office' => 'boolean',
+        'certifications' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function portfolios()
+    {
+        return $this->hasMany(CompanyPortfolio::class);
+    }
+
+    public function offerings()
+    {
+        return $this->hasMany(CompanyOffering::class);
     }
 
     public function locations()

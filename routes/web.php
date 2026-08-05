@@ -33,7 +33,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/verify', [\App\Http\Controllers\VerificationController::class, 'store'])->name('verify.store');
 
     Route::get('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'index'])->name('company.profile');
+    Route::get('/company/profile/edit', [\App\Http\Controllers\CompanyProfileController::class, 'edit'])->name('company.profile.edit');
+    Route::put('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'update'])->name('company.profile.update');
     
+    // Portfolios
+    Route::get('/portfolios/create', [\App\Http\Controllers\PortfolioController::class, 'create'])->name('portfolios.create');
+    Route::post('/portfolios', [\App\Http\Controllers\PortfolioController::class, 'store'])->name('portfolios.store');
+
     Route::get('/review', [\App\Http\Controllers\VerificationController::class, 'review'])->name('review');
 });
 
@@ -66,9 +72,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckCompanyVerifica
         return view('explore');
     });
 
-    Route::get('/vendor-profile', function () {
-        return view('vendor-profile');
-    });
+    Route::get('/vendor/{company}', [\App\Http\Controllers\VendorController::class, 'show'])->name('vendor.show')->whereNumber('company');
 
     Route::get('/project/tender', function () {
         return view('project-tender');
