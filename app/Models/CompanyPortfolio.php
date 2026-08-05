@@ -12,6 +12,7 @@ class CompanyPortfolio extends Model
     protected $fillable = [
         'company_id',
         'title',
+        'description',
         'image_path',
     ];
 
