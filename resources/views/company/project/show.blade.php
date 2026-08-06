@@ -52,6 +52,11 @@
                                 $badgeText = 'Perdagangan Umum';
                                 $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>';
                                 break;
+                            case 'distribusi':
+                                $badgeClass = 'bg-teal-50 text-teal-700 border-teal-200';
+                                $badgeText = 'Distribusi & Keagenan';
+                                $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>';
+                                break;
                         }
                     @endphp
                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold border {!! $badgeClass !!}">
@@ -113,7 +118,8 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5"/><path d="m9 11 3 3L22 4"/></svg>
                     </div>
                     @if($project->type === 'kso') Apa yang Kami Miliki
-                    @elseif($project->type === 'offering') Kapasitas & Kapabilitas Kami
+                    @elseif($project->type === 'perdagangan') Katalog Produk / Jasa Kami
+                    @elseif($project->type === 'distribusi') Fasilitas Distribusi / Dukungan Keagenan
                     @else Disediakan Pemberi Tugas @endif
                 </h2>
                 <ul class="space-y-3">
@@ -136,7 +142,8 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     </div>
                     @if($project->type === 'kso') Apa yang Kami Cari (Syarat Mitra)
-                    @elseif($project->type === 'offering') Skema Kemitraan yang Dicari
+                    @elseif($project->type === 'perdagangan') Syarat Pembelian / Ketentuan
+                    @elseif($project->type === 'distribusi') Syarat Mitra Keagenan / Prinsipal
                     @else Tanggung Jawab Pelaksana @endif
                 </h2>
                 <ul class="space-y-3">
@@ -192,10 +199,18 @@
                 @if(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id)
                     <!-- Owner View -->
                     <div class="flex flex-col gap-3">
-                        <button class="w-full py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-xl transition-colors shadow-sm flex justify-center items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <a href="{{ route('projects.edit', $project->id) }}" class="w-full py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-xl transition-colors shadow-sm flex justify-center items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                             Edit Proyek
-                        </button>
+                        </a>
+                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full py-3 bg-white hover:bg-red-50 border border-red-200 text-red-600 font-bold rounded-xl transition-colors shadow-sm flex justify-center items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                Hapus Proyek
+                            </button>
+                        </form>
                     </div>
                 @else
                     <!-- Viewer View -->

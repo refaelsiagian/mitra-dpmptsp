@@ -108,6 +108,7 @@
                                 case 'konstruksi': $badgeColor = 'bg-amber-100 text-amber-700'; break;
                                 case 'kso': $badgeColor = 'bg-emerald-100 text-emerald-700'; break;
                                 case 'perdagangan': $badgeColor = 'bg-purple-100 text-purple-700'; break;
+                                case 'distribusi': $badgeColor = 'bg-teal-100 text-teal-700'; break;
                             }
                         @endphp
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $badgeColor }} tracking-wide uppercase">
@@ -129,8 +130,8 @@
                     <div class="text-center">
                         <p class="text-xs text-slate-400 font-medium mb-0.5">Sisa Waktu</p>
                         <p class="text-sm font-bold text-amber-600">
-                            @if($project->end_date)
-                                {{ \Carbon\Carbon::parse($project->end_date)->diffForHumans(null, true) }}
+                            @if($project->offer_end_date)
+                                {{ \Carbon\Carbon::parse($project->offer_end_date)->diffForHumans(null, true) }}
                             @else
                                 Terbuka
                             @endif
@@ -139,6 +140,9 @@
                     <div class="flex flex-col gap-2">
                         <a href="{{ route('projects.show', $project->id) }}" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
                             Lihat Detail
+                        </a>
+                        <a href="{{ route('projects.edit', $project->id) }}" class="w-full px-4 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                            Edit Proyek
                         </a>
                         <!-- Form Delete -->
                         <form action="{{ route('projects.destroy', $project->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');">

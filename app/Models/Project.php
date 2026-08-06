@@ -16,10 +16,11 @@ class Project extends Model
         'description',
         'ruang_lingkup',
         'estimated_value',
+        'is_budget_negotiable',
         'location',
-        'start_date',
+        'offer_end_date',
+        'project_start_date',
         'project_end_date',
-        'end_date',
         'status',
         'metrics',
         'requirements',
@@ -28,9 +29,10 @@ class Project extends Model
     ];
 
     protected $casts = [
-        'start_date' => 'date',
+        'is_budget_negotiable' => 'boolean',
+        'offer_end_date' => 'date',
+        'project_start_date' => 'date',
         'project_end_date' => 'date',
-        'end_date' => 'date',
         'metrics' => 'array',
         'requirements' => 'array',
         'offerings' => 'array',

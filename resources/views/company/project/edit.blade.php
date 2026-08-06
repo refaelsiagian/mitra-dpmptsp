@@ -1,22 +1,27 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="max-w-4xl mx-auto pb-10" x-data="projectForm()">
+<div class="max-w-4xl mx-auto pb-10" x-data="projectForm({ 
+    initialType: '{{ old('type', $project->type) }}',
+    initialOfferings: {{ json_encode(old('offerings', $project->offerings ?? [])) }},
+    initialRequirements: {{ json_encode(old('requirements', $project->requirements ?? [])) }}
+})">
     
-    <a href="{{ route('vendor.show', ['company' => $company->id, 'tab' => 'projects']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-6 group">
+    <a href="{{ route('rfp-saya') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-6 group">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
-        <span>Kembali ke Profil</span>
+        <span>Kembali ke Manajemen RFP</span>
     </a>
 
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         
         <div class="p-6 md:p-8 border-b border-slate-100 bg-slate-50">
-            <h1 class="text-2xl font-bold text-slate-900">Buat Proyek / Kemitraan Baru</h1>
-            <p class="text-slate-500 mt-1">Pilih jenis kemitraan dan lengkapi detail penawaran Anda.</p>
+            <h1 class="text-2xl font-bold text-slate-900">Edit Proyek / Kemitraan</h1>
+            <p class="text-slate-500 mt-1">Perbarui detail penawaran proyek Anda.</p>
         </div>
 
-        <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-8">
+        <form action="{{ route('projects.update', $project->id) }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-8">
             @csrf
+            @method('PUT')
 
             <!-- Type Selection -->
             <div>
@@ -122,18 +127,18 @@
                 <!-- Common Fields -->
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Judul Proyek / Kemitraan</label>
-                    <input type="text" name="title" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Instalasi HVAC Lantai 1-5">
+                    <input type="text" name="title" value="{{ old('title', $project->title) }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Instalasi HVAC Lantai 1-5">
                     @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Kemitraan</label>
-                    <textarea name="description" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan gambaran umum kemitraan/proyek ini..."></textarea>
+                    <textarea name="description" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan gambaran umum kemitraan/proyek ini...">{{ old('description', $project->description) }}</textarea>
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Ruang Lingkup Pekerjaan / Kebutuhan Khusus</label>
-                    <textarea name="ruang_lingkup" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan secara detail spesifikasi yang dibutuhkan, ruang lingkup pekerjaan, atau detail operasional..."></textarea>
+                    <textarea name="ruang_lingkup" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan secara detail spesifikasi yang dibutuhkan, ruang lingkup pekerjaan, atau detail operasional...">{{ old('ruang_lingkup', $project->ruang_lingkup) }}</textarea>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -141,34 +146,34 @@
                         <label class="block text-sm font-bold text-slate-700 mb-2">Nilai Anggaran / Kontrak (Opsional)</label>
                         <div class="relative mb-2">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 font-bold">Rp</span>
-                            <input type="number" name="estimated_value" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="0">
+                            <input type="number" name="estimated_value" value="{{ old('estimated_value', (int)$project->estimated_value) }}" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="0">
                         </div>
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="is_budget_negotiable" value="1" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <input type="checkbox" name="is_budget_negotiable" value="1" {{ old('is_budget_negotiable', $project->is_budget_negotiable) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                             <span class="text-sm font-medium text-slate-600">Nilai bersifat negosiasi / bisa didiskusikan</span>
                         </label>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Lokasi (Opsional)</label>
-                        <input type="text" name="location" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Surabaya">
+                        <input type="text" name="location" value="{{ old('location', $project->location) }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Surabaya">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Batas Waktu Penawaran / Pendaftaran (Opsional)</label>
-                        <input type="date" name="offer_end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        <input type="date" name="offer_end_date" value="{{ old('offer_end_date', $project->offer_end_date ? \Carbon\Carbon::parse($project->offer_end_date)->format('Y-m-d') : '') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target Mulai Pelaksanaan Proyek (Opsional)</label>
-                        <input type="date" name="project_start_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        <input type="date" name="project_start_date" value="{{ old('project_start_date', $project->project_start_date ? \Carbon\Carbon::parse($project->project_start_date)->format('Y-m-d') : '') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target Selesai Pelaksanaan Proyek (Opsional)</label>
-                        <input type="date" name="project_end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        <input type="date" name="project_end_date" value="{{ old('project_end_date', $project->project_end_date ? \Carbon\Carbon::parse($project->project_end_date)->format('Y-m-d') : '') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                     </div>
                 </div>
 
@@ -233,9 +238,9 @@
 <script>
 function projectForm() {
     return {
-        type: '{{ old('type', '') }}',
-        offerings: {!! old('offerings') ? json_encode(old('offerings')) : "['']" !!},
-        requirements: {!! old('requirements') ? json_encode(old('requirements')) : "['']" !!},
+        type: '{{ old('type', $project->type) }}',
+        offerings: {!! json_encode(old('offerings', $project->offerings ?? [''])) !!},
+        requirements: {!! json_encode(old('requirements', $project->requirements ?? [''])) !!},
         
         getOfferingsTitle() {
             if (this.type === 'kso') return 'Aset / Modal yang Kami Siapkan';

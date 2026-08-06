@@ -163,7 +163,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckCompanyVerifica
         $company = auth()->user()->company;
         $projects = $company ? $company->projects()->latest()->get() : collect();
         return view('rfp-saya', compact('projects'));
-    });
+    })->name('rfp-saya');
 });
 
 

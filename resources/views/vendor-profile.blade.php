@@ -173,6 +173,7 @@
                         <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 rounded-md text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">
                             @if($project->type === 'kso') KSO
                             @elseif($project->type === 'perdagangan') Perdagangan Umum
+                            @elseif($project->type === 'distribusi') Distribusi & Keagenan
                             @else {{ ucwords(str_replace('_', ' ', $project->type)) }}
                             @endif
                         </div>

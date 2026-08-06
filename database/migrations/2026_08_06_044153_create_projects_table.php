@@ -19,10 +19,11 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->text('ruang_lingkup')->nullable();
             $table->decimal('estimated_value', 20, 2)->nullable();
+            $table->boolean('is_budget_negotiable')->default(false);
             $table->string('location')->nullable();
-            $table->date('start_date')->nullable();
+            $table->date('offer_end_date')->nullable();
+            $table->date('project_start_date')->nullable();
             $table->date('project_end_date')->nullable();
-            $table->date('end_date')->nullable();
             $table->enum('status', ['draft', 'published', 'closed'])->default('published');
             
             // Flexible JSON columns

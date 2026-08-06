@@ -22,16 +22,16 @@ class ProjectController extends Controller
         $company = auth()->user()->company;
 
         $validated = $request->validate([
-            'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan',
+            'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'ruang_lingkup' => 'nullable|string',
             'estimated_value' => 'nullable|numeric',
-            'is_negotiable' => 'nullable|boolean',
+            'is_budget_negotiable' => 'nullable|boolean',
             'location' => 'nullable|string|max:255',
-            'start_date' => 'nullable|date',
+            'offer_end_date' => 'nullable|date',
+            'project_start_date' => 'nullable|date',
             'project_end_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
             'metrics' => 'nullable|array',
             'requirements' => 'nullable|array',
             'offerings' => 'nullable|array',
@@ -39,6 +39,9 @@ class ProjectController extends Controller
         
         $requirements = $request->input('requirements', []);
         $offerings = $request->input('offerings', []);
+
+        // Default to false if not checked
+        $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable');
 
         // Handle file uploads (attachments)
         $attachments = [];
@@ -60,7 +63,6 @@ class ProjectController extends Controller
         }
 
         $metrics = $request->input('metrics', []);
-        $metrics['is_negotiable'] = $request->has('is_negotiable');
 
         $project = $company->projects()->create(array_merge($validated, [
             'attachments' => $attachments,
@@ -70,7 +72,7 @@ class ProjectController extends Controller
             'offerings' => array_values(array_filter($offerings)),
         ]));
 
-        return redirect()->route('projects.show', $project->id)->with('success', 'Proyek berhasil diterbitkan!');
+        return redirect()->route('rfp-saya')->with('success', 'Proyek berhasil diterbitkan!');
     }
 
     public function show(\App\Models\Project $project)
@@ -80,12 +82,67 @@ class ProjectController extends Controller
 
     public function edit(\App\Models\Project $project)
     {
-        // TODO
+        // Ensure user owns the project
+        if ($project->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
+        
+        $company = auth()->user()->company;
+        return view('company.project.edit', compact('project', 'company'));
     }
 
     public function update(Request $request, \App\Models\Project $project)
     {
-        // TODO
+        // Ensure user owns the project
+        if ($project->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'ruang_lingkup' => 'nullable|string',
+            'estimated_value' => 'nullable|numeric',
+            'is_budget_negotiable' => 'nullable|boolean',
+            'location' => 'nullable|string|max:255',
+            'offer_end_date' => 'nullable|date',
+            'project_start_date' => 'nullable|date',
+            'project_end_date' => 'nullable|date',
+            'metrics' => 'nullable|array',
+            'requirements' => 'nullable|array',
+            'offerings' => 'nullable|array',
+        ]);
+        
+        $requirements = $request->input('requirements', []);
+        $offerings = $request->input('offerings', []);
+
+        $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable');
+
+        // Handle file uploads (attachments)
+        $attachments = $project->attachments ?? [];
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('projects', 'public');
+                $attachments[] = [
+                    'name' => $file->getClientOriginalName(),
+                    'path' => $path,
+                    'type' => $file->getClientMimeType(),
+                    'size' => $file->getSize(),
+                ];
+            }
+        }
+
+        $metrics = $request->input('metrics', []);
+
+        $project->update(array_merge($validated, [
+            'attachments' => $attachments,
+            'metrics' => $metrics,
+            'requirements' => array_values(array_filter($requirements)),
+            'offerings' => array_values(array_filter($offerings)),
+        ]));
+
+        return redirect()->route('rfp-saya')->with('success', 'Proyek berhasil diperbarui!');
     }
 
     public function destroy(\App\Models\Project $project)
