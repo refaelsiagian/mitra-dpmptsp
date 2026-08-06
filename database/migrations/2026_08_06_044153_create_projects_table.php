@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-            $table->enum('type', ['tender', 'kso', 'offering']);
+            $table->string('type');
             $table->string('title');
             $table->text('description')->nullable();
+            $table->text('ruang_lingkup')->nullable();
             $table->decimal('estimated_value', 20, 2)->nullable();
             $table->string('location')->nullable();
             $table->date('start_date')->nullable();
+            $table->date('project_end_date')->nullable();
             $table->date('end_date')->nullable();
             $table->enum('status', ['draft', 'published', 'closed'])->default('published');
             

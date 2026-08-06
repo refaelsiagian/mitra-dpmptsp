@@ -34,7 +34,7 @@ class VerificationController extends Controller
             return view('verify.index', compact('provinces', 'kblis', 'company', 'feedbacks'));
         }
         
-        return view('verify.index', compact('provinces', 'kblis'));
+        return view('verify.index', compact('provinces', 'kblis', 'company'));
     }
 
     public function review()

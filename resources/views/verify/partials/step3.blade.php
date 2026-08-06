@@ -5,8 +5,8 @@
                         
                         <div class="space-y-8">
                             @php 
-                                $kantorUtama = $company->locations->where('type', 'KANTOR_UTAMA')->first() ?? null;
-                                $lokasiUsaha = $company->locations->where('type', 'LOKASI_USAHA')->first() ?? null;
+                                $kantorUtama = $company?->locations?->where('type', 'KANTOR_UTAMA')->first() ?? null;
+                                $lokasiUsaha = $company?->locations?->where('type', 'LOKASI_USAHA')->first() ?? null;
                             @endphp
                             
                             @if(isset($feedbacks['lokasi-perusahaan']))

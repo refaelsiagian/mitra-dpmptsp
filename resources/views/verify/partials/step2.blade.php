@@ -4,7 +4,7 @@
                         </h2>
                         
                         <div class="space-y-8">
-                            @php $rep = $company->representatives->first() ?? null; @endphp
+                            @php $rep = $company?->representatives?->first() ?? null; @endphp
                             <!-- Pimpinan Section -->
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2"><i class="ph ph-user-circle text-xl text-gray-500"></i> Informasi Penanggung Jawab</h3>

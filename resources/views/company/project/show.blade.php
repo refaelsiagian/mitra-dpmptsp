@@ -16,24 +16,48 @@
             
             <!-- Header Section -->
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
-                <div class="mb-4">
-                    @if($project->type === 'tender')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 text-sm font-bold border border-blue-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                            Subkontrak & Rantai Pasok
-                        </span>
-                    @elseif($project->type === 'kso')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 text-teal-700 text-sm font-bold border border-teal-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                            Kerja Sama Operasional (KSO)
-                        </span>
-                    @elseif($project->type === 'offering')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 text-purple-700 text-sm font-bold border border-purple-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            Penawaran Kapasitas (UMKM)
-                        </span>
-                    @endif
-                </div>
+                    @php
+                        $badgeClass = 'bg-slate-50 text-slate-700 border-slate-200';
+                        $badgeText = ucfirst($project->type);
+                        $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>';
+
+                        switch($project->type) {
+                            case 'subkontrak':
+                                $badgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                                $badgeText = 'Subkontrak';
+                                $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>';
+                                break;
+                            case 'rantai_pasok':
+                                $badgeClass = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                                $badgeText = 'Rantai Pasok';
+                                $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5"/><path d="M14 17h1"/></svg>';
+                                break;
+                            case 'outsourcing':
+                                $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+                                $badgeText = 'Penyumberluaran (Outsourcing)';
+                                $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+                                break;
+                            case 'konstruksi':
+                                $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                                $badgeText = 'Konstruksi';
+                                $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M17 22v-5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v5"/><path d="M12 15V2"/></svg>';
+                                break;
+                            case 'kso':
+                                $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                                $badgeText = 'Kerja Sama Operasional (KSO)';
+                                $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8a2 2 0 0 0 2-2v-4.1a2 2 0 0 0-.59-1.41L12 8 6.59 13.41A2 2 0 0 0 6 14.9V19a2 2 0 0 0 2 2Z"/></svg>';
+                                break;
+                            case 'perdagangan':
+                                $badgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
+                                $badgeText = 'Perdagangan Umum';
+                                $badgeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>';
+                                break;
+                        }
+                    @endphp
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold border {!! $badgeClass !!}">
+                        {!! $badgeIcon !!}
+                        {{ $badgeText }}
+                    </span>
                 
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2 leading-tight">{{ $project->title }}</h1>
                 
@@ -50,7 +74,12 @@
                     @endif
                     @if($project->start_date)
                         <span class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
-                            Mulai: {{ $project->start_date->format('d M Y') }}
+                            Target Mulai: {{ $project->start_date->format('d M Y') }}
+                        </span>
+                    @endif
+                    @if($project->project_end_date)
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
+                            Target Selesai: {{ $project->project_end_date->format('d M Y') }}
                         </span>
                     @endif
                 </div>
@@ -60,9 +89,19 @@
             @if($project->description)
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-xl font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">
-                    {{ $project->type === 'offering' ? 'Deskripsi Bisnis' : 'Ruang Lingkup (SOW)' }}
+                    Deskripsi Kemitraan
                 </h2>
                 <div class="text-slate-600 leading-relaxed whitespace-pre-wrap">{{ $project->description }}</div>
+            </div>
+            @endif
+
+            <!-- Ruang Lingkup -->
+            @if($project->ruang_lingkup)
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">
+                    Ruang Lingkup Pekerjaan / Kebutuhan
+                </h2>
+                <div class="text-slate-600 leading-relaxed whitespace-pre-wrap">{{ $project->ruang_lingkup }}</div>
             </div>
             @endif
 
@@ -122,10 +161,20 @@
                 @if($project->estimated_value)
                 <div class="text-center mb-6">
                     <p class="text-sm font-medium text-slate-500 mb-1">
-                        @if($project->type === 'offering') Nilai Minimum Proyek
-                        @else Nilai Pagu / Modal @endif
+                        Nilai Anggaran / Kontrak
                     </p>
-                    <h3 class="text-2xl font-bold text-emerald-600">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</h3>
+                    <h3 class="text-2xl font-bold text-emerald-600 mb-2">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</h3>
+                    
+                    @if(isset($project->metrics['is_negotiable']) && $project->metrics['is_negotiable'])
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>
+                        Bisa Didiskusikan
+                    </span>
+                    @else
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold border border-slate-200">
+                        Fix / Tetap
+                    </span>
+                    @endif
                 </div>
                 @endif
                 

@@ -99,13 +99,20 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2">
-                        @if($project->type === 'tender')
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700 tracking-wide uppercase">Tender Aktif</span>
-                        @elseif($project->type === 'kso')
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 tracking-wide uppercase">KSO Aktif</span>
-                        @elseif($project->type === 'offering')
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-100 text-purple-700 tracking-wide uppercase">Penawaran Kapasitas</span>
-                        @endif
+                        @php
+                            $badgeColor = 'bg-slate-100 text-slate-700';
+                            switch($project->type) {
+                                case 'subkontrak': $badgeColor = 'bg-blue-100 text-blue-700'; break;
+                                case 'rantai_pasok': $badgeColor = 'bg-indigo-100 text-indigo-700'; break;
+                                case 'outsourcing': $badgeColor = 'bg-rose-100 text-rose-700'; break;
+                                case 'konstruksi': $badgeColor = 'bg-amber-100 text-amber-700'; break;
+                                case 'kso': $badgeColor = 'bg-emerald-100 text-emerald-700'; break;
+                                case 'perdagangan': $badgeColor = 'bg-purple-100 text-purple-700'; break;
+                            }
+                        @endphp
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $badgeColor }} tracking-wide uppercase">
+                            {{ str_replace('_', ' ', $project->type) }}
+                        </span>
                         <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Dipublikasikan: {{ $project->created_at->format('d M Y') }}</span>
                     </div>
                     <a href="{{ route('projects.show', $project->id) }}" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">

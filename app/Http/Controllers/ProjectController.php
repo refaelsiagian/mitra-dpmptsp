@@ -22,12 +22,15 @@ class ProjectController extends Controller
         $company = auth()->user()->company;
 
         $validated = $request->validate([
-            'type' => 'required|in:tender,kso,offering',
+            'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'ruang_lingkup' => 'nullable|string',
             'estimated_value' => 'nullable|numeric',
+            'is_negotiable' => 'nullable|boolean',
             'location' => 'nullable|string|max:255',
             'start_date' => 'nullable|date',
+            'project_end_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'metrics' => 'nullable|array',
             'requirements' => 'nullable|array',
@@ -56,8 +59,12 @@ class ProjectController extends Controller
             }
         }
 
+        $metrics = $request->input('metrics', []);
+        $metrics['is_negotiable'] = $request->has('is_negotiable');
+
         $project = $company->projects()->create(array_merge($validated, [
             'attachments' => $attachments,
+            'metrics' => $metrics,
             // Filter out null/empty strings from arrays
             'requirements' => array_values(array_filter($requirements)),
             'offerings' => array_values(array_filter($offerings)),

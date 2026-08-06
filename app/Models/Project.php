@@ -14,9 +14,11 @@ class Project extends Model
         'type',
         'title',
         'description',
+        'ruang_lingkup',
         'estimated_value',
         'location',
         'start_date',
+        'project_end_date',
         'end_date',
         'status',
         'metrics',
@@ -27,6 +29,7 @@ class Project extends Model
 
     protected $casts = [
         'start_date' => 'date',
+        'project_end_date' => 'date',
         'end_date' => 'date',
         'metrics' => 'array',
         'requirements' => 'array',

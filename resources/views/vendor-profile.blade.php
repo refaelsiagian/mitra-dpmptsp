@@ -171,9 +171,9 @@
                     @foreach($company->projects as $project)
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group hover:border-blue-300 transition-colors">
                         <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 rounded-md text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">
-                            @if($project->type === 'tender') Tender
-                            @elseif($project->type === 'kso') KSO
-                            @elseif($project->type === 'offering') Penawaran Kapasitas
+                            @if($project->type === 'kso') KSO
+                            @elseif($project->type === 'perdagangan') Perdagangan Umum
+                            @else {{ ucwords(str_replace('_', ' ', $project->type)) }}
                             @endif
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-2">

@@ -21,54 +21,83 @@
             <!-- Type Selection -->
             <div>
                 <label class="block text-sm font-bold text-slate-700 mb-4">Pilih Kategori Kemitraan</label>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     
                     @if($company->skala_usaha !== 'Kecil' && $company->skala_usaha !== 'Mikro')
-                    <!-- Tender (Usaha Besar only) -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none" 
-                           :class="type === 'tender' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="tender" x-model="type" class="sr-only">
+                    
+                    <!-- Subkontrak -->
+                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
+                           :class="type === 'subkontrak' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
+                        <input type="radio" name="type" value="subkontrak" x-model="type" class="sr-only">
                         <span class="flex flex-1">
                             <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Subkontrak & Rantai Pasok (Tender)</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Cari vendor untuk proyek spesifik.</span>
+                                <span class="block text-sm font-bold text-slate-900">Subkontrak</span>
+                                <span class="mt-1 flex items-center text-xs text-slate-500">Pekerjaan spesifik untuk vendor.</span>
                             </span>
                         </span>
-                        <svg class="h-5 w-5 text-blue-600" :class="type === 'tender' ? 'opacity-100' : 'opacity-0'" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                        </svg>
                     </label>
+
+                    <!-- Rantai Pasok -->
+                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
+                           :class="type === 'rantai_pasok' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
+                        <input type="radio" name="type" value="rantai_pasok" x-model="type" class="sr-only">
+                        <span class="flex flex-1">
+                            <span class="flex flex-col">
+                                <span class="block text-sm font-bold text-slate-900">Rantai Pasok</span>
+                                <span class="mt-1 flex items-center text-xs text-slate-500">Suplai bahan berkelanjutan.</span>
+                            </span>
+                        </span>
+                    </label>
+
+                    <!-- Outsourcing -->
+                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
+                           :class="type === 'outsourcing' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
+                        <input type="radio" name="type" value="outsourcing" x-model="type" class="sr-only">
+                        <span class="flex flex-1">
+                            <span class="flex flex-col">
+                                <span class="block text-sm font-bold text-slate-900">Penyumberluaran</span>
+                                <span class="mt-1 flex items-center text-xs text-slate-500">Outsourcing tenaga kerja/jasa.</span>
+                            </span>
+                        </span>
+                    </label>
+
+                    <!-- Konstruksi -->
+                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
+                           :class="type === 'konstruksi' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
+                        <input type="radio" name="type" value="konstruksi" x-model="type" class="sr-only">
+                        <span class="flex flex-1">
+                            <span class="flex flex-col">
+                                <span class="block text-sm font-bold text-slate-900">Konstruksi</span>
+                                <span class="mt-1 flex items-center text-xs text-slate-500">Pembangunan sarana prasarana.</span>
+                            </span>
+                        </span>
+                    </label>
+
                     @endif
 
                     <!-- KSO (Available to both) -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none" 
-                           :class="type === 'kso' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
+                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
+                           :class="type === 'kso' ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
                         <input type="radio" name="type" value="kso" x-model="type" class="sr-only">
                         <span class="flex flex-1">
                             <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Kerja Sama Operasional (KSO)</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Gabung sumber daya & bagi hasil.</span>
+                                <span class="block text-sm font-bold text-slate-900">KSO / Bagi Hasil</span>
+                                <span class="mt-1 flex items-center text-xs text-slate-500">Kerja sama & berbagi keuntungan.</span>
                             </span>
                         </span>
-                        <svg class="h-5 w-5 text-blue-600" :class="type === 'kso' ? 'opacity-100' : 'opacity-0'" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                        </svg>
                     </label>
 
                     @if($company->skala_usaha === 'Kecil' || $company->skala_usaha === 'Mikro')
-                    <!-- Offering (UMKM only) -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none" 
-                           :class="type === 'offering' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="offering" x-model="type" class="sr-only">
+                    <!-- Perdagangan Umum (UMKM only) -->
+                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
+                           :class="type === 'perdagangan' ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
+                        <input type="radio" name="type" value="perdagangan" x-model="type" class="sr-only">
                         <span class="flex flex-1">
                             <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Penawaran Portofolio (UMKM)</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Pamerkan kapasitas ke Usaha Besar.</span>
+                                <span class="block text-sm font-bold text-slate-900">Perdagangan Umum</span>
+                                <span class="mt-1 flex items-center text-xs text-slate-500">Penjualan barang / pengadaan langsung.</span>
                             </span>
                         </span>
-                        <svg class="h-5 w-5 text-blue-600" :class="type === 'offering' ? 'opacity-100' : 'opacity-0'" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                        </svg>
                     </label>
                     @endif
                 </div>
@@ -80,23 +109,32 @@
                 
                 <!-- Common Fields -->
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2" x-text="type === 'offering' ? 'Judul Penawaran' : 'Judul Proyek'"></label>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Judul Proyek / Kemitraan</label>
                     <input type="text" name="title" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Instalasi HVAC Lantai 1-5">
                     @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2" x-text="type === 'offering' ? 'Deskripsi Bisnis & Visi' : 'Deskripsi / Ruang Lingkup (SOW)'"></label>
-                    <textarea name="description" rows="4" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan secara detail..."></textarea>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Kemitraan</label>
+                    <textarea name="description" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan gambaran umum kemitraan/proyek ini..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Ruang Lingkup Pekerjaan / Kebutuhan Khusus</label>
+                    <textarea name="ruang_lingkup" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan secara detail spesifikasi yang dibutuhkan, ruang lingkup pekerjaan, atau detail operasional..."></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2" x-text="type === 'offering' ? 'Minimum Nilai Kontrak (Opsional)' : 'Pagu Anggaran / Modal'"></label>
-                        <div class="relative">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Nilai Anggaran / Kontrak (Opsional)</label>
+                        <div class="relative mb-2">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 font-bold">Rp</span>
                             <input type="number" name="estimated_value" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="0">
                         </div>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="is_negotiable" value="1" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <span class="text-sm font-medium text-slate-600">Nilai bersifat negosiasi / bisa didiskusikan</span>
+                        </label>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Lokasi (Opsional)</label>
@@ -105,13 +143,20 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div x-show="type === 'tender'">
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Target Mulai</label>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Batas Waktu Penawaran / Pendaftaran</label>
+                        <input type="date" name="end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Target Mulai Pelaksanaan (Opsional)</label>
                         <input type="date" name="start_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Batas Akhir Penawaran / Pendaftaran</label>
-                        <input type="date" name="end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Target Selesai Pelaksanaan (Opsional)</label>
+                        <input type="date" name="project_end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                     </div>
                 </div>
 
@@ -181,27 +226,35 @@ function projectForm() {
         requirements: {!! old('requirements') ? json_encode(old('requirements')) : "['']" !!},
         
         getOfferingsTitle() {
-            if (this.type === 'kso') return 'Apa yang Kami Miliki';
-            if (this.type === 'offering') return 'Kapasitas & Kapabilitas Kami';
+            if (this.type === 'kso') return 'Aset / Modal yang Kami Siapkan';
+            if (this.type === 'perdagangan') return 'Katalog Produk / Jasa Kami';
+            if (this.type === 'outsourcing') return 'Fasilitas & Tunjangan Tenaga Kerja';
+            if (this.type === 'rantai_pasok') return 'Kemudahan / Dukungan untuk Suplier';
             return 'Fasilitas yang Disediakan Pemberi Tugas';
         },
         
         getOfferingsDesc() {
             if (this.type === 'kso') return 'Sebutkan aset, perizinan, atau modal yang sudah Anda siapkan.';
-            if (this.type === 'offering') return 'Sebutkan sertifikasi, mesin, jumlah karyawan, atau keahlian Anda.';
-            return 'Sebutkan material atau akses yang akan Anda berikan ke vendor.';
+            if (this.type === 'perdagangan') return 'Sebutkan jenis barang yang Anda jual (kapasitas produksi, spesifikasi).';
+            if (this.type === 'outsourcing') return 'Apa yang didapat oleh penyedia jasa outsourcing (misal: area kerja).';
+            if (this.type === 'rantai_pasok') return 'Sebutkan dukungan untuk vendor (misal: pembayaran tunai, kontrak jangka panjang).';
+            return 'Sebutkan material atau akses yang akan Anda berikan ke pelaksana.';
         },
 
         getRequirementsTitle() {
-            if (this.type === 'kso') return 'Apa yang Kami Cari (Syarat Mitra)';
-            if (this.type === 'offering') return 'Skema Kemitraan yang Diharapkan';
+            if (this.type === 'kso') return 'Kewajiban Calon Mitra KSO';
+            if (this.type === 'perdagangan') return 'Syarat Pembelian / Ketentuan';
+            if (this.type === 'outsourcing') return 'Kualifikasi Tenaga Kerja / Jasa';
+            if (this.type === 'rantai_pasok') return 'Spesifikasi Barang / Suplai yang Dicari';
             return 'Tanggung Jawab Vendor / Pelaksana';
         },
 
         getRequirementsDesc() {
             if (this.type === 'kso') return 'Sebutkan apa yang harus disediakan oleh mitra (contoh: modal tambahan, teknologi).';
-            if (this.type === 'offering') return 'Sebutkan jenis proyek atau kontrak yang Anda incar dari Usaha Besar.';
-            return 'Sebutkan alat, tenaga kerja, atau bahan yang wajib dibawa oleh vendor.';
+            if (this.type === 'perdagangan') return 'Sebutkan minimal order, atau kriteria pembeli jika ada.';
+            if (this.type === 'outsourcing') return 'Sebutkan sertifikasi, atau jumlah tenaga yang dibutuhkan.';
+            if (this.type === 'rantai_pasok') return 'Sebutkan standar kualitas material, jadwal pengiriman, dsb.';
+            return 'Sebutkan alat, tenaga kerja, atau standar kerja vendor.';
         }
     }
 }
