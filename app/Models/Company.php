@@ -24,6 +24,11 @@ class Company extends Model
         return $this->hasMany(CompanyPortfolio::class);
     }
 
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
     public function offerings()
     {
         return $this->hasMany(CompanyOffering::class);

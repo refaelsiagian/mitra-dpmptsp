@@ -13,14 +13,14 @@
         </div>
         
         <!-- Dynamic Role Buttons -->
-        <button class="besar-only px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+        <a href="{{ route('projects.create') }}" class="besar-only px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             Buat Tender / Pengadaan Baru
-        </button>
-        <button class="umkm-only px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+        </a>
+        <a href="{{ route('projects.create') }}" class="umkm-only px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             Tawarkan KSO / Suplai
-        </button>
+        </a>
     </div>
 
     <!-- Quick Stats -->
@@ -95,88 +95,64 @@
                 </div>
             </div>
 
-            <!-- List Item 1 -->
+            @forelse($projects as $project)
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2">
+                        @if($project->type === 'tender')
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700 tracking-wide uppercase">Tender Aktif</span>
-                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Dipublikasikan: 24 Jul 2026</span>
-                    </div>
-                    <a href="#" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
-                        Pembangunan Gedung Kantor Tahap 2 CBD
-                    </a>
-                    <p class="text-sm text-slate-500 line-clamp-1">Proyek pembangunan struktur utama Gedung Kantor Tahap 2 yang berlokasi di area CBD Jakarta Selatan.</p>
-                </div>
-                
-                <div class="flex items-center gap-6 md:border-l border-slate-200 md:pl-6">
-                    <div class="text-center">
-                        <p class="text-xs text-slate-400 font-medium mb-0.5">Proposal Masuk</p>
-                        <p class="text-xl font-black text-slate-800">12</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-xs text-slate-400 font-medium mb-0.5">Sisa Waktu</p>
-                        <p class="text-sm font-bold text-amber-600">5 Hari</p>
-                    </div>
-                    <a href="#" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
-                        Kelola Proyek
-                    </a>
-                </div>
-            </div>
-
-            <!-- List Item 2 -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white">
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
+                        @elseif($project->type === 'kso')
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 tracking-wide uppercase">KSO Aktif</span>
-                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Dipublikasikan: 15 Jul 2026</span>
+                        @elseif($project->type === 'offering')
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-100 text-purple-700 tracking-wide uppercase">Penawaran Kapasitas</span>
+                        @endif
+                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Dipublikasikan: {{ $project->created_at->format('d M Y') }}</span>
                     </div>
-                    <a href="#" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
-                        Kemitraan Suplai Bahan Bangunan Tahap 1
+                    <a href="{{ route('projects.show', $project->id) }}" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
+                        {{ $project->title }}
                     </a>
-                    <p class="text-sm text-slate-500 line-clamp-1">Mencari mitra penyuplai semen dan pasir untuk kebutuhan konstruksi proyek tahap 1 selama 6 bulan.</p>
+                    <p class="text-sm text-slate-500 line-clamp-1">{{ Str::limit($project->description, 100) }}</p>
                 </div>
                 
                 <div class="flex items-center gap-6 md:border-l border-slate-200 md:pl-6">
                     <div class="text-center">
                         <p class="text-xs text-slate-400 font-medium mb-0.5">Proposal Masuk</p>
-                        <p class="text-xl font-black text-slate-800">2</p>
+                        <p class="text-xl font-black text-slate-800">0</p>
                     </div>
                     <div class="text-center">
                         <p class="text-xs text-slate-400 font-medium mb-0.5">Sisa Waktu</p>
-                        <p class="text-sm font-bold text-emerald-600">Terbuka</p>
+                        <p class="text-sm font-bold text-amber-600">
+                            @if($project->end_date)
+                                {{ \Carbon\Carbon::parse($project->end_date)->diffForHumans(null, true) }}
+                            @else
+                                Terbuka
+                            @endif
+                        </p>
                     </div>
-                    <a href="#" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
-                        Kelola Proyek
-                    </a>
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ route('projects.show', $project->id) }}" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                            Lihat Detail
+                        </a>
+                        <!-- Form Delete -->
+                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full px-4 py-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-
-            <!-- List Item 3 (Completed) -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 bg-slate-50 opacity-75 grayscale-[20%] transition-all group">
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-600 tracking-wide uppercase">Selesai / Ditutup</span>
-                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Ditutup: 02 Jun 2026</span>
-                    </div>
-                    <a href="#" class="text-lg font-bold text-slate-700 block mb-1">
-                        Jasa Konsultan Arsitektur & Desain Interior
-                    </a>
-                    <p class="text-sm text-slate-500 line-clamp-1">Pengadaan jasa konsultan untuk desain interior ruang kantor eksekutif lantai 14.</p>
+            @empty
+            <div class="text-center py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h10"/></svg>
                 </div>
-                
-                <div class="flex items-center gap-6 md:border-l border-slate-200 md:pl-6">
-                    <div class="text-center">
-                        <p class="text-xs text-slate-400 font-medium mb-0.5">Pemenang</p>
-                        <div class="flex items-center gap-1.5 justify-center">
-                            <div class="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">PT</div>
-                            <p class="text-sm font-bold text-slate-700">PT Arsitek Indo</p>
-                        </div>
-                    </div>
-                    <a href="#" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
-                        Lihat Arsip
-                    </a>
-                </div>
+                <h3 class="text-slate-900 font-bold mb-1">Belum ada proyek</h3>
+                <p class="text-slate-500 text-sm">Anda belum mempublikasikan proyek atau tawaran kemitraan apapun.</p>
             </div>
+            @endforelse
         </div>
 
         <!-- Project List Content: Proposal Terkirim -->

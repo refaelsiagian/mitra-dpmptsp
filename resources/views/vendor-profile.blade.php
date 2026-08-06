@@ -147,48 +147,57 @@
             </div>
 
             <!-- Tab Content: Offerings -->
-            @if($company->offerings->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
+            @if($company->projects->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
             <div x-show="activeTab === 'offerings'" x-transition style="display: none;" class="space-y-6">
                 <div class="flex justify-between items-center mb-2">
                     <h2 class="text-lg font-bold text-slate-900">Semua Proyek & Penawaran KSO</h2>
                     @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-                    <a href="/rfp-saya" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors">
+                    <a href="{{ route('projects.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                         Buat Proyek/RFP
                     </a>
                     @endif
                 </div>
                 
-                @if($company->offerings->count() === 0)
+                @if($company->projects->count() === 0)
                 <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
                     <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                     </div>
                     <p class="text-slate-500 mb-1 font-medium">Belum ada proyek yang dipublikasikan.</p>
-                    <p class="text-slate-400 text-sm">Gunakan RFP Saya untuk mulai mempublikasikan proyek.</p>
+                    <p class="text-slate-400 text-sm">Klik Buat Proyek untuk mempublikasikan proyek.</p>
                 </div>
                 @else
-                    @foreach($company->offerings as $offering)
+                    @foreach($company->projects as $project)
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group hover:border-blue-300 transition-colors">
                         <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 rounded-md text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">
-                            {{ $offering->category ?? 'Peluang' }}
+                            @if($project->type === 'tender') Tender
+                            @elseif($project->type === 'kso') KSO
+                            @elseif($project->type === 'offering') Penawaran Kapasitas
+                            @endif
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">{{ $offering->title }}</h3>
-                        <p class="text-slate-600 text-sm mb-5 leading-relaxed">{{ $offering->description }}</p>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">
+                            <a href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
+                        </h3>
+                        <p class="text-slate-600 text-sm mb-5 leading-relaxed">{{ Str::limit($project->description, 150) }}</p>
                         
-                        <div class="flex flex-wrap gap-4 mt-auto">
-                            @if($offering->highlight_metric)
-                            <div class="bg-blue-50 px-3 py-2 rounded-lg border border-blue-100">
-                                <span class="block text-xs font-semibold text-blue-600/70 mb-0.5">Highlight</span>
-                                <span class="font-bold text-blue-900">{{ $offering->highlight_metric }}</span>
+                        <div class="flex flex-wrap items-end justify-between gap-4 mt-auto pt-4 border-t border-slate-100">
+                            <div class="flex flex-wrap gap-4">
+                                @if($project->estimated_value)
+                                <div class="bg-blue-50 px-3 py-2 rounded-lg border border-blue-100">
+                                    <span class="block text-xs font-semibold text-blue-600/70 mb-0.5">Nilai</span>
+                                    <span class="font-bold text-blue-900">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</span>
+                                </div>
+                                @endif
+                                <div class="bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
+                                    <span class="block text-xs font-semibold text-emerald-600/70 mb-0.5">Status</span>
+                                    <span class="font-bold text-emerald-900">Terbuka</span>
+                                </div>
                             </div>
-                            @endif
-                            @if($offering->value_text)
-                            <div class="bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
-                                <span class="block text-xs font-semibold text-emerald-600/70 mb-0.5">Nilai/Rasio</span>
-                                <span class="font-bold text-emerald-900">{{ $offering->value_text }}</span>
-                            </div>
-                            @endif
+                            <a href="{{ route('projects.show', $project->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors">
+                                Lihat Detail
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
                         </div>
                     </div>
                     @endforeach

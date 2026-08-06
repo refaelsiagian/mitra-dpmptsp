@@ -43,6 +43,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/portfolios/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'update'])->name('portfolios.update');
     Route::delete('/portfolios/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'destroy'])->name('portfolios.destroy');
 
+    // Projects
+    Route::get('/projects/create', [\App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');
+    Route::post('/projects', [\App\Http\Controllers\ProjectController::class, 'store'])->name('projects.store');
+    Route::get('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
+    Route::get('/projects/{project}/edit', [\App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
+    Route::put('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
+    Route::delete('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('projects.destroy');
+
     Route::get('/review', [\App\Http\Controllers\VerificationController::class, 'review'])->name('review');
 });
 
@@ -152,7 +160,9 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckCompanyVerifica
     });
 
     Route::get('/rfp-saya', function () {
-        return view('rfp-saya');
+        $company = auth()->user()->company;
+        $projects = $company ? $company->projects()->latest()->get() : collect();
+        return view('rfp-saya', compact('projects'));
     });
 });
 
