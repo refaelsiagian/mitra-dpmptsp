@@ -28,7 +28,7 @@ Route::post('/email/verification-notification', [\App\Http\Controllers\EmailVeri
     ->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // Protected Routes
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/verify', [\App\Http\Controllers\VerificationController::class, 'index'])->name('verify');
     Route::post('/verify', [\App\Http\Controllers\VerificationController::class, 'store'])->name('verify.store');
 
@@ -78,7 +78,7 @@ Route::get('/api/villages/{district_id}', function ($district_id) {
 
 
 
-Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckCompanyVerification::class])->group(function () {
+Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompanyVerification::class])->group(function () {
     Route::get('/explore', function () {
         return view('explore');
     });

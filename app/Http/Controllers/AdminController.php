@@ -23,7 +23,7 @@ class AdminController extends Controller
         $company->load([
             'locations.province', 'locations.regency', 'locations.district', 'locations.village',
             'representatives', 'kblis', 'feedbacks' => function($q) {
-                $q->where('is_resolved', false);
+                $q->where('is_resolved', 'false');
             }
         ]);
 
@@ -41,7 +41,7 @@ class AdminController extends Controller
             [
                 'company_id' => $company->id,
                 'field_name' => $request->field_name,
-                'is_resolved' => false
+                'is_resolved' => 'false'
             ],
             [
                 'message' => $request->message
@@ -62,7 +62,7 @@ class AdminController extends Controller
 
         VerificationFeedback::where('company_id', $company->id)
             ->where('field_name', $request->field_name)
-            ->where('is_resolved', false)
+            ->where('is_resolved', 'false')
             ->delete();
 
         return response()->json(['success' => true]);
@@ -74,7 +74,7 @@ class AdminController extends Controller
             $company->update(['status' => 'verified']);
             
             // Mark any pending feedbacks as resolved automatically
-            $company->feedbacks()->update(['is_resolved' => true]);
+            $company->feedbacks()->update(['is_resolved' => 'true']);
         });
 
         return redirect()->route('admin.dashboard')->with('success', 'Perusahaan berhasil diverifikasi.');

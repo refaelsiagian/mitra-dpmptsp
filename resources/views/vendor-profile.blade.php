@@ -10,9 +10,9 @@
     </a>
 
     <!-- Hero Section -->
-    <div class="relative bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 mb-8">
-        <!-- Banner Image Placeholder -->
-        <div class="h-48 md:h-64 w-full bg-slate-200 relative group">
+    <div class="relative mb-16 md:mb-20 lg:mb-24">
+        <!-- Banner Image -->
+        <div class="w-full aspect-[4/1] md:aspect-[5/1] lg:aspect-[6/1] bg-slate-200 relative group rounded-2xl overflow-hidden shadow-sm border border-slate-200">
             @if($company->banner)
                 <img src="{{ Storage::url($company->banner) }}" alt="Company Banner" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
             @else
@@ -28,18 +28,16 @@
             </a>
             @endif
 
-            <!-- Overlapping Logo -->
-            <div class="absolute -bottom-8 md:-bottom-12 left-6 md:left-10 w-24 h-24 md:w-32 md:h-32 bg-white rounded-xl shadow-md border-4 border-white overflow-hidden flex items-center justify-center z-20">
-                 @if($company->logo)
-                    <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-cover">
-                 @else
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                 @endif
-            </div>
         </div>
         
-        <!-- Padding to compensate for overlapping logo -->
-        <div class="h-12 md:h-16"></div>
+        <!-- Overlapping Logo (Positioned relative to the Hero Section wrapper) -->
+        <div class="absolute bottom-0 translate-y-1/2 left-[5%] md:left-[6%] w-[20%] sm:w-[16%] md:w-[12%] lg:w-[10%] max-w-[90px] sm:max-w-[110px] md:max-w-[130px] aspect-square bg-white rounded-xl shadow-md border-4 border-white overflow-hidden flex items-center justify-center z-20">
+             @if($company->logo)
+                <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-cover">
+             @else
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+             @endif
+        </div>
     </div>
 
     <!-- Main Content Layout (2/3 + 1/3) -->
@@ -70,7 +68,7 @@
                     class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors">
                     Ringkasan
                 </button>
-                @if($company->offerings->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
+                @if($company->projects->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
                 <button @click="activeTab = 'offerings'" 
                     :class="activeTab === 'offerings' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                     class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors">
@@ -80,10 +78,17 @@
                 @if($company->portfolios->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
                 <button @click="activeTab = 'portfolios'" 
                     :class="activeTab === 'portfolios' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
-                    class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors">
+                    class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors whitespace-nowrap">
                     Portofolio Proyek
                 </button>
                 @endif
+                
+                <!-- Mobile Only Tab -->
+                <button @click="activeTab = 'legalitas'" 
+                    :class="activeTab === 'legalitas' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
+                    class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors lg:hidden whitespace-nowrap">
+                    Legalitas
+                </button>
             </div>
 
             <!-- Tab Content: Overview -->
@@ -290,6 +295,71 @@
             </div>
             @endif
             
+            <!-- Tab Content: Legalitas (Mobile Only) -->
+            <div x-show="activeTab === 'legalitas'" x-transition style="display: none;" class="lg:hidden">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                        <h3 class="font-bold text-slate-900">Informasi Legalitas</h3>
+                    </div>
+                    
+                    <div class="p-6 space-y-5">
+                        <!-- NIB -->
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium mb-1">Nomor Induk Berusaha (NIB)</p>
+                            <div class="flex items-center gap-2">
+                                <p class="text-slate-900 font-semibold font-mono">{{ $company->nib_number }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- PKP -->
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium mb-1">Status PKP (Pengusaha Kena Pajak)</p>
+                            @if($company->is_pkp)
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-sm font-semibold border border-blue-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                    Aktif (PKP)
+                                </div>
+                            @else
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 text-sm font-semibold border border-slate-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" x2="19.07" y1="4.93" y2="19.07"/></svg>
+                                    Non PKP
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Skala -->
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium mb-1">Skala Usaha / Kapasitas</p>
+                            <p class="text-slate-900 font-medium">{{ ucwords(str_replace('_', ' ', $company->skala_usaha)) }}</p>
+                        </div>
+                        
+                        <!-- KBLI & Certifications -->
+                        <div class="border-t border-slate-100 pt-5 mt-5">
+                            @if($company->certifications && count($company->certifications) > 0)
+                            <p class="text-xs text-slate-500 font-medium mb-3">Sertifikasi & Lisensi</p>
+                            <div class="flex flex-wrap gap-2 mb-5">
+                                @foreach($company->certifications as $cert)
+                                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                    {{ $cert }}
+                                </span>
+                                @endforeach
+                            </div>
+                            @endif
+
+                            <p class="text-xs text-slate-500 font-medium mb-3">Bidang Keahlian (KBLI)</p>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach($company->kblis as $kbli)
+                                <span class="px-2.5 py-1 rounded-md bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold" title="{{ $kbli->name }}">
+                                    {{ $kbli->code }}
+                                </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
         
         <!-- Right Column: Sidebar (1/3 width) -->
@@ -304,8 +374,8 @@
                 </button>
                 @endif
                 
-                <!-- Details Card -->
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <!-- Details Card (Desktop Only) -->
+                <div class="hidden lg:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
                         <h3 class="font-bold text-slate-900">Informasi Legalitas</h3>
                     </div>

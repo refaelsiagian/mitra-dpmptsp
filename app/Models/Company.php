@@ -10,6 +10,7 @@ class Company extends Model
 
     protected $casts = [
         'is_pkp' => 'boolean',
+        'is_npwp_same_as_nik' => 'boolean',
         'is_usaha_same_as_office' => 'boolean',
         'certifications' => 'array',
     ];

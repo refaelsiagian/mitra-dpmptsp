@@ -16,7 +16,7 @@ class VendorController extends Controller
             abort(404);
         }
 
-        $company->load(['portfolios', 'offerings', 'kblis']);
+        $company->load(['portfolios', 'projects', 'kblis']);
 
         return view('vendor-profile', compact('company'));
     }

@@ -47,6 +47,7 @@
         
         <!-- Navigation -->
         <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto custom-scrollbar">
+            @if(auth()->check() && auth()->user()->role === 'user')
             <a href="/rfp-saya" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->is('rfp-saya') ? 'bg-blue-50 text-blue-700 font-semibold shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 Beranda (RFP Saya)
@@ -69,6 +70,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                 Pengaturan
             </a>
+            @endif
+
+            @if(auth()->check() && auth()->user()->role === 'admin')
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 text-blue-700 font-semibold shadow-2xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                Dashboard Admin
+            </a>
+            @endif
         </nav>
         
         <!-- Sidebar Footer: Profile Widget & Logout -->
@@ -79,17 +88,27 @@
                 <button @click="open = !open" @click.away="open = false" class="w-full flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-blue-300 hover:ring-1 hover:ring-blue-100 transition-all text-left">
                     <div class="flex items-center gap-2 flex-1 overflow-hidden">
                         @php
-                            $company = auth()->check() ? auth()->user()->company : null;
-                            $initials = $company ? strtoupper(substr($company->name, 0, 2)) : 'UK';
-                            $typeName = $company ? ucwords(str_replace('-', ' ', $company->pelaku_usaha_type)) : 'Lengkapi Profil';
-                            $statusName = $company ? ucfirst($company->skala_usaha) : '';
+                            $user = auth()->user();
+                            $company = $user ? $user->company : null;
+                            
+                            if ($user && $user->role === 'admin') {
+                                $initials = 'AD';
+                                $displayName = $user->name ?? 'Administrator';
+                                $typeName = 'Admin System';
+                                $statusName = '';
+                            } else {
+                                $initials = $company ? strtoupper(substr($company->name, 0, 2)) : 'UK';
+                                $displayName = $company->name ?? 'Belum ada data';
+                                $typeName = $company ? ucwords(str_replace('-', ' ', $company->pelaku_usaha_type)) : 'Lengkapi Profil';
+                                $statusName = $company ? ucfirst($company->skala_usaha) : '';
+                            }
                         @endphp
                         <div class="w-8 h-8 rounded-lg bg-blue-100 flex shrink-0 items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200">
                             {{ $initials }}
                         </div>
                         <div class="flex-1 overflow-hidden">
-                            <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5 truncate">{{ $company->name ?? 'Belum ada data' }}</p>
-                            <p class="text-[10px] text-slate-500 font-medium leading-none truncate">{{ $typeName }} {{ $statusName ? '• ' . $statusName : '' }}</p>
+                            <p class="text-[11px] font-extrabold text-slate-800 leading-none mb-0.5 truncate">{{ $displayName }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium leading-none truncate">{{ $typeName }}{{ $statusName ? ' • ' . $statusName : '' }}</p>
                         </div>
                     </div>
                     <!-- Dots Icon -->

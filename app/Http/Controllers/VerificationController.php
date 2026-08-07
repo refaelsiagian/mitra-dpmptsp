@@ -86,10 +86,10 @@ class VerificationController extends Controller
                 'nib_link' => $request->input('nib_link'),
                 'npwp_number' => $request->input('npwp_number'),
                 'npwp_link' => $request->input('npwp_link'),
-                'is_pkp' => filter_var($request->input('is_pkp'), FILTER_VALIDATE_BOOLEAN),
+                'is_pkp' => filter_var($request->input('is_pkp'), FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false',
                 'pkp_link' => filter_var($request->input('is_pkp'), FILTER_VALIDATE_BOOLEAN) ? $request->input('pkp_link') : null,
-                'is_npwp_same_as_nik' => $request->has('sama_dengan_nik'),
-                'is_usaha_same_as_office' => $request->boolean('same_as_office'),
+                'is_npwp_same_as_nik' => $request->has('sama_dengan_nik') ? 'true' : 'false',
+                'is_usaha_same_as_office' => $request->boolean('same_as_office') ? 'true' : 'false',
                 'skala_usaha' => $request->input('skala_usaha'),
                 'status' => 'pending'
             ];
