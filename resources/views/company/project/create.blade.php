@@ -1,7 +1,12 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="max-w-4xl mx-auto pb-10" x-data="projectForm()">
+<div class="max-w-4xl mx-auto pb-10" x-data="projectForm({ 
+    type: '{{ old('type', '') }}', 
+    isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }}, 
+    offerings: {!! old('offerings') ? json_encode(old('offerings')) : "['']" !!}, 
+    requirements: {!! old('requirements') ? json_encode(old('requirements')) : "['']" !!} 
+})">
     
     <a href="{{ route('vendor.show', ['company' => $company->id, 'tab' => 'projects']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-6 group">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
@@ -27,92 +32,18 @@
             <div>
                 <label class="block text-sm font-bold text-slate-700 mb-4">Pilih Kategori Kemitraan</label>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    
-                    @if(!in_array(strtolower($company->skala_usaha), ['mikro', 'kecil']))
-                    <!-- Subkontrak -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
-                           :class="type === 'subkontrak' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="subkontrak" x-model="type" class="sr-only">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Subkontrak</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Pekerjaan spesifik untuk vendor.</span>
+                    <template x-for="cat in availableCategories" :key="cat.id">
+                        <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
+                               :class="type === cat.id ? cat.activeClass : 'border-slate-300 bg-white hover:bg-slate-50'">
+                            <input type="radio" name="type" :value="cat.id" x-model="type" class="sr-only">
+                            <span class="flex flex-1">
+                                <span class="flex flex-col">
+                                    <span class="block text-sm font-bold text-slate-900" x-text="cat.name"></span>
+                                    <span class="mt-1 flex items-center text-xs text-slate-500" x-text="cat.desc"></span>
+                                </span>
                             </span>
-                        </span>
-                    </label>
-                    @endif
-
-                    <!-- Rantai Pasok -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
-                           :class="type === 'rantai_pasok' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="rantai_pasok" x-model="type" class="sr-only">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Rantai Pasok</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Suplai bahan berkelanjutan.</span>
-                            </span>
-                        </span>
-                    </label>
-
-                    <!-- Outsourcing -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
-                           :class="type === 'outsourcing' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="outsourcing" x-model="type" class="sr-only">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Penyumberluaran</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Outsourcing tenaga kerja/jasa.</span>
-                            </span>
-                        </span>
-                    </label>
-
-                    <!-- Konstruksi -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
-                           :class="type === 'konstruksi' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="konstruksi" x-model="type" class="sr-only">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Konstruksi</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Pembangunan sarana prasarana.</span>
-                            </span>
-                        </span>
-                    </label>
-
-                    <!-- KSO (Available to both) -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
-                           :class="type === 'kso' ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="kso" x-model="type" class="sr-only">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">KSO / Bagi Hasil</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Kerja sama & berbagi keuntungan.</span>
-                            </span>
-                        </span>
-                    </label>
-
-                    <!-- Distribusi & Keagenan (Available to both) -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
-                           :class="type === 'distribusi' ? 'border-teal-600 bg-teal-50 ring-1 ring-teal-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="distribusi" x-model="type" class="sr-only">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Distribusi & Keagenan</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Penyaluran produk atau perwakilan agensi.</span>
-                            </span>
-                        </span>
-                    </label>
-
-                    <!-- Perdagangan Umum (Available to both) -->
-                    <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
-                           :class="type === 'perdagangan' ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
-                        <input type="radio" name="type" value="perdagangan" x-model="type" class="sr-only">
-                        <span class="flex flex-1">
-                            <span class="flex flex-col">
-                                <span class="block text-sm font-bold text-slate-900">Perdagangan Umum</span>
-                                <span class="mt-1 flex items-center text-xs text-slate-500">Penjualan barang / pengadaan langsung.</span>
-                            </span>
-                        </span>
-                    </label>
+                        </label>
+                    </template>
                 </div>
                 @error('type') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
@@ -123,7 +54,7 @@
                 <!-- Common Fields -->
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Judul Proyek / Kemitraan</label>
-                    <input type="text" name="title" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Instalasi HVAC Lantai 1-5">
+                    <input type="text" name="title" value="{{ old('title') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" x-bind:placeholder="getTitlePlaceholder()">
                     @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
@@ -172,8 +103,6 @@
                         <input type="date" name="project_end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                     </div>
                 </div>
-
-                <!-- Dynamic JSON Lists -->
                 
                 <!-- Offerings -->
                 <div class="bg-blue-50/50 p-6 rounded-xl border border-blue-100">
@@ -229,52 +158,5 @@
             
         </form>
     </div>
-</div>
-
-<script>
-function projectForm() {
-    return {
-        type: '{{ old('type', '') }}',
-        isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }},
-        offerings: {!! old('offerings') ? json_encode(old('offerings')) : "['']" !!},
-        requirements: {!! old('requirements') ? json_encode(old('requirements')) : "['']" !!},
-        
-        getOfferingsTitle() {
-            if (this.type === 'kso') return 'Aset / Modal yang Kami Siapkan';
-            if (this.type === 'perdagangan') return this.isUmkm ? 'Katalog Produk / Jasa Kami' : 'Informasi Pengadaan / Pembayaran';
-            if (this.type === 'outsourcing') return this.isUmkm ? 'Layanan Jasa & Kualifikasi Kami' : 'Fasilitas & Tunjangan Tenaga Kerja';
-            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Kapasitas Suplai / Material Kami' : 'Kemudahan / Dukungan untuk Suplier';
-            if (this.type === 'distribusi') return this.isUmkm ? 'Fasilitas Distribusi / Dukungan Keagenan' : 'Dukungan Prinsipal / Fasilitas Agen';
-            return this.isUmkm ? 'Layanan Konstruksi & Alat Kami' : 'Fasilitas yang Disediakan Pemberi Tugas';
-        },
-        
-        getOfferingsDesc() {
-            if (this.type === 'kso') return 'Sebutkan aset, perizinan, atau modal yang sudah Anda siapkan.';
-            if (this.type === 'perdagangan') return this.isUmkm ? 'Sebutkan jenis barang yang Anda jual (kapasitas produksi, spesifikasi).' : 'Sebutkan ketentuan pembayaran, sistem PO, atau fasilitas untuk vendor.';
-            if (this.type === 'outsourcing') return this.isUmkm ? 'Sebutkan jenis jasa yang Anda tawarkan.' : 'Apa yang didapat oleh penyedia jasa outsourcing (misal: area kerja).';
-            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Sebutkan jenis barang yang bisa Anda suplai.' : 'Sebutkan dukungan untuk vendor (misal: pembayaran tunai, kontrak jangka panjang).';
-            if (this.type === 'distribusi') return this.isUmkm ? 'Sebutkan jangkauan wilayah, fasilitas gudang, atau dukungan promosi.' : 'Sebutkan produk yang didistribusikan, margin keuntungan, atau materi promosi.';
-            return this.isUmkm ? 'Sebutkan alat berat atau spesialisasi yang Anda miliki.' : 'Sebutkan material atau akses yang akan Anda berikan ke pelaksana.';
-        },
-
-        getRequirementsTitle() {
-            if (this.type === 'kso') return 'Kewajiban Calon Mitra KSO';
-            if (this.type === 'perdagangan') return this.isUmkm ? 'Syarat Pembelian / Ketentuan' : 'Spesifikasi Barang / Jasa yang Dicari';
-            if (this.type === 'outsourcing') return this.isUmkm ? 'Ketentuan Kontrak Jasa' : 'Kualifikasi Tenaga Kerja / Jasa';
-            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Syarat Kontrak / Kebutuhan Pembeli' : 'Spesifikasi Barang / Suplai yang Dicari';
-            if (this.type === 'distribusi') return this.isUmkm ? 'Syarat Mitra Keagenan / Prinsipal' : 'Kualifikasi Mitra Distributor / Agen';
-            return this.isUmkm ? 'Ketentuan Kontrak Konstruksi' : 'Tanggung Jawab Vendor / Pelaksana';
-        },
-
-        getRequirementsDesc() {
-            if (this.type === 'kso') return 'Sebutkan apa yang harus disediakan oleh mitra (contoh: modal tambahan, teknologi).';
-            if (this.type === 'perdagangan') return this.isUmkm ? 'Sebutkan minimal order, atau kriteria pembeli jika ada.' : 'Sebutkan standar kualitas, kuantitas, atau sertifikasi yang wajib dimiliki vendor.';
-            if (this.type === 'outsourcing') return this.isUmkm ? 'Sebutkan durasi minimal, atau syarat kerja.' : 'Sebutkan sertifikasi, atau jumlah tenaga yang dibutuhkan.';
-            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Sebutkan minimal pemesanan atau syarat pembayaran.' : 'Sebutkan standar kualitas material, jadwal pengiriman, dsb.';
-            if (this.type === 'distribusi') return this.isUmkm ? 'Sebutkan kriteria yang Anda cari dari mitra agen atau tipe produk prinsipal.' : 'Sebutkan syarat keagenan (misal: memiliki gudang, jangkauan armada, target penjualan).';
-            return this.isUmkm ? 'Sebutkan apa yang harus disiapkan pemberi kerja.' : 'Sebutkan alat, tenaga kerja, atau standar kerja vendor.';
-        }
-    }
-}
-</script>
+<script src="{{ asset('js/project-form.js') }}"></script>
 @endsection
