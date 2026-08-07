@@ -1,6 +1,9 @@
 function projectForm(config) {
     return {
         type: config.type || '',
+        title: config.title || '',
+        description: config.description || '',
+        ruang_lingkup: config.ruang_lingkup || '',
         isUmkm: config.isUmkm || false,
         offerings: config.offerings && config.offerings.length > 0 ? config.offerings : [''],
         requirements: config.requirements && config.requirements.length > 0 ? config.requirements : [''],
@@ -21,6 +24,42 @@ function projectForm(config) {
                 return true;
             });
         },
+
+        errors: {},
+
+        validate(e) {
+            this.errors = {};
+            if (!this.type) {
+                this.errors.type = 'Kategori kemitraan wajib dipilih.';
+            }
+            if (!this.title || this.title.trim() === '') {
+                this.errors.title = 'Judul proyek / kemitraan wajib diisi.';
+            }
+            if (!this.description || this.description.trim() === '') {
+                this.errors.description = 'Deskripsi kemitraan wajib diisi.';
+            }
+            if (!this.ruang_lingkup || this.ruang_lingkup.trim() === '') {
+                this.errors.ruang_lingkup = 'Ruang lingkup pekerjaan wajib diisi.';
+            }
+            
+            const validOfferings = this.offerings.filter(o => typeof o === 'string' && o.trim() !== '');
+            if (validOfferings.length === 0) {
+                this.errors.offerings = 'Minimal satu item wajib diisi.';
+            }
+
+            const validRequirements = this.requirements.filter(r => typeof r === 'string' && r.trim() !== '');
+            if (validRequirements.length === 0) {
+                this.errors.requirements = 'Minimal satu item wajib diisi.';
+            }
+
+            if (Object.keys(this.errors).length > 0) {
+                e.preventDefault(); // Prevent form submission
+                
+                // Scroll to top to see errors
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        },
+
         getOfferingsTitle() {
             if (this.type === 'kso') return 'Aset / Modal yang Kami Siapkan';
             if (this.type === 'perdagangan') return this.isUmkm ? 'Katalog Produk / Jasa Kami' : 'Informasi Pengadaan / Pembayaran';

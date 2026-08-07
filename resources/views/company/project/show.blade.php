@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="max-w-6xl mx-auto pb-10">
+<div class="max-w-6xl mx-auto pb-10" x-data="projectForm({ type: '{{ $project->type }}', isUmkm: {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }} })">
     
     <!-- Back Button -->
     <a href="{{ route('vendor.show', ['company' => $project->company_id, 'tab' => 'projects']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-5 group">
@@ -117,13 +117,7 @@
                     <div class="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5"/><path d="m9 11 3 3L22 4"/></svg>
                     </div>
-                    @if($project->type === 'kso') Apa yang Kami Miliki
-                    @elseif($project->type === 'perdagangan') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Katalog Produk / Jasa Kami' : 'Informasi Pengadaan / Pembayaran' }}
-                    @elseif($project->type === 'distribusi') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Fasilitas Distribusi / Dukungan Keagenan' : 'Dukungan Prinsipal / Fasilitas Agen' }}
-                    @elseif($project->type === 'outsourcing') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Layanan Jasa & Kualifikasi Kami' : 'Fasilitas & Tunjangan Tenaga Kerja' }}
-                    @elseif($project->type === 'rantai_pasok') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Kapasitas Suplai / Material Kami' : 'Kemudahan / Dukungan untuk Suplier' }}
-                    @elseif($project->type === 'konstruksi') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Layanan Konstruksi & Alat Kami' : 'Fasilitas yang Disediakan Pemberi Tugas' }}
-                    @else Disediakan Pemberi Tugas @endif
+                    <span x-text="getOfferingsTitle()"></span>
                 </h2>
                 <ul class="space-y-3">
                     @foreach($project->offerings as $item)
@@ -144,13 +138,7 @@
                     <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     </div>
-                    @if($project->type === 'kso') Apa yang Kami Cari (Syarat Mitra)
-                    @elseif($project->type === 'perdagangan') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Syarat Pembelian / Ketentuan' : 'Spesifikasi Barang / Jasa yang Dicari' }}
-                    @elseif($project->type === 'distribusi') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Syarat Mitra Keagenan / Prinsipal' : 'Kualifikasi Mitra Distributor / Agen' }}
-                    @elseif($project->type === 'outsourcing') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Ketentuan Kontrak Jasa' : 'Kualifikasi Tenaga Kerja / Jasa' }}
-                    @elseif($project->type === 'rantai_pasok') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Syarat Kontrak / Kebutuhan Pembeli' : 'Spesifikasi Barang / Suplai yang Dicari' }}
-                    @elseif($project->type === 'konstruksi') {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Ketentuan Kontrak Konstruksi' : 'Tanggung Jawab Vendor / Pelaksana' }}
-                    @else Tanggung Jawab Pelaksana @endif
+                    <span x-text="getRequirementsTitle()"></span>
                 </h2>
                 <ul class="space-y-3">
                     @foreach($project->requirements as $item)
@@ -237,4 +225,5 @@
         
     </div>
 </div>
+<script src="{{ asset('js/project-form.js') }}"></script>
 @endsection

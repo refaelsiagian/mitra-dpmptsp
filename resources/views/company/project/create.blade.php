@@ -3,6 +3,9 @@
 @section('content')
 <div class="max-w-4xl mx-auto pb-10" x-data="projectForm({ 
     type: '{{ old('type', '') }}', 
+    title: '{{ old('title', '') }}',
+    description: {{ json_encode(old('description', '')) }},
+    ruang_lingkup: {{ json_encode(old('ruang_lingkup', '')) }},
     isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }}, 
     offerings: {!! old('offerings') ? json_encode(old('offerings')) : "['']" !!}, 
     requirements: {!! old('requirements') ? json_encode(old('requirements')) : "['']" !!} 
@@ -25,7 +28,7 @@
             </p>
         </div>
 
-        <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-8">
+        <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-8" @submit="validate">
             @csrf
 
             <!-- Type Selection -->
@@ -45,6 +48,9 @@
                         </label>
                     </template>
                 </div>
+                <template x-if="errors.type">
+                    <p class="text-red-500 text-xs mt-1" x-text="errors.type"></p>
+                </template>
                 @error('type') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
@@ -54,18 +60,29 @@
                 <!-- Common Fields -->
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Judul Proyek / Kemitraan</label>
-                    <input type="text" name="title" value="{{ old('title') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" x-bind:placeholder="getTitlePlaceholder()">
+                    <input type="text" name="title" x-model="title" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" x-bind:placeholder="getTitlePlaceholder()">
+                    <template x-if="errors.title">
+                        <p class="text-red-500 text-xs mt-1" x-text="errors.title"></p>
+                    </template>
                     @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Kemitraan</label>
-                    <textarea name="description" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan gambaran umum kemitraan/proyek ini..."></textarea>
+                    <textarea name="description" x-model="description" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan gambaran umum kemitraan/proyek ini..."></textarea>
+                    <template x-if="errors.description">
+                        <p class="text-red-500 text-xs mt-1" x-text="errors.description"></p>
+                    </template>
+                    @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Ruang Lingkup Pekerjaan / Kebutuhan Khusus</label>
-                    <textarea name="ruang_lingkup" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan secara detail spesifikasi yang dibutuhkan, ruang lingkup pekerjaan, atau detail operasional..."></textarea>
+                    <textarea name="ruang_lingkup" x-model="ruang_lingkup" rows="3" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Jelaskan secara detail spesifikasi yang dibutuhkan, ruang lingkup pekerjaan, atau detail operasional..."></textarea>
+                    <template x-if="errors.ruang_lingkup">
+                        <p class="text-red-500 text-xs mt-1" x-text="errors.ruang_lingkup"></p>
+                    </template>
+                    @error('ruang_lingkup') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -122,6 +139,10 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                         Tambah Item Baru
                     </button>
+                    <template x-if="errors.offerings">
+                        <p class="text-red-500 text-xs mt-2" x-text="errors.offerings"></p>
+                    </template>
+                    @error('offerings') <p class="text-red-500 text-xs mt-2">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- Requirements -->
@@ -142,6 +163,10 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                         Tambah Item Baru
                     </button>
+                    <template x-if="errors.requirements">
+                        <p class="text-red-500 text-xs mt-2" x-text="errors.requirements"></p>
+                    </template>
+                    @error('requirements') <p class="text-red-500 text-xs mt-2">{{ $message }}</p> @enderror
                 </div>
 
             </div>

@@ -24,8 +24,8 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'ruang_lingkup' => 'nullable|string',
+            'description' => 'required|string',
+            'ruang_lingkup' => 'required|string',
             'estimated_value' => 'nullable|numeric',
             'is_budget_negotiable' => 'nullable|boolean',
             'location' => 'nullable|string|max:255',
@@ -33,8 +33,8 @@ class ProjectController extends Controller
             'project_start_date' => 'nullable|date',
             'project_end_date' => 'nullable|date',
             'metrics' => 'nullable|array',
-            'requirements' => 'nullable|array',
-            'offerings' => 'nullable|array',
+            'requirements' => 'required|array',
+            'offerings' => 'required|array',
         ]);
         
         $requirements = $request->input('requirements', []);
@@ -101,8 +101,8 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'ruang_lingkup' => 'nullable|string',
+            'description' => 'required|string',
+            'ruang_lingkup' => 'required|string',
             'estimated_value' => 'nullable|numeric',
             'is_budget_negotiable' => 'nullable|boolean',
             'location' => 'nullable|string|max:255',
@@ -110,8 +110,8 @@ class ProjectController extends Controller
             'project_start_date' => 'nullable|date',
             'project_end_date' => 'nullable|date',
             'metrics' => 'nullable|array',
-            'requirements' => 'nullable|array',
-            'offerings' => 'nullable|array',
+            'requirements' => 'required|array',
+            'offerings' => 'required|array',
         ]);
         
         $requirements = $request->input('requirements', []);
