@@ -11,8 +11,13 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         
         <div class="p-6 md:p-8 border-b border-slate-100 bg-slate-50">
-            <h1 class="text-2xl font-bold text-slate-900">Buat Proyek / Kemitraan Baru</h1>
-            <p class="text-slate-500 mt-1">Pilih jenis kemitraan dan lengkapi detail penawaran Anda.</p>
+            @php $isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']); @endphp
+            <h1 class="text-2xl font-bold text-slate-900">
+                {{ $isUMKM ? 'Form Penawaran Kemitraan' : 'Buat Proyek / Pengadaan (RFP)' }}
+            </h1>
+            <p class="text-slate-500 mt-1">
+                {{ $isUMKM ? 'Terbitkan profil produk, jasa, atau proposal KSO Anda agar Usaha Besar dapat menemukan dan berkolaborasi dengan Anda.' : 'Terbitkan kebutuhan pengadaan atau proyek Anda untuk menemukan vendor UMKM yang terkualifikasi.' }}
+            </p>
         </div>
 
         <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data" class="p-6 md:p-8 space-y-8">
@@ -24,7 +29,6 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     
                     @if(!in_array(strtolower($company->skala_usaha), ['mikro', 'kecil']))
-                    
                     <!-- Subkontrak -->
                     <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
                            :class="type === 'subkontrak' ? 'border-blue-600 bg-blue-50 ring-1 ring-blue-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
@@ -36,6 +40,7 @@
                             </span>
                         </span>
                     </label>
+                    @endif
 
                     <!-- Rantai Pasok -->
                     <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
@@ -73,8 +78,6 @@
                         </span>
                     </label>
 
-                    @endif
-
                     <!-- KSO (Available to both) -->
                     <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
                            :class="type === 'kso' ? 'border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
@@ -99,8 +102,7 @@
                         </span>
                     </label>
 
-                    @if(in_array(strtolower($company->skala_usaha), ['mikro', 'kecil']))
-                    <!-- Perdagangan Umum (UMKM only) -->
+                    <!-- Perdagangan Umum (Available to both) -->
                     <label class="relative flex cursor-pointer rounded-xl border p-4 shadow-sm focus:outline-none transition-all" 
                            :class="type === 'perdagangan' ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-600' : 'border-slate-300 bg-white hover:bg-slate-50'">
                         <input type="radio" name="type" value="perdagangan" x-model="type" class="sr-only">
@@ -111,7 +113,6 @@
                             </span>
                         </span>
                     </label>
-                    @endif
                 </div>
                 @error('type') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
@@ -222,7 +223,7 @@
                     Batal
                 </a>
                 <button type="submit" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
-                    Terbitkan
+                    {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'Tawarkan' : 'Terbitkan' }}
                 </button>
             </div>
             
@@ -234,43 +235,44 @@
 function projectForm() {
     return {
         type: '{{ old('type', '') }}',
+        isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }},
         offerings: {!! old('offerings') ? json_encode(old('offerings')) : "['']" !!},
         requirements: {!! old('requirements') ? json_encode(old('requirements')) : "['']" !!},
         
         getOfferingsTitle() {
             if (this.type === 'kso') return 'Aset / Modal yang Kami Siapkan';
-            if (this.type === 'perdagangan') return 'Katalog Produk / Jasa Kami';
-            if (this.type === 'outsourcing') return 'Fasilitas & Tunjangan Tenaga Kerja';
-            if (this.type === 'rantai_pasok') return 'Kemudahan / Dukungan untuk Suplier';
-            if (this.type === 'distribusi') return 'Fasilitas Distribusi / Dukungan Keagenan';
-            return 'Fasilitas yang Disediakan Pemberi Tugas';
+            if (this.type === 'perdagangan') return this.isUmkm ? 'Katalog Produk / Jasa Kami' : 'Informasi Pengadaan / Pembayaran';
+            if (this.type === 'outsourcing') return this.isUmkm ? 'Layanan Jasa & Kualifikasi Kami' : 'Fasilitas & Tunjangan Tenaga Kerja';
+            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Kapasitas Suplai / Material Kami' : 'Kemudahan / Dukungan untuk Suplier';
+            if (this.type === 'distribusi') return this.isUmkm ? 'Fasilitas Distribusi / Dukungan Keagenan' : 'Dukungan Prinsipal / Fasilitas Agen';
+            return this.isUmkm ? 'Layanan Konstruksi & Alat Kami' : 'Fasilitas yang Disediakan Pemberi Tugas';
         },
         
         getOfferingsDesc() {
             if (this.type === 'kso') return 'Sebutkan aset, perizinan, atau modal yang sudah Anda siapkan.';
-            if (this.type === 'perdagangan') return 'Sebutkan jenis barang yang Anda jual (kapasitas produksi, spesifikasi).';
-            if (this.type === 'outsourcing') return 'Apa yang didapat oleh penyedia jasa outsourcing (misal: area kerja).';
-            if (this.type === 'rantai_pasok') return 'Sebutkan dukungan untuk vendor (misal: pembayaran tunai, kontrak jangka panjang).';
-            if (this.type === 'distribusi') return 'Sebutkan jangkauan wilayah, fasilitas gudang, atau dukungan promosi.';
-            return 'Sebutkan material atau akses yang akan Anda berikan ke pelaksana.';
+            if (this.type === 'perdagangan') return this.isUmkm ? 'Sebutkan jenis barang yang Anda jual (kapasitas produksi, spesifikasi).' : 'Sebutkan ketentuan pembayaran, sistem PO, atau fasilitas untuk vendor.';
+            if (this.type === 'outsourcing') return this.isUmkm ? 'Sebutkan jenis jasa yang Anda tawarkan.' : 'Apa yang didapat oleh penyedia jasa outsourcing (misal: area kerja).';
+            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Sebutkan jenis barang yang bisa Anda suplai.' : 'Sebutkan dukungan untuk vendor (misal: pembayaran tunai, kontrak jangka panjang).';
+            if (this.type === 'distribusi') return this.isUmkm ? 'Sebutkan jangkauan wilayah, fasilitas gudang, atau dukungan promosi.' : 'Sebutkan produk yang didistribusikan, margin keuntungan, atau materi promosi.';
+            return this.isUmkm ? 'Sebutkan alat berat atau spesialisasi yang Anda miliki.' : 'Sebutkan material atau akses yang akan Anda berikan ke pelaksana.';
         },
 
         getRequirementsTitle() {
             if (this.type === 'kso') return 'Kewajiban Calon Mitra KSO';
-            if (this.type === 'perdagangan') return 'Syarat Pembelian / Ketentuan';
-            if (this.type === 'outsourcing') return 'Kualifikasi Tenaga Kerja / Jasa';
-            if (this.type === 'rantai_pasok') return 'Spesifikasi Barang / Suplai yang Dicari';
-            if (this.type === 'distribusi') return 'Syarat Mitra Keagenan / Prinsipal';
-            return 'Tanggung Jawab Vendor / Pelaksana';
+            if (this.type === 'perdagangan') return this.isUmkm ? 'Syarat Pembelian / Ketentuan' : 'Spesifikasi Barang / Jasa yang Dicari';
+            if (this.type === 'outsourcing') return this.isUmkm ? 'Ketentuan Kontrak Jasa' : 'Kualifikasi Tenaga Kerja / Jasa';
+            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Syarat Kontrak / Kebutuhan Pembeli' : 'Spesifikasi Barang / Suplai yang Dicari';
+            if (this.type === 'distribusi') return this.isUmkm ? 'Syarat Mitra Keagenan / Prinsipal' : 'Kualifikasi Mitra Distributor / Agen';
+            return this.isUmkm ? 'Ketentuan Kontrak Konstruksi' : 'Tanggung Jawab Vendor / Pelaksana';
         },
 
         getRequirementsDesc() {
             if (this.type === 'kso') return 'Sebutkan apa yang harus disediakan oleh mitra (contoh: modal tambahan, teknologi).';
-            if (this.type === 'perdagangan') return 'Sebutkan minimal order, atau kriteria pembeli jika ada.';
-            if (this.type === 'outsourcing') return 'Sebutkan sertifikasi, atau jumlah tenaga yang dibutuhkan.';
-            if (this.type === 'rantai_pasok') return 'Sebutkan standar kualitas material, jadwal pengiriman, dsb.';
-            if (this.type === 'distribusi') return 'Sebutkan kriteria yang Anda cari dari mitra agen atau tipe produk prinsipal.';
-            return 'Sebutkan alat, tenaga kerja, atau standar kerja vendor.';
+            if (this.type === 'perdagangan') return this.isUmkm ? 'Sebutkan minimal order, atau kriteria pembeli jika ada.' : 'Sebutkan standar kualitas, kuantitas, atau sertifikasi yang wajib dimiliki vendor.';
+            if (this.type === 'outsourcing') return this.isUmkm ? 'Sebutkan durasi minimal, atau syarat kerja.' : 'Sebutkan sertifikasi, atau jumlah tenaga yang dibutuhkan.';
+            if (this.type === 'rantai_pasok') return this.isUmkm ? 'Sebutkan minimal pemesanan atau syarat pembayaran.' : 'Sebutkan standar kualitas material, jadwal pengiriman, dsb.';
+            if (this.type === 'distribusi') return this.isUmkm ? 'Sebutkan kriteria yang Anda cari dari mitra agen atau tipe produk prinsipal.' : 'Sebutkan syarat keagenan (misal: memiliki gudang, jangkauan armada, target penjualan).';
+            return this.isUmkm ? 'Sebutkan apa yang harus disiapkan pemberi kerja.' : 'Sebutkan alat, tenaga kerja, atau standar kerja vendor.';
         }
     }
 }
