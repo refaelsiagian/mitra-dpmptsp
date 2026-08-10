@@ -51,6 +51,11 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::put('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('projects.destroy');
 
+    // Invitations
+    Route::get('/notifications', [\App\Http\Controllers\InvitationController::class, 'index'])->name('notifications.index');
+    Route::post('/invitations', [\App\Http\Controllers\InvitationController::class, 'store'])->name('invitations.store');
+    Route::put('/invitations/{invitation}', [\App\Http\Controllers\InvitationController::class, 'update'])->name('invitations.update');
+
     Route::get('/review', [\App\Http\Controllers\VerificationController::class, 'review'])->name('review');
 });
 

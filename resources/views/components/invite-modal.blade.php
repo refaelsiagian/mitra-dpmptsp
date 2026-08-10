@@ -24,15 +24,15 @@
                 </p>
                 
                 <div class="space-y-3">
-                    <!-- Option 1 -->
+                    @forelse($myProjects as $project)
                     <label class="relative flex cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:border-blue-300 hover:bg-blue-50/30 transition-colors">
-                        <input type="radio" name="project_id" value="1" class="peer sr-only" />
+                        <input type="radio" name="project_id" value="{{ $project->id }}" class="peer sr-only" />
                         <div class="flex w-full items-center justify-between">
                             <div class="flex items-center">
                                 <div class="text-sm">
-                                    <p class="font-bold text-slate-900">Pembangunan Gedung Kantor Tahap 2 CBD</p>
+                                    <p class="font-bold text-slate-900">{{ $project->title }}</p>
                                     <div class="text-slate-500 mt-0.5">
-                                        <p class="text-xs">Tender Aktif • Sisa Waktu: 5 Hari</p>
+                                        <p class="text-xs">{{ ucfirst($project->type) }} Aktif • Tenggat: {{ \Carbon\Carbon::parse($project->deadline)->translatedFormat('d M Y') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -42,25 +42,13 @@
                         </div>
                         <div class="absolute -inset-px rounded-xl border-2 border-transparent peer-checked:border-blue-600 pointer-events-none"></div>
                     </label>
-
-                    <!-- Option 2 -->
-                    <label class="relative flex cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm focus:outline-none hover:border-blue-300 hover:bg-blue-50/30 transition-colors">
-                        <input type="radio" name="project_id" value="2" class="peer sr-only" />
-                        <div class="flex w-full items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="text-sm">
-                                    <p class="font-bold text-slate-900">Pengadaan Katering Karyawan Pabrik Cikarang</p>
-                                    <div class="text-slate-500 mt-0.5">
-                                        <p class="text-xs">KSO Aktif • Sisa Waktu: Terbuka</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="shrink-0 text-blue-600 hidden peer-checked:block">
-                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            </div>
-                        </div>
-                        <div class="absolute -inset-px rounded-xl border-2 border-transparent peer-checked:border-blue-600 pointer-events-none"></div>
-                    </label>
+                    @empty
+                    <div class="text-center py-6 text-slate-500">
+                        <svg class="mx-auto h-12 w-12 text-slate-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <p class="text-sm font-medium">Anda belum memiliki proyek aktif.</p>
+                        <a href="{{ route('projects.create') }}" class="text-blue-600 hover:underline text-xs font-semibold mt-2 inline-block">Buat Proyek Baru</a>
+                    </div>
+                    @endforelse
                 </div>
             </div>
             
@@ -86,19 +74,46 @@
         document.getElementById('inviteModal').classList.add('hidden');
     }
 
-    function submitInvite() {
-        // Find checked radio
+    async function submitInvite() {
         const selected = document.querySelector('input[name="project_id"]:checked');
         if(!selected) {
             alert('Pilih salah satu proyek terlebih dahulu!');
             return;
         }
         
-        // Mock success
-        alert('Undangan berhasil dikirim! Vendor akan menerima notifikasi dari Anda.');
-        closeInviteModal();
-        
-        // Uncheck the selected radio for next time
-        selected.checked = false;
+        try {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Mengirim...';
+            btn.disabled = true;
+
+            const response = await fetch('{{ route("invitations.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    project_id: selected.value,
+                    invited_company_id: '{{ $company->id }}'
+                })
+            });
+
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                alert(data.message);
+                closeInviteModal();
+            } else {
+                alert(data.message || 'Terjadi kesalahan saat mengirim undangan.');
+            }
+            
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan pada sistem.');
+        }
     }
 </script>

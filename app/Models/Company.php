@@ -54,4 +54,14 @@ class Company extends Model
     {
         return $this->hasMany(VerificationFeedback::class);
     }
+
+    public function sentInvitations()
+    {
+        return $this->hasMany(ProjectInvitation::class, 'inviting_company_id');
+    }
+
+    public function receivedInvitations()
+    {
+        return $this->hasMany(ProjectInvitation::class, 'invited_company_id');
+    }
 }

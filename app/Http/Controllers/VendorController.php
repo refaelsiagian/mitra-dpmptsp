@@ -18,6 +18,11 @@ class VendorController extends Controller
 
         $company->load(['portfolios', 'projects', 'kblis']);
 
-        return view('vendor-profile', compact('company'));
+        $myProjects = collect();
+        if (auth()->check() && auth()->user()->company) {
+            $myProjects = auth()->user()->company->projects()->where('status', 'published')->get();
+        }
+
+        return view('vendor-profile', compact('company', 'myProjects'));
     }
 }

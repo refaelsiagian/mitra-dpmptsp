@@ -77,7 +77,15 @@ class ProjectController extends Controller
 
     public function show(\App\Models\Project $project)
     {
-        return view('company.project.show', compact('project'));
+        $invitation = null;
+        if (auth()->check() && auth()->user()->company) {
+            $invitation = \App\Models\ProjectInvitation::where('project_id', $project->id)
+                ->where('invited_company_id', auth()->user()->company->id)
+                ->where('status', 'pending')
+                ->first();
+        }
+
+        return view('company.project.show', compact('project', 'invitation'));
     }
 
     public function edit(\App\Models\Project $project)

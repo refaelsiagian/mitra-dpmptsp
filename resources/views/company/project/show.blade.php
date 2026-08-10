@@ -14,6 +14,29 @@
         <!-- Left Column (col-span-2) -->
         <div class="md:col-span-2 space-y-6">
             
+            <!-- Invitation Banner -->
+            @if(isset($invitation) && $invitation->status === 'pending')
+            <div class="bg-blue-50 border border-blue-200 p-5 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3 text-blue-800">
+                    <div class="bg-blue-100 p-2 rounded-full shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg leading-tight">Anda diundang ke proyek ini!</h4>
+                        <p class="text-sm opacity-90 mt-0.5">{{ $project->company->name }} telah mengundang Anda secara langsung untuk berpartisipasi.</p>
+                    </div>
+                </div>
+                <div class="flex shrink-0 w-full md:w-auto">
+                    <form action="{{ route('invitations.update', $invitation->id) }}" method="POST" class="w-full">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="action" value="accept">
+                        <button type="submit" class="w-full md:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm whitespace-nowrap">Terima Tawaran</button>
+                    </form>
+                </div>
+            </div>
+            @endif
+
             <!-- Header Section -->
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
                     @php

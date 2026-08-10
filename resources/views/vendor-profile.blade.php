@@ -10,7 +10,7 @@
     </a>
 
     <!-- Hero Section -->
-    <div class="relative mb-16 md:mb-20 lg:mb-24">
+    <div class="relative mb-8">
         <!-- Banner Image -->
         <div class="w-full aspect-[4/1] md:aspect-[5/1] lg:aspect-[6/1] bg-slate-200 relative group rounded-2xl overflow-hidden shadow-sm border border-slate-200">
             @if($company->banner)
@@ -27,16 +27,6 @@
                 Edit Tampilan & Bio
             </a>
             @endif
-
-        </div>
-        
-        <!-- Overlapping Logo (Positioned relative to the Hero Section wrapper) -->
-        <div class="absolute bottom-0 translate-y-1/2 left-[5%] md:left-[6%] w-[20%] sm:w-[16%] md:w-[12%] lg:w-[10%] max-w-[90px] sm:max-w-[110px] md:max-w-[130px] aspect-square bg-white rounded-xl shadow-md border-4 border-white overflow-hidden flex items-center justify-center z-20">
-             @if($company->logo)
-                <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-cover">
-             @else
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-             @endif
         </div>
     </div>
 
@@ -47,18 +37,30 @@
         <div class="flex-1 lg:w-2/3 space-y-6">
             
             <!-- Company Header Info -->
-            <div>
-                <div class="flex items-center gap-3 mb-2">
-                    <h1 class="text-3xl font-bold text-slate-900">{{ $company->name }}</h1>
-                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        Terverifikasi
-                    </span>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                <!-- Profile Picture -->
+                <div class="w-24 sm:w-28 md:w-32 aspect-square shrink-0 bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden flex items-center justify-center">
+                    @if($company->logo)
+                        <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-cover">
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    @endif
                 </div>
-                <p class="text-slate-500 font-medium">
-                    @if($company->established_year) Berdiri sejak {{ $company->established_year }} • @endif 
-                    {{ $company->tagline ?? ($company->kblis->first()->name ?? 'Bidang Usaha Umum') }}
-                </p>
+
+                <!-- Company Details -->
+                <div>
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <h1 class="text-3xl font-bold text-slate-900">{{ $company->name }}</h1>
+                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Terverifikasi
+                        </span>
+                    </div>
+                    <p class="text-slate-500 font-medium">
+                        @if($company->established_year) Berdiri sejak {{ $company->established_year }} • @endif 
+                        {{ $company->tagline ?? ($company->kblis->first()->name ?? 'Bidang Usaha Umum') }}
+                    </p>
+                </div>
             </div>
             
             <!-- Tabs Navigation -->
@@ -368,7 +370,7 @@
                 
                 @if(!(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
                 <!-- Action CTA -->
-                <button class="w-full flex justify-center items-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-600/20 focus:ring-4 focus:ring-blue-100 focus:outline-none">
+                <button onclick="openInviteModal()" class="w-full flex justify-center items-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-600/20 focus:ring-4 focus:ring-blue-100 focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                     Undang ke Proyek
                 </button>
@@ -462,5 +464,8 @@
         </button>
     </div>
     @endif
+
+    <!-- Invite Modal -->
+    @include('components.invite-modal')
 </div>
 @endsection
