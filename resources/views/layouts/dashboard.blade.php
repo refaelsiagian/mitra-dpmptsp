@@ -27,15 +27,8 @@
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased h-screen flex overflow-hidden relative">
 
-    <!-- Mobile Overlay -->
-    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden transition-opacity"></div>
-
-    <!-- Sidebar (Left) - Fixed Width & Full Height -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex flex-col h-full transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
-        <!-- Close Button (Mobile Only) -->
-        <button onclick="toggleSidebar()" class="md:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
+    <!-- Sidebar (Desktop Only) -->
+    <aside id="sidebar" class="hidden md:flex inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 flex-col h-full relative">
 
         <!-- Logo -->
         <div class="h-16 flex items-center px-6 border-b border-slate-200">
@@ -73,9 +66,11 @@
                 </div>
                 @php
                     $pendingCount = auth()->user()->company ? auth()->user()->company->receivedInvitations()->whereNull('read_at')->count() : 0;
+                    $sentUpdateCount = auth()->user()->company ? auth()->user()->company->sentInvitations()->whereIn('status', ['accepted', 'rejected'])->whereNull('sender_read_at')->count() : 0;
+                    $totalBadge = $pendingCount + $sentUpdateCount;
                 @endphp
-                @if($pendingCount > 0)
-                <span class="px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-extrabold">{{ $pendingCount }}</span>
+                @if($totalBadge > 0)
+                <span class="px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-extrabold">{{ $totalBadge }}</span>
                 @endif
             </a>
 
@@ -180,26 +175,15 @@
                 <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
                 <span class="font-bold text-slate-900">Mitra DPMPTSP</span>
             </div>
-            <button onclick="toggleSidebar()" class="p-2 -mr-2 text-slate-600 hover:bg-slate-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
         </div>
 
         <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 custom-scrollbar">
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 custom-scrollbar pb-24 md:pb-6">
             @yield('content', '<div class="h-full flex items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl bg-white/50"><p class="text-slate-400 font-medium">Content goes here</p></div>')
         </main>
     </div>
 
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
         // Initialize role toggle dropdown
         document.addEventListener('DOMContentLoaded', () => {
             const role = localStorage.getItem('userRole') || 'role_besar';
@@ -226,5 +210,95 @@
             border-radius: 20px;
         }
     </style>
+    <!-- Mobile Bottom Navigation (Visible only on mobile) -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-50 md:hidden flex justify-around items-center h-16 px-2 pb-safe shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]" x-data="{ openProfileMenu: false }">
+        <!-- Beranda / RFP Saya -->
+        <a href="/rfp-saya" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('rfp-saya') ? 'text-blue-600' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('rfp-saya') ? 'fill-blue-50/50' : '' }}"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="text-[10px] font-semibold">Beranda</span>
+        </a>
+
+        <!-- Eksplorasi -->
+        <a href="/explore" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'text-blue-600' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'fill-blue-50/50' : '' }}"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <span class="text-[10px] font-semibold">Eksplorasi</span>
+        </a>
+
+        <!-- Notifikasi -->
+        <a href="{{ route('notifications.index') }}" class="relative flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->routeIs('notifications.index') ? 'text-blue-600' : '' }}">
+            <div class="relative mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{{ request()->routeIs('notifications.index') ? 'fill-blue-50/50' : '' }}"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                @php
+                    $pendingCount = auth()->user()->company ? auth()->user()->company->receivedInvitations()->whereNull('read_at')->count() : 0;
+                    $sentUpdateCount = auth()->user()->company ? auth()->user()->company->sentInvitations()->whereIn('status', ['accepted', 'rejected'])->whereNull('sender_read_at')->count() : 0;
+                    $totalBadge = $pendingCount + $sentUpdateCount;
+                @endphp
+                @if($totalBadge > 0)
+                <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full"></span>
+                @endif
+            </div>
+            <span class="text-[10px] font-semibold">Notifikasi</span>
+        </a>
+
+        <!-- Profil -->
+        <div class="relative w-full h-full">
+            <button @click="openProfileMenu = true" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="text-[10px] font-semibold">Profil</span>
+            </button>
+
+            <!-- Slide-up Profile Menu (Alpine.js) -->
+            <div x-show="openProfileMenu" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 translate-y-10"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-10"
+                 class="fixed inset-x-0 bottom-16 bg-white border-t border-slate-200 rounded-t-2xl shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.15)] p-4 z-[60] flex flex-col gap-1"
+                 style="display: none;">
+                 
+                 <div class="flex items-center justify-between px-2 pb-3 mb-2 border-b border-slate-100">
+                    <span class="font-bold text-slate-900 text-sm">Menu Profil</span>
+                    <button @click="openProfileMenu = false" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-1 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                 </div>
+
+                @if(auth()->check() && auth()->user()->role === 'user')
+                    @if(auth()->user()->company)
+                        <a href="{{ route('vendor.show', auth()->user()->company->id) }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 font-medium text-slate-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Lihat Profil Publik
+                        </a>
+                    @endif
+                    <a href="/company/profile" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 font-medium text-slate-700 transition-colors {{ request()->is('company/profile') ? 'bg-blue-50 text-blue-700' : '' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
+                        Data Legalitas
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 font-medium text-slate-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        Pengaturan
+                    </a>
+                @elseif(auth()->check() && auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 font-medium text-slate-700 transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 text-blue-700' : '' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                        Dashboard Admin
+                    </a>
+                @endif
+                
+                <div class="border-t border-slate-100 my-1"></div>
+                
+                <form method="POST" action="{{ route('logout') }}" class="m-0">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 font-medium rounded-xl transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                        Keluar Akun
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Backdrop for Mobile Profile Menu -->
+            <div x-show="openProfileMenu" style="display: none;" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[55] md:hidden" @click="openProfileMenu = false"></div>
+        </div>
+    </nav>
 </body>
 </html>

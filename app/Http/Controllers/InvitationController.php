@@ -18,12 +18,23 @@ class InvitationController extends Controller
             return redirect()->route('verify');
         }
 
-        // Mark all as read
+        // Mark all received as read
         $company->receivedInvitations()->whereNull('read_at')->update(['read_at' => now()]);
 
-        $invitations = $company->receivedInvitations()
-            ->with(['project', 'invitingCompany'])
-            ->orderBy('created_at', 'desc')
+        // Mark all sent updates as read
+        $company->sentInvitations()->whereIn('status', ['accepted', 'rejected'])->whereNull('sender_read_at')->update(['sender_read_at' => now()]);
+
+        $invitations = ProjectInvitation::where(function($q) use ($company) {
+                // Received invitations
+                $q->where('invited_company_id', $company->id);
+            })
+            ->orWhere(function($q) use ($company) {
+                // Sent invitations that have a response
+                $q->where('inviting_company_id', $company->id)
+                  ->whereIn('status', ['accepted', 'rejected']);
+            })
+            ->with(['project', 'invitingCompany', 'invitedCompany'])
+            ->orderBy('updated_at', 'desc')
             ->get();
 
         return view('notifications', compact('invitations'));
