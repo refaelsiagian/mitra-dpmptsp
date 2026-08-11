@@ -10,9 +10,9 @@
     </a>
 
     <!-- Hero Section -->
-    <div class="relative mb-8">
+    <div class="relative mb-4">
         <!-- Banner Image -->
-        <div class="w-full aspect-[4/1] md:aspect-[5/1] lg:aspect-[6/1] bg-slate-200 relative group rounded-2xl overflow-hidden shadow-sm border border-slate-200">
+        <div class="w-full aspect-[3/1] md:aspect-[4/1] lg:aspect-[5/1] bg-slate-200 relative group rounded-2xl overflow-hidden shadow-sm border border-slate-200">
             @if($company->banner)
                 <img src="{{ Storage::url($company->banner) }}" alt="Company Banner" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
             @else
@@ -37,9 +37,9 @@
         <div class="flex-1 lg:w-2/3 space-y-6">
             
             <!-- Company Header Info -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 relative">
                 <!-- Profile Picture -->
-                <div class="w-24 sm:w-28 md:w-32 aspect-square shrink-0 bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden flex items-center justify-center">
+                <div class="-mt-12 sm:-mt-16 w-24 sm:w-28 md:w-32 aspect-square shrink-0 bg-white rounded-2xl shadow-md border-4 border-slate-50 overflow-hidden flex items-center justify-center z-10">
                     @if($company->logo)
                         <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-cover">
                     @else
@@ -64,16 +64,16 @@
             </div>
             
             <!-- Tabs Navigation -->
-            <div class="flex border-b border-slate-200 gap-6 mt-6">
+            <div class="flex border-b border-slate-200 gap-6 mt-6 overflow-x-auto hide-scrollbar snap-x">
                 <button @click="activeTab = 'overview'" 
                     :class="activeTab === 'overview' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
-                    class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors">
+                    class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors whitespace-nowrap snap-start">
                     Ringkasan
                 </button>
                 @if($company->projects->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
                 <button @click="activeTab = 'offerings'" 
                     :class="activeTab === 'offerings' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
-                    class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors">
+                    class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors whitespace-nowrap snap-start">
                     Proyek & Peluang KSO
                 </button>
                 @endif
@@ -131,7 +131,10 @@
                         @if($company->description)
                             {!! nl2br(e($company->description)) !!}
                         @else
-                            <p class="italic text-slate-400">Belum ada deskripsi profil perusahaan.</p>
+                            <div class="flex flex-col items-center justify-center py-6 px-4 bg-slate-50 border border-dashed border-slate-200 rounded-xl">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300 mb-2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                                <p class="text-slate-400 font-medium text-sm text-center">Belum ada deskripsi profil perusahaan.</p>
+                            </div>
                         @endif
                     </div>
                     

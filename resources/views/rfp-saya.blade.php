@@ -3,40 +3,42 @@
 @section('content')
 <div class="max-w-6xl mx-auto pb-10">
     
-    <!-- Page Header -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+    @php $isUMKM = in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['mikro', 'kecil']); @endphp
+    
+    <!-- Page Header (Welcome Message) -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 md:mb-8">
         <div>
-            @php $isUMKM = in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['mikro', 'kecil']); @endphp
-            
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
-                {{ $isUMKM ? 'Manajemen Kemitraan & Penawaran' : 'Manajemen RFP & KSO' }}
+            <p class="text-sm font-semibold text-slate-500 mb-0.5">
+                Selamat datang 👋
+            </p>
+            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight mb-1.5">
+                {{ auth()->user()->company->name ?? 'Mitra DPMPTSP' }}
             </h1>
-            
-            @if($isUMKM)
-                <p class="text-slate-500 font-medium">Kelola profil penawaran Anda (KSO, Distribusi, Jasa) dan pantau statusnya.</p>
-            @else
-                <p class="text-slate-500 font-medium">Kelola tender yang Anda terbitkan dan pantau status proposal vendor yang masuk.</p>
-            @endif
+            <p class="text-xs font-medium text-slate-400">
+                {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}
+            </p>
         </div>
         
-        <!-- Dynamic Role Buttons -->
-        @if($isUMKM)
-        <a href="{{ route('projects.create') }}" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-            Tawarkan Kemitraan / Layanan
-        </a>
-        @else
-        <a href="{{ route('projects.create') }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-            Buat Proyek / Pengadaan (RFP)
-        </a>
-        @endif
+        <!-- Dynamic Role Buttons (Hidden on Mobile) -->
+        <div class="hidden md:block">
+            @if($isUMKM)
+            <a href="{{ route('projects.create') }}" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                Tawarkan Kemitraan
+            </a>
+            @else
+            <a href="{{ route('projects.create') }}" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                Buat Proyek
+            </a>
+            @endif
+        </div>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <!-- Quick Stats (Scrollable on Mobile) -->
+    <div class="flex overflow-x-auto pb-4 md:pb-0 md:grid md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-10 snap-x snap-mandatory hide-scrollbar">
         <!-- Stat 1 -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="min-w-[280px] sm:min-w-[320px] md:min-w-0 flex-shrink-0 snap-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
@@ -46,7 +48,7 @@
             </div>
         </div>
         <!-- Stat 2 -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="min-w-[280px] sm:min-w-[320px] md:min-w-0 flex-shrink-0 snap-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </div>
@@ -56,7 +58,7 @@
             </div>
         </div>
         <!-- Stat 3 -->
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="min-w-[280px] sm:min-w-[320px] md:min-w-0 flex-shrink-0 snap-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
             </div>
@@ -71,19 +73,34 @@
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         
         <!-- Tab Navigation -->
-        <div class="border-b border-slate-200 px-6 flex items-center gap-8 bg-slate-50/50">
-            <button id="tab-btn-diterbitkan" onclick="switchRfpTab('diterbitkan')" class="py-4 text-sm font-bold text-blue-700 border-b-2 border-blue-600 flex items-center gap-2 tab-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                {{ $isUMKM ? 'Katalog Penawaran Aktif' : 'Proyek (RFP) Diterbitkan' }}
-            </button>
-            <button id="tab-btn-terkirim" onclick="switchRfpTab('terkirim')" class="py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                Proposal Terkirim
-            </button>
-            <button id="tab-btn-draf" onclick="switchRfpTab('draf')" class="py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                Draft Tersimpan
-            </button>
+        <div class="border-b border-slate-200 px-4 md:px-6 flex items-center justify-between gap-4 bg-slate-50/50">
+            <div class="flex items-center gap-6 md:gap-8 overflow-x-auto hide-scrollbar snap-x flex-1">
+                <button id="tab-btn-diterbitkan" onclick="switchRfpTab('diterbitkan')" class="whitespace-nowrap py-4 text-sm font-bold text-blue-700 border-b-2 border-blue-600 flex items-center gap-2 tab-btn snap-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    {{ $isUMKM ? 'Katalog Penawaran Aktif' : 'Proyek Diterbitkan' }}
+                </button>
+                <button id="tab-btn-terkirim" onclick="switchRfpTab('terkirim')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                    Proposal Terkirim
+                </button>
+                <button id="tab-btn-draf" onclick="switchRfpTab('draf')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                    Draft Tersimpan
+                </button>
+            </div>
+            
+            <!-- Mobile Action Button (Near Tabs) -->
+            <div class="md:hidden flex-shrink-0">
+                @if($isUMKM)
+                <a href="{{ route('projects.create') }}" class="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm flex items-center justify-center" title="Tawarkan Kemitraan">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                </a>
+                @else
+                <a href="{{ route('projects.create') }}" class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm flex items-center justify-center" title="Buat Proyek">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                </a>
+                @endif
+            </div>
         </div>
 
         <!-- Project List Content: Diterbitkan -->
