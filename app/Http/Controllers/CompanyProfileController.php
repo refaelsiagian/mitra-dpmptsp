@@ -105,7 +105,6 @@ class CompanyProfileController extends Controller
         $company->update($validated);
 
 
-
-        return redirect()->route('company.profile')->with('success', 'Profil berhasil diperbarui!');
+        return redirect()->route('vendor.show', ['company' => $company->id])->with('success', 'Profil berhasil diperbarui!');
     }
 }

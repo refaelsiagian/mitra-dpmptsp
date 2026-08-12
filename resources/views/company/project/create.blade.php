@@ -173,7 +173,7 @@
 
             <!-- Submit -->
             <div class="pt-6 border-t border-slate-100 flex justify-end gap-3" x-show="type !== ''" style="display: none;">
-                <a href="{{ route('vendor.show', ['company' => $company->id, 'tab' => 'projects']) }}" class="px-6 py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors">
+                <a href="{{ route('vendor.show', ['company' => $company->id, 'tab' => 'offerings']) }}" class="px-6 py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors">
                     Batal
                 </a>
                 <button type="submit" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">

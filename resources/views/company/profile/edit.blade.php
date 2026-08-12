@@ -103,7 +103,7 @@
 
         <!-- Submit -->
         <div class="flex flex-col sm:flex-row sm:justify-end pt-4 gap-3">
-            <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('company.profile') }}" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 text-base order-2 sm:order-1">
+            <a href="{{ route('vendor.show', ['company' => $company->id]) }}" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 text-base order-2 sm:order-1">
                 Batal
             </a>
             <button type="submit" class="w-full sm:w-auto justify-center px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2 text-base order-1 sm:order-2">

@@ -3,13 +3,8 @@
 @section('content')
 <div class="max-w-6xl mx-auto pb-10" x-data="{ activeTab: '{{ request('tab', 'overview') }}', lightboxOpen: false, lightboxImage: '' }">
     
-    <!-- Back to Previous Page / Discovery Hub -->
-    <div class="mb-5">
-        <a href="/explore" onclick="if(document.referrer.indexOf(window.location.hostname) !== -1) { window.history.back(); return false; }" class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-600 bg-white border border-slate-200 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-blue-600 shadow-sm transition-all group">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
-            <span>Kembali</span>
-        </a>
-    </div>
+    <!-- Top padding for layout balance -->
+    <div class="pt-2"></div>
 
     <!-- Hero Section -->
     <div class="relative mb-4">
