@@ -2,13 +2,13 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto pb-10" x-data="projectForm({ 
-    type: '{{ old('type', $project->type) }}',
-    title: '{{ old('title', $project->title) }}',
+    type: {{ json_encode(old('type', $project->type)) }},
+    title: {{ json_encode(old('title', $project->title)) }},
     description: {{ json_encode(old('description', $project->description)) }},
     ruang_lingkup: {{ json_encode(old('ruang_lingkup', $project->ruang_lingkup)) }},
     isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }},
-    offerings: {!! json_encode(old('offerings', $project->offerings ?? [''])) !!},
-    requirements: {!! json_encode(old('requirements', $project->requirements ?? [''])) !!}
+    offerings: {{ json_encode(old('offerings', $project->offerings ?? [''])) }},
+    requirements: {{ json_encode(old('requirements', $project->requirements ?? [''])) }}
 })">
     
     <a href="{{ route('rfp-saya') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-6 group">

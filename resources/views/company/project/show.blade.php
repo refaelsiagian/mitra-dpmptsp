@@ -4,12 +4,12 @@
 <div class="max-w-6xl mx-auto pb-10" x-data="projectForm({ type: '{{ $project->type }}', isUmkm: {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }} })">
     
     <!-- Back Button -->
-    <a href="{{ route('vendor.show', ['company' => $project->company_id, 'tab' => 'projects']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-5 group">
+    <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('vendor.show', ['company' => $project->company_id, 'tab' => 'offerings']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-5 group">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
-        <span>Kembali ke Profil Perusahaan</span>
+        <span>Kembali</span>
     </a>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-24 md:pb-0">
         
         <!-- Left Column (col-span-2) -->
         <div class="md:col-span-2 space-y-6">
@@ -82,14 +82,14 @@
                                 break;
                         }
                     @endphp
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold border {!! $badgeClass !!}">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold border mb-3 {!! $badgeClass !!}">
                         {!! $badgeIcon !!}
                         {{ $badgeText }}
                     </span>
                 
                 <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2 leading-tight">{{ $project->title }}</h1>
                 
-                <a href="{{ route('vendor.show', $project->company_id) }}" class="text-blue-600 font-semibold hover:underline text-lg flex items-center gap-1.5 mb-6 inline-flex">
+                <a href="{{ route('vendor.show', $project->company_id) }}" class="text-blue-600 font-semibold hover:underline text-base sm:text-lg flex items-center gap-1.5 mb-5 inline-flex">
                     {{ $project->company->name }}
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
                 </a>
@@ -113,73 +113,113 @@
                 </div>
             </div>
             
-            <!-- Deskripsi -->
-            @if($project->description)
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">
-                    Deskripsi Kemitraan
-                </h2>
-                <div class="text-slate-600 leading-relaxed whitespace-pre-wrap">{{ $project->description }}</div>
-            </div>
-            @endif
-
-            <!-- Ruang Lingkup -->
-            @if($project->ruang_lingkup)
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">
-                    Ruang Lingkup Pekerjaan / Kebutuhan
-                </h2>
-                <div class="text-slate-600 leading-relaxed whitespace-pre-wrap">{{ $project->ruang_lingkup }}</div>
-            </div>
-            @endif
-
-            <!-- Dynamic Lists (Offerings & Requirements) -->
-            @if($project->offerings && count($project->offerings) > 0)
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
-                    <div class="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5"/><path d="m9 11 3 3L22 4"/></svg>
+            <!-- Mobile Budget Info (Hidden on Desktop) -->
+            <div class="md:hidden bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                @if($project->estimated_value)
+                <div class="text-center">
+                    <p class="text-xs font-medium text-slate-500 mb-1">
+                        Nilai Anggaran / Kontrak
+                    </p>
+                    <h3 class="text-xl font-bold text-emerald-600 mb-2">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</h3>
+                    
+                    @if(isset($project->metrics['is_negotiable']) && $project->metrics['is_negotiable'])
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>
+                        Bisa Didiskusikan
+                    </span>
+                    @else
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200">
+                        Fix / Tetap
+                    </span>
+                    @endif
+                </div>
+                @endif
+                
+                @if($project->end_date)
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center justify-center gap-3 mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <div>
+                        <p class="text-xs text-amber-800 font-medium leading-none">Batas Penawaran</p>
+                        <p class="text-sm font-bold text-amber-900 mt-1 leading-none">{{ \Carbon\Carbon::parse($project->end_date)->diffForHumans() }}</p>
                     </div>
-                    <span x-text="getOfferingsTitle()"></span>
-                </h2>
-                <ul class="space-y-3">
-                    @foreach($project->offerings as $item)
-                        <li class="flex items-start gap-3">
-                            <div class="mt-0.5 p-1 bg-emerald-50 rounded-full text-emerald-600 flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            </div>
-                            <span class="text-slate-800 font-medium leading-relaxed">{{ $item }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+                </div>
+                @endif
             </div>
-            @endif
 
-            @if($project->requirements && count($project->requirements) > 0)
-            <div class="bg-blue-50/50 p-6 md:p-8 rounded-2xl border-2 border-dashed border-blue-200">
-                <h2 class="text-xl font-bold text-blue-900 mb-4 border-b border-blue-200/50 pb-3 flex items-center gap-2">
-                    <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    </div>
-                    <span x-text="getRequirementsTitle()"></span>
-                </h2>
-                <ul class="space-y-3">
-                    @foreach($project->requirements as $item)
-                        <li class="flex items-start gap-3 bg-white p-3 rounded-xl border border-blue-100 shadow-sm">
-                            <div class="mt-0.5 p-1 bg-blue-50 rounded-full text-blue-600 flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            <!-- Detail Proyek (Consolidated) -->
+            <div class="bg-white p-5 sm:p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                
+                <!-- Deskripsi -->
+                @if($project->description)
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold text-slate-900 mb-3">
+                        Deskripsi Kemitraan
+                    </h2>
+                    <div class="text-slate-600 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{{ $project->description }}</div>
+                </div>
+                @endif
+
+                <!-- Ruang Lingkup -->
+                @if($project->ruang_lingkup)
+                <div class="mt-6 pt-6 border-t border-slate-100">
+                    <h2 class="text-lg md:text-xl font-bold text-slate-900 mb-3">
+                        Ruang Lingkup Pekerjaan / Kebutuhan
+                    </h2>
+                    <div class="text-slate-600 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{{ $project->ruang_lingkup }}</div>
+                </div>
+                @endif
+
+                <!-- Dynamic Lists (Offerings) -->
+                @if($project->offerings && count($project->offerings) > 0)
+                <div class="mt-6 pt-6 border-t border-slate-100">
+                    <h2 class="text-lg md:text-xl font-bold text-slate-900 mb-4 flex items-start sm:items-center gap-3">
+                        <div class="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg shrink-0 mt-0.5 sm:mt-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.5"/><path d="m9 11 3 3L22 4"/></svg>
+                        </div>
+                        <span x-text="getOfferingsTitle()" class="leading-snug"></span>
+                    </h2>
+                    <ul class="space-y-3">
+                        @foreach($project->offerings as $item)
+                            <li class="flex items-start gap-3">
+                                <div class="mt-0.5 p-1 bg-emerald-50 rounded-full text-emerald-600 flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                                <span class="text-slate-800 font-medium leading-relaxed text-sm md:text-base">{{ $item }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <!-- Dynamic Lists (Requirements) -->
+                @if($project->requirements && count($project->requirements) > 0)
+                <div class="mt-6 pt-6">
+                    <div class="bg-blue-50/50 p-4 md:p-6 rounded-xl border border-blue-100">
+                        <h2 class="text-lg md:text-xl font-bold text-blue-900 mb-4 flex items-start sm:items-center gap-3">
+                            <div class="p-1.5 bg-blue-100 text-blue-600 rounded-lg shrink-0 mt-0.5 sm:mt-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                             </div>
-                            <span class="text-slate-800 font-medium leading-relaxed">{{ $item }}</span>
-                        </li>
-                    @endforeach
-                </ul>
+                            <span x-text="getRequirementsTitle()" class="leading-snug"></span>
+                        </h2>
+                        <ul class="space-y-3">
+                            @foreach($project->requirements as $item)
+                                <li class="flex items-start gap-3 bg-white p-3 rounded-lg border border-blue-50 shadow-sm">
+                                    <div class="mt-0.5 p-1 bg-blue-50 rounded-full text-blue-600 flex-shrink-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                                    </div>
+                                    <span class="text-slate-800 font-medium leading-relaxed text-sm md:text-base">{{ $item }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+                @endif
             </div>
-            @endif
             
         </div>
         
         <!-- Right Column (col-span-1) -->
-        <div class="md:col-span-1">
+        <div class="hidden md:block md:col-span-1">
             <div class="sticky top-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 
                 @if($project->estimated_value)
@@ -246,6 +286,37 @@
             </div>
         </div>
         
+    </div>
+    
+    <!-- Mobile Sticky CTA Bar (Hidden on Desktop) -->
+    <div class="md:hidden fixed bottom-16 left-0 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40">
+        @if(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id)
+            <div class="flex gap-3">
+                <a href="{{ route('projects.edit', $project->id) }}" class="flex-1 py-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold rounded-xl text-center text-sm shadow-sm transition-colors flex justify-center items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    Edit
+                </a>
+                <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="flex-1 m-0" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl text-sm border border-red-200 transition-colors flex justify-center items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                        Hapus
+                    </button>
+                </form>
+            </div>
+        @else
+            <div class="flex gap-3">
+                <button class="flex-[1.5] py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
+                    Penawaran
+                </button>
+                <button class="flex-1 py-3 bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-300 rounded-xl text-sm transition-colors flex justify-center items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Pesan
+                </button>
+            </div>
+        @endif
     </div>
 </div>
 <script src="{{ asset('js/project-form.js') }}"></script>

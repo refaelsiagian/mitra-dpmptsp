@@ -41,7 +41,7 @@ class ProjectController extends Controller
         $offerings = $request->input('offerings', []);
 
         // Default to false if not checked
-        $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable');
+        $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable') ? 'true' : 'false';
 
         // Handle file uploads (attachments)
         $attachments = [];
@@ -72,7 +72,7 @@ class ProjectController extends Controller
             'offerings' => array_values(array_filter($offerings)),
         ]));
 
-        return redirect()->route('rfp-saya')->with('success', 'Proyek berhasil diterbitkan!');
+        return redirect()->route('projects.show', $project->id)->with('success', 'Proyek berhasil diterbitkan!');
     }
 
     public function show(\App\Models\Project $project)
@@ -125,7 +125,7 @@ class ProjectController extends Controller
         $requirements = $request->input('requirements', []);
         $offerings = $request->input('offerings', []);
 
-        $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable');
+        $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable') ? 'true' : 'false';
 
         // Handle file uploads (attachments)
         $attachments = $project->attachments ?? [];
@@ -150,7 +150,7 @@ class ProjectController extends Controller
             'offerings' => array_values(array_filter($offerings)),
         ]));
 
-        return redirect()->route('rfp-saya')->with('success', 'Proyek berhasil diperbarui!');
+        return redirect()->route('projects.show', $project->id)->with('success', 'Proyek berhasil diperbarui!');
     }
 
     public function destroy(\App\Models\Project $project)

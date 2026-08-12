@@ -4,10 +4,12 @@
 <div class="max-w-6xl mx-auto pb-10" x-data="{ activeTab: '{{ request('tab', 'overview') }}', lightboxOpen: false, lightboxImage: '' }">
     
     <!-- Back to Discovery Hub -->
-    <a href="/explore" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-4 group">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
-        <span>Kembali ke Direktori Mitra & Vendor</span>
-    </a>
+    <div class="mb-5">
+        <a href="/explore" class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-600 bg-white border border-slate-200 px-4 py-2 rounded-full hover:bg-slate-50 hover:text-blue-600 shadow-sm transition-all group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
+            <span>Kembali ke Direktori Mitra & Vendor</span>
+        </a>
+    </div>
 
     <!-- Hero Section -->
     <div class="relative mb-4">
@@ -20,13 +22,6 @@
             @endif
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
             
-            @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-            <!-- Inline Edit Button (Owner Only) -->
-            <a href="{{ route('company.profile.edit') }}" class="absolute top-4 right-4 bg-white/90 hover:bg-white text-slate-800 backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2 z-10 border border-white/50">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                Edit Tampilan & Bio
-            </a>
-            @endif
         </div>
     </div>
 
@@ -37,48 +32,85 @@
         <div class="flex-1 lg:w-2/3 space-y-6">
             
             <!-- Company Header Info -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 relative">
-                <!-- Profile Picture -->
-                <div class="-mt-12 sm:-mt-16 w-24 sm:w-28 md:w-32 aspect-square shrink-0 bg-white rounded-2xl shadow-md border-4 border-slate-50 overflow-hidden flex items-center justify-center z-10">
-                    @if($company->logo)
-                        <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-cover">
+            <div class="flex flex-col sm:flex-row sm:items-start gap-5 sm:gap-6 relative">
+                <!-- Avatar & Mobile Edit Button Wrapper -->
+                <div class="flex items-end justify-between w-full sm:w-auto shrink-0">
+                    <!-- Profile Picture -->
+                    <div class="-mt-12 sm:-mt-16 w-24 sm:w-28 md:w-32 aspect-square shrink-0 bg-white rounded-2xl shadow-xl ring-4 ring-white overflow-hidden flex items-center justify-center z-10 relative">
+                        @if($company->logo)
+                            <img src="{{ Storage::url($company->logo) }}" alt="Logo" class="w-full h-full object-cover">
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        @endif
+                    </div>
+                    
+                    @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
+                    <!-- Edit Button for Mobile -->
+                    <div class="sm:hidden ml-auto mb-2">
+                        <a href="{{ route('company.profile.edit') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                            Edit Profil
+                        </a>
+                    </div>
                     @else
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <!-- Undang Button for Mobile -->
+                    <div class="sm:hidden ml-auto mb-2">
+                        <button onclick="openInviteModal()" class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-xl text-xs font-bold shadow-sm transition-colors shadow-blue-600/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                            Undang
+                        </button>
+                    </div>
                     @endif
                 </div>
 
                 <!-- Company Details -->
-                <div>
-                    <div class="flex flex-wrap items-center gap-3 mb-2">
-                        <h1 class="text-3xl font-bold text-slate-900">{{ $company->name }}</h1>
-                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Terverifikasi
-                        </span>
+                <div class="flex-1 w-full flex flex-col sm:flex-row sm:items-start justify-between gap-4 mt-2 sm:mt-2">
+                    <div>
+                        <div class="flex flex-wrap items-center gap-3 mb-1.5">
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{{ $company->name }}</h1>
+                        </div>
+                        <p class="text-slate-600 font-medium text-sm sm:text-base">
+                            @if($company->established_year) Berdiri sejak {{ $company->established_year }} • @endif 
+                            {{ $company->tagline ?? ($company->kblis->first()->name ?? 'Bidang Usaha Umum') }}
+                        </p>
                     </div>
-                    <p class="text-slate-500 font-medium">
-                        @if($company->established_year) Berdiri sejak {{ $company->established_year }} • @endif 
-                        {{ $company->tagline ?? ($company->kblis->first()->name ?? 'Bidang Usaha Umum') }}
-                    </p>
+
+                    @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
+                    <!-- Edit Button for Desktop -->
+                    <div class="hidden sm:block shrink-0 mt-1">
+                        <a href="{{ route('company.profile.edit') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                            Edit Profil
+                        </a>
+                    </div>
+                    @else
+                    <!-- Undang Button for Desktop -->
+                    <div class="hidden sm:block shrink-0 mt-1">
+                        <button onclick="openInviteModal()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-xl text-sm font-bold shadow-sm transition-colors shadow-blue-600/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                            Undang ke Proyek
+                        </button>
+                    </div>
+                    @endif
                 </div>
             </div>
             
             <!-- Tabs Navigation -->
             <div class="flex border-b border-slate-200 gap-6 mt-6 overflow-x-auto hide-scrollbar snap-x">
-                <button @click="activeTab = 'overview'" 
+                <button @click="activeTab = 'overview'; window.history.replaceState(null, null, '?tab=overview')" 
                     :class="activeTab === 'overview' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                     class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors whitespace-nowrap snap-start">
                     Ringkasan
                 </button>
                 @if($company->projects->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
-                <button @click="activeTab = 'offerings'" 
+                <button @click="activeTab = 'offerings'; window.history.replaceState(null, null, '?tab=offerings')" 
                     :class="activeTab === 'offerings' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                     class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors whitespace-nowrap snap-start">
                     Proyek & Peluang KSO
                 </button>
                 @endif
                 @if($company->portfolios->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
-                <button @click="activeTab = 'portfolios'" 
+                <button @click="activeTab = 'portfolios'; window.history.replaceState(null, null, '?tab=portfolios')" 
                     :class="activeTab === 'portfolios' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                     class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors whitespace-nowrap">
                     Portofolio Proyek
@@ -86,7 +118,7 @@
                 @endif
                 
                 <!-- Mobile Only Tab -->
-                <button @click="activeTab = 'legalitas'" 
+                <button @click="activeTab = 'legalitas'; window.history.replaceState(null, null, '?tab=legalitas')" 
                     :class="activeTab === 'legalitas' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                     class="py-3 px-1 border-b-2 font-semibold text-sm transition-colors lg:hidden whitespace-nowrap">
                     Legalitas
@@ -131,9 +163,19 @@
                         @if($company->description)
                             {!! nl2br(e($company->description)) !!}
                         @else
-                            <div class="flex flex-col items-center justify-center py-6 px-4 bg-slate-50 border border-dashed border-slate-200 rounded-xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300 mb-2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-                                <p class="text-slate-400 font-medium text-sm text-center">Belum ada deskripsi profil perusahaan.</p>
+                            <div class="flex flex-col items-center justify-center py-8 px-4 bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-2xl">
+                                <div class="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                                </div>
+                                <p class="text-slate-500 font-bold text-sm text-center mb-1">Belum ada deskripsi profil perusahaan</p>
+                                <p class="text-slate-400 text-xs text-center max-w-xs mb-4">Tambahkan latar belakang, visi misi, dan layanan utama untuk menarik klien.</p>
+                                
+                                @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
+                                <a href="{{ route('company.profile.edit') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-xs rounded-lg transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                    Tambahkan Deskripsi
+                                </a>
+                                @endif
                             </div>
                         @endif
                     </div>
@@ -370,14 +412,6 @@
         <!-- Right Column: Sidebar (1/3 width) -->
         <div class="w-full lg:w-1/3">
             <div class="sticky top-6 flex flex-col gap-6">
-                
-                @if(!(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
-                <!-- Action CTA -->
-                <button onclick="openInviteModal()" class="w-full flex justify-center items-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-600/20 focus:ring-4 focus:ring-blue-100 focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                    Undang ke Proyek
-                </button>
-                @endif
                 
                 <!-- Details Card (Desktop Only) -->
                 <div class="hidden lg:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">

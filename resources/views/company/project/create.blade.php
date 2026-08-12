@@ -2,13 +2,13 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto pb-10" x-data="projectForm({ 
-    type: '{{ old('type', '') }}', 
-    title: '{{ old('title', '') }}',
+    type: {{ json_encode(old('type', '')) }},
+    title: {{ json_encode(old('title', '')) }},
     description: {{ json_encode(old('description', '')) }},
     ruang_lingkup: {{ json_encode(old('ruang_lingkup', '')) }},
-    isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }}, 
-    offerings: {!! old('offerings') ? json_encode(old('offerings')) : "['']" !!}, 
-    requirements: {!! old('requirements') ? json_encode(old('requirements')) : "['']" !!} 
+    isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }},
+    offerings: {{ json_encode(old('offerings', [''])) }},
+    requirements: {{ json_encode(old('requirements', [''])) }}
 })">
     
     <a href="{{ route('vendor.show', ['company' => $company->id, 'tab' => 'projects']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-6 group">
