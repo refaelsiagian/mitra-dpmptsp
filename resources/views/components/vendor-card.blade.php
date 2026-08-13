@@ -1,3 +1,13 @@
+@props([
+    'profileUrl' => '#',
+    'name' => 'Nama Vendor',
+    'category' => 'Kategori',
+    'location' => 'Lokasi',
+    'chips' => [],
+    'activeProject' => null,
+    'projectUrl' => '#'
+])
+
 <div class="group bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row gap-6 relative overflow-hidden">
     <!-- Left side: Image & Badge -->
     <div class="relative flex-shrink-0">

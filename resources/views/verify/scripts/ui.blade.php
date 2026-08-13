@@ -95,7 +95,7 @@
                         document.getElementById('summary-nib').textContent = document.getElementById('nib-number').value || '-';
                         document.getElementById('summary-npwp').textContent = document.getElementById('npwp-number').value || '-';
                         
-                        const pkpCheckYes = document.getElementById('pkp-yes');
+                        const pkpCheckYes = document.querySelector('input[name="is_pkp"][value="1"]');
                         if (pkpCheckYes && pkpCheckYes.checked) {
                             document.getElementById('summary-pkp').innerHTML = `<span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded border border-green-200 font-bold">SUDAH PKP</span>`;
                         } else {

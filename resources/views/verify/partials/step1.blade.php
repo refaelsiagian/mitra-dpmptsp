@@ -4,102 +4,97 @@
                         </h2>
                         
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1" for="company-name">Nama Perusahaan / Usaha <span class="text-red-500">*</span></label>
-                                <input name="company_name" value="{{ old('company_name', $company->name ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="company-name" type="text" placeholder="Contoh: PT Maju Bersama">
-                                @if(isset($feedbacks['company-name']))
-                                    <div class="mt-2 text-sm text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
-                                        <i class="ph ph-warning-circle mt-0.5"></i> 
-                                        <div>
-                                            <span class="font-bold text-xs uppercase tracking-wider block mb-0.5">Catatan Revisi</span>
-                                            {{ $feedbacks['company-name']->message }}
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
+                            <x-form.input 
+                                name="company_name" 
+                                label="Nama Perusahaan / Usaha" 
+                                id="company-name" 
+                                :required="true" 
+                                value="{{ $company->name ?? '' }}" 
+                                placeholder="Contoh: PT Maju Bersama" 
+                            />
                             
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1" for="pelaku-usaha">Pelaku Usaha <span class="text-red-500">*</span></label>
-                                <select name="pelaku_usaha"  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="pelaku-usaha">
-                                    <option value="" disabled {{ !isset($company) ? 'selected' : '' }}>Pilih Pelaku Usaha...</option>
-                                    <option value="orang-perseorangan" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'orang-perseorangan' ? 'selected' : '' }}>Orang Perseorangan</option>
-                                    <option value="badan-usaha" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'badan-usaha' ? 'selected' : '' }}>Badan Usaha</option>
-                                    <option value="kantor-perwakilan" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'kantor-perwakilan' ? 'selected' : '' }}>Kantor Perwakilan</option>
-                                    <option value="badan-usaha-luar-negeri" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'badan-usaha-luar-negeri' ? 'selected' : '' }}>Badan Usaha Luar Negeri</option>
-                                </select>
-                                @if(isset($feedbacks['pelaku-usaha']))
-                                    <div class="mt-2 text-sm text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
-                                        <i class="ph ph-warning-circle mt-0.5"></i> 
-                                        <div>
-                                            <span class="font-bold text-xs uppercase tracking-wider block mb-0.5">Catatan Revisi</span>
-                                            {{ $feedbacks['pelaku-usaha']->message }}
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
+                            <x-form.select 
+                                name="pelaku_usaha" 
+                                label="Pelaku Usaha" 
+                                id="pelaku-usaha" 
+                                :required="true"
+                            >
+                                <option value="" disabled {{ !isset($company) ? 'selected' : '' }}>Pilih Pelaku Usaha...</option>
+                                <option value="orang-perseorangan" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'orang-perseorangan' ? 'selected' : '' }}>Orang Perseorangan</option>
+                                <option value="badan-usaha" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'badan-usaha' ? 'selected' : '' }}>Badan Usaha</option>
+                                <option value="kantor-perwakilan" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'kantor-perwakilan' ? 'selected' : '' }}>Kantor Perwakilan</option>
+                                <option value="badan-usaha-luar-negeri" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'badan-usaha-luar-negeri' ? 'selected' : '' }}>Badan Usaha Luar Negeri</option>
+                            </x-form.select>
                             
                             <div id="container-skala-usaha" class="{{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'kantor-perwakilan' ? '' : 'hidden' }}">
-                                <label class="block text-sm font-medium text-gray-700 mb-1" for="skala-usaha">Skala Usaha (sesuai NIB) <span class="text-red-500">*</span></label>
-                                <select name="skala_usaha" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white disabled:bg-gray-100 disabled:text-gray-500" id="skala-usaha">
+                                <x-form.select 
+                                    name="skala_usaha" 
+                                    label="Skala Usaha (sesuai NIB)" 
+                                    id="skala-usaha" 
+                                    :required="true"
+                                >
                                     <option value="" disabled {{ !isset($company) ? 'selected' : '' }}>Pilih Skala Usaha...</option>
                                     <option value="mikro" {{ old('skala_usaha', $company->skala_usaha ?? '') == 'mikro' ? 'selected' : '' }}>Usaha Mikro</option>
                                     <option value="kecil" {{ old('skala_usaha', $company->skala_usaha ?? '') == 'kecil' ? 'selected' : '' }}>Usaha Kecil</option>
                                     <option value="menengah" {{ old('skala_usaha', $company->skala_usaha ?? '') == 'menengah' ? 'selected' : '' }}>Usaha Menengah</option>
                                     <option value="besar" {{ old('skala_usaha', $company->skala_usaha ?? '') == 'besar' ? 'selected' : '' }}>Usaha Besar</option>
-                                </select>
-                                @if(isset($feedbacks['skala-usaha']))
-                                    <div class="mt-2 text-sm text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
-                                        <i class="ph ph-warning-circle mt-0.5"></i> 
-                                        <div>
-                                            <span class="font-bold text-xs uppercase tracking-wider block mb-0.5">Catatan Revisi</span>
-                                            {{ $feedbacks['skala-usaha']->message }}
-                                        </div>
-                                    </div>
-                                @endif
+                                </x-form.select>
                             </div>
                             
                             @php $isSubPelakuUsahaVisible = in_array(old('pelaku_usaha', $company->pelaku_usaha_type ?? ''), ['orang-perseorangan', 'badan-usaha', 'kantor-perwakilan', 'badan-usaha-luar-negeri']); @endphp
                             <div id="sub-pelaku-usaha-container" class="{{ $isSubPelakuUsahaVisible ? '' : 'hidden' }}">
                                 <div id="container-nik" class="{{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'orang-perseorangan' ? 'mb-4' : 'hidden mb-4' }}">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="nik-perseorangan">NIK <span class="text-red-500">*</span></label>
-                                    <input name="nik_perseorangan" value="{{ old('nik_perseorangan', $company->perseorangan_nik ?? '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="nik-perseorangan" type="text" placeholder="Masukkan 16 digit NIK">
+                                    <x-form.input 
+                                        name="nik_perseorangan" 
+                                        label="NIK" 
+                                        id="nik-perseorangan" 
+                                        :required="true" 
+                                        value="{{ $company->perseorangan_nik ?? '' }}" 
+                                        placeholder="Masukkan 16 digit NIK" 
+                                    />
                                 </div>
                                 <div id="container-badan-usaha" class="{{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'badan-usaha' ? 'mb-4' : 'hidden mb-4' }}">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="jenis-badan-usaha">Jenis Badan Usaha <span class="text-red-500">*</span></label>
-                                    <select name="jenis_badan_usaha"  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="jenis-badan-usaha">
+                                    <x-form.select 
+                                        name="jenis_badan_usaha" 
+                                        label="Jenis Badan Usaha" 
+                                        id="jenis-badan-usaha" 
+                                        :required="true"
+                                        feedbackKey="pelaku-usaha-detail"
+                                    >
                                         <option value="" disabled {{ !isset($company) ? 'selected' : '' }}>Pilih Jenis Badan Usaha...</option>
                                         @foreach(['Perseroan Terbatas (PT)', 'Perseroan Terbatas (PT) Perorangan', 'Persekutuan Komanditer (CV / Commanditaire Vennootschap)', 'Persekutuan Firma (FA / Venootschap Onder Firma)', 'Persekutuan Perdata', 'Perusahaan Umum (Perum)', 'Perusahaan Umum Daerah (Perumda)', 'Badan Hukum Lainnya', 'Koperasi', 'Persekutuan dan Perkumpulan', 'Yayasan', 'Badan Layanan Umum', 'BUM Desa', 'BUM Desa Bersama', 'Bentuk Usaha Tetap (BUT)'] as $jbu)
                                             <option value="{{ $jbu }}" {{ old('jenis_badan_usaha', $company->pelaku_usaha_detail ?? '') == $jbu ? 'selected' : '' }}>{{ $jbu }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-form.select>
                                 </div>
                                 <div id="container-kantor-perwakilan" class="{{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'kantor-perwakilan' ? 'mb-4' : 'hidden mb-4' }}">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="jenis-kantor-perwakilan">Jenis Kantor Perwakilan <span class="text-red-500">*</span></label>
-                                    <select name="jenis_kantor_perwakilan"  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="jenis-kantor-perwakilan">
+                                    <x-form.select 
+                                        name="jenis_kantor_perwakilan" 
+                                        label="Jenis Kantor Perwakilan" 
+                                        id="jenis-kantor-perwakilan" 
+                                        :required="true"
+                                        feedbackKey="pelaku-usaha-detail"
+                                    >
                                         <option value="" disabled {{ !isset($company) ? 'selected' : '' }}>Pilih Jenis Kantor Perwakilan...</option>
                                         @foreach(['KPPA', 'KPJPTLA', 'KP3A', 'KP3A PMSE', 'BUJKA'] as $jkp)
                                             <option value="{{ $jkp }}" {{ old('jenis_kantor_perwakilan', $company->pelaku_usaha_detail ?? '') == $jkp ? 'selected' : '' }}>{{ $jkp }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-form.select>
                                 </div>
                                 <div id="container-badan-usaha-luar-negeri" class="{{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'badan-usaha-luar-negeri' ? 'mb-4' : 'hidden mb-4' }}">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="jenis-badan-usaha-luar-negeri">Jenis Badan Usaha Luar Negeri <span class="text-red-500">*</span></label>
-                                    <select name="jenis_badan_usaha_luar_negeri"  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" id="jenis-badan-usaha-luar-negeri">
+                                    <x-form.select 
+                                        name="jenis_badan_usaha_luar_negeri" 
+                                        label="Jenis Badan Usaha Luar Negeri" 
+                                        id="jenis-badan-usaha-luar-negeri" 
+                                        :required="true"
+                                        feedbackKey="pelaku-usaha-detail"
+                                    >
                                         <option value="" disabled {{ !isset($company) ? 'selected' : '' }}>Pilih Jenis Badan Usaha Luar Negeri...</option>
                                         @foreach(['Pemberi Waralaba (STPW)', 'Pedagang Berjangka Asing', 'PSE Asing'] as $jbuln)
                                             <option value="{{ $jbuln }}" {{ old('jenis_badan_usaha_luar_negeri', $company->pelaku_usaha_detail ?? '') == $jbuln ? 'selected' : '' }}>{{ $jbuln }}</option>
                                         @endforeach
-                                    </select>
+                                    </x-form.select>
                                 </div>
-                                @if(isset($feedbacks['pelaku-usaha-detail']))
-                                    <div class="mt-2 text-sm text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
-                                        <i class="ph ph-warning-circle mt-0.5"></i> 
-                                        <div>
-                                            <span class="font-bold text-xs uppercase tracking-wider block mb-0.5">Catatan Revisi</span>
-                                            {{ $feedbacks['pelaku-usaha-detail']->message }}
-                                        </div>
-                                    </div>
-                                @endif
                             </div>
                             
                             <div class="relative">

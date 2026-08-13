@@ -23,13 +23,42 @@
                         <p class="text-sm opacity-90 mt-0.5">{{ $project->company->name }} telah mengundang Anda secara langsung untuk berpartisipasi.</p>
                     </div>
                 </div>
-                <div class="flex shrink-0 w-full md:w-auto">
-                    <form action="{{ route('invitations.update', $invitation->id) }}" method="POST" class="w-full">
+                <div class="flex shrink-0 w-full md:w-auto gap-2" x-data="{ showRejectModal: false }">
+                    <button type="button" @click="showRejectModal = true" class="w-full md:w-auto px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-sm transition-colors shadow-sm whitespace-nowrap">Tolak</button>
+                    <form action="{{ route('invitations.update', $invitation->id) }}" method="POST" class="w-full md:w-auto">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="action" value="accept">
                         <button type="submit" class="w-full md:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm whitespace-nowrap">Terima Tawaran</button>
                     </form>
+
+                    <!-- Reject Modal -->
+                    <div x-show="showRejectModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center">
+                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showRejectModal = false"></div>
+                        <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-2xl p-6 sm:max-w-md w-full border border-slate-200 z-10 m-4">
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">Tolak Undangan?</h3>
+                            <p class="text-sm text-slate-500 mb-5">Apakah Anda yakin ingin menolak tawaran proyek "{{ $project->title }}" dari {{ $project->company->name }}?</p>
+                            
+                            <div class="flex justify-end gap-3">
+                                <button type="button" @click="showRejectModal = false" class="px-4 py-2 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50">Batal</button>
+                                <form action="{{ route('invitations.update', $invitation->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-red-600 border border-transparent rounded-lg shadow-sm hover:bg-red-700">Ya, Tolak</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @elseif(isset($invitation) && $invitation->status === 'rejected' && $invitation->invited_company_id === (auth()->user()->company->id ?? null))
+            <div class="bg-slate-50 border border-slate-200 p-5 rounded-2xl shadow-sm flex items-center gap-3">
+                <div class="bg-slate-100 p-2 rounded-full shrink-0 text-slate-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-700 text-lg leading-tight">Anda menolak tawaran proyek ini</h4>
                 </div>
             </div>
             @endif

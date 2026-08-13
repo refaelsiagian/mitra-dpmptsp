@@ -23,31 +23,56 @@
                                 <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2"><i class="ph ph-office-chair text-xl text-gray-500"></i> Alamat Kantor Utama</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Provinsi <span class="text-red-500">*</span></label>
-                                        <select name="provinsi_kantor"  id="provinsi-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadRegencies(this.value, 'kabupaten-kantor')">
+                                        <x-form.select 
+                                            name="provinsi_kantor" 
+                                            label="Provinsi" 
+                                            id="provinsi-kantor" 
+                                            :required="true"
+                                            onchange="loadRegencies(this.value, 'kabupaten-kantor')"
+                                        >
                                             <option {{ !isset($kantorUtama) ? 'selected' : '' }} disabled value="">Pilih Provinsi...</option>
                                             @foreach($provinces as $prov)
                                                 <option value="{{ $prov->id }}" {{ old('provinsi_kantor', $kantorUtama->province_id ?? '') == $prov->id ? 'selected' : '' }}>{{ $prov->name }}</option>
                                             @endforeach
-                                        </select>
+                                        </x-form.select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Kabupaten/Kota <span class="text-red-500">*</span></label>
-                                        <select name="kabupaten_kantor" data-old="{{ old('kabupaten_kantor', $kantorUtama->regency_id ?? '') }}" id="kabupaten-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadDistricts(this.value, 'kecamatan-kantor')" disabled>
+                                        <x-form.select 
+                                            name="kabupaten_kantor" 
+                                            label="Kabupaten/Kota" 
+                                            id="kabupaten-kantor" 
+                                            :required="true"
+                                            onchange="loadDistricts(this.value, 'kecamatan-kantor')"
+                                            data-old="{{ old('kabupaten_kantor', $kantorUtama->regency_id ?? '') }}"
+                                            disabled
+                                        >
                                             <option selected disabled value="">Pilih Kabupaten...</option>
-                                        </select>
+                                        </x-form.select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Kecamatan <span class="text-red-500">*</span></label>
-                                        <select name="kecamatan_kantor" data-old="{{ old('kecamatan_kantor', $kantorUtama->district_id ?? '') }}" id="kecamatan-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadVillages(this.value, 'desa-kantor')" disabled>
+                                        <x-form.select 
+                                            name="kecamatan_kantor" 
+                                            label="Kecamatan" 
+                                            id="kecamatan-kantor" 
+                                            :required="true"
+                                            onchange="loadVillages(this.value, 'desa-kantor')"
+                                            data-old="{{ old('kecamatan_kantor', $kantorUtama->district_id ?? '') }}"
+                                            disabled
+                                        >
                                             <option selected disabled value="">Pilih Kecamatan...</option>
-                                        </select>
+                                        </x-form.select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Desa/Kelurahan <span class="text-red-500">*</span></label>
-                                        <select name="desa_kantor" data-old="{{ old('desa_kantor', $kantorUtama->village_id ?? '') }}" id="desa-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" disabled>
+                                        <x-form.select 
+                                            name="desa_kantor" 
+                                            label="Desa/Kelurahan" 
+                                            id="desa-kantor" 
+                                            :required="true"
+                                            data-old="{{ old('desa_kantor', $kantorUtama->village_id ?? '') }}"
+                                            disabled
+                                        >
                                             <option selected disabled value="">Pilih Desa...</option>
-                                        </select>
+                                        </x-form.select>
                                     </div>
                                 </div>
                                 <div>
@@ -76,34 +101,59 @@
                                     </label>
                                 </div>
                                 
-                                <div id="usaha-location-fields" class="{{ old('same_as_office', $company->is_usaha_same_as_office ?? false) ? 'opacity-50 pointer-events-none' : 'transition-opacity duration-300' }}">
+                                <div id="usaha-location-fields" class="transition-opacity duration-300 {{ old('same_as_office', $company->is_usaha_same_as_office ?? false) ? 'opacity-40 pointer-events-none grayscale' : '' }}">
                                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Provinsi <span class="text-red-500">*</span></label>
-                                            <select name="provinsi_usaha"  id="provinsi-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadRegencies(this.value, 'kabupaten-usaha')">
+                                            <x-form.select 
+                                                name="provinsi_usaha" 
+                                                label="Provinsi" 
+                                                id="provinsi-usaha" 
+                                                :required="true"
+                                                onchange="loadRegencies(this.value, 'kabupaten-usaha')"
+                                            >
                                                 <option {{ !isset($lokasiUsaha) ? 'selected' : '' }} disabled value="">Pilih Provinsi...</option>
                                                 @foreach($provinces as $prov)
                                                     <option value="{{ $prov->id }}" {{ old('provinsi_usaha', $lokasiUsaha->province_id ?? '') == $prov->id ? 'selected' : '' }}>{{ $prov->name }}</option>
                                                 @endforeach
-                                            </select>
+                                            </x-form.select>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Kabupaten/Kota <span class="text-red-500">*</span></label>
-                                            <select name="kabupaten_usaha" data-old="{{ old('kabupaten_usaha', $lokasiUsaha->regency_id ?? '') }}" id="kabupaten-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadDistricts(this.value, 'kecamatan-usaha')" disabled>
+                                            <x-form.select 
+                                                name="kabupaten_usaha" 
+                                                label="Kabupaten/Kota" 
+                                                id="kabupaten-usaha" 
+                                                :required="true"
+                                                onchange="loadDistricts(this.value, 'kecamatan-usaha')"
+                                                data-old="{{ old('kabupaten_usaha', $lokasiUsaha->regency_id ?? '') }}"
+                                                disabled
+                                            >
                                                 <option selected disabled value="">Pilih Kabupaten...</option>
-                                            </select>
+                                            </x-form.select>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Kecamatan <span class="text-red-500">*</span></label>
-                                            <select name="kecamatan_usaha" data-old="{{ old('kecamatan_usaha', $lokasiUsaha->district_id ?? '') }}" id="kecamatan-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" onchange="loadVillages(this.value, 'desa-usaha')" disabled>
+                                            <x-form.select 
+                                                name="kecamatan_usaha" 
+                                                label="Kecamatan" 
+                                                id="kecamatan-usaha" 
+                                                :required="true"
+                                                onchange="loadVillages(this.value, 'desa-usaha')"
+                                                data-old="{{ old('kecamatan_usaha', $lokasiUsaha->district_id ?? '') }}"
+                                                disabled
+                                            >
                                                 <option selected disabled value="">Pilih Kecamatan...</option>
-                                            </select>
+                                            </x-form.select>
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Desa/Kelurahan <span class="text-red-500">*</span></label>
-                                            <select name="desa_usaha" data-old="{{ old('desa_usaha', $lokasiUsaha->village_id ?? '') }}" id="desa-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" disabled>
+                                            <x-form.select 
+                                                name="desa_usaha" 
+                                                label="Desa/Kelurahan" 
+                                                id="desa-usaha" 
+                                                :required="true"
+                                                data-old="{{ old('desa_usaha', $lokasiUsaha->village_id ?? '') }}"
+                                                disabled
+                                            >
                                                 <option selected disabled value="">Pilih Desa...</option>
-                                            </select>
+                                            </x-form.select>
                                         </div>
                                     </div>
                                     <div>

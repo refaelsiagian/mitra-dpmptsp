@@ -19,15 +19,15 @@
                         p.className = 'text-red-500 text-xs mt-1 error-msg';
                         p.textContent = message;
                         
-                        if (elementId === 'nib-link' || elementId === 'npwp-link' || elementId === 'pkp-link') {
-                            targetEl.parentNode.parentNode.insertBefore(p, targetEl.parentNode.nextSibling);
-                        } else if (elementId === 'coordinate-input') {
+                        if (elementId === 'coordinate-input') {
                             targetEl.parentNode.parentNode.insertBefore(p, targetEl.parentNode.nextSibling);
                         } else if (elementId === 'kbli-search') {
                             const kbliContainer = document.getElementById('kbli-container');
                             kbliContainer.parentNode.insertBefore(p, kbliContainer.nextSibling);
                         } else if (targetEl.nextElementSibling && targetEl.nextElementSibling.classList.contains('custom-search-wrapper')) {
                             targetEl.parentNode.insertBefore(p, targetEl.nextElementSibling.nextSibling);
+                        } else if (targetEl.parentNode && targetEl.parentNode.classList.contains('relative') && targetEl.parentNode.classList.contains('rounded-lg')) {
+                            targetEl.parentNode.parentNode.insertBefore(p, targetEl.parentNode.nextSibling);
                         } else {
                             targetEl.parentNode.insertBefore(p, targetEl.nextSibling);
                         }
@@ -125,8 +125,9 @@
                     }
 
                     // PKP Validation
-                    const pkpYesCheck = document.getElementById('pkp-yes').checked;
-                    const pkpNoCheck = document.getElementById('pkp-no').checked;
+                    const pkpYesCheck = document.querySelector('input[name="is_pkp"][value="1"]')?.checked;
+                    const pkpNoCheck = document.querySelector('input[name="is_pkp"][value="0"]')?.checked;
+                    
                     if (!pkpYesCheck && !pkpNoCheck) {
                         showError('pkp-yes', 'Pilih status PKP perusahaan');
                     } else if (pkpYesCheck) {

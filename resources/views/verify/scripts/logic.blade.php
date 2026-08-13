@@ -161,8 +161,8 @@
             }
 
             // PKP Logic
-            const pkpYes = document.getElementById('pkp-yes');
-            const pkpNo = document.getElementById('pkp-no');
+            const pkpYes = document.querySelector('input[name="is_pkp"][value="1"]');
+            const pkpNo = document.querySelector('input[name="is_pkp"][value="0"]');
             const pkpLinkContainer = document.getElementById('container-pkp-link');
             const pkpHelperText = document.getElementById('pkp-helper-text');
             const pkpLinkInput = document.getElementById('pkp-link');

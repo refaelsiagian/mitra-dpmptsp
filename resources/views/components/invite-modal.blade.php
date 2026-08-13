@@ -1,3 +1,5 @@
+@props(['myProjects' => [], 'company' => null])
+
 <!-- Invite Modal Overlay -->
 <div id="inviteModal" class="fixed inset-0 z-[100] hidden">
     <!-- Backdrop -->
