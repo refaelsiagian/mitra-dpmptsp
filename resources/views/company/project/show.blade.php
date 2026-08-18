@@ -6,10 +6,10 @@
     <!-- Top padding for layout balance -->
     <div class="pt-4"></div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-24 md:pb-0">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-24 lg:pb-0">
         
         <!-- Left Column (col-span-2) -->
-        <div class="md:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-6">
             
             <!-- Invitation Banner -->
             @if(isset($invitation) && $invitation->status === 'pending')
@@ -140,7 +140,7 @@
             </div>
             
             <!-- Mobile Budget Info (Hidden on Desktop) -->
-            <div class="md:hidden bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+            <div class="lg:hidden bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 @if($project->estimated_value)
                 <div class="text-center">
                     <p class="text-xs font-medium text-slate-500 mb-1">
@@ -245,7 +245,7 @@
         </div>
         
         <!-- Right Column (col-span-1) -->
-        <div class="hidden md:block md:col-span-1">
+        <div class="hidden lg:block lg:col-span-1">
             <div class="sticky top-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 
                 @if($project->estimated_value)
@@ -253,7 +253,7 @@
                     <p class="text-sm font-medium text-slate-500 mb-1">
                         Nilai Anggaran / Kontrak
                     </p>
-                    <h3 class="text-2xl font-bold text-emerald-600 mb-2">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</h3>
+                    <h3 class="text-xl xl:text-2xl font-bold text-emerald-600 mb-2 break-all sm:break-normal">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</h3>
                     
                     @if(isset($project->metrics['is_negotiable']) && $project->metrics['is_negotiable'])
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
@@ -314,8 +314,8 @@
         
     </div>
     
-    <!-- Mobile Sticky CTA Bar (Hidden on Desktop) -->
-    <div class="md:hidden fixed bottom-16 left-0 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40">
+    <!-- Mobile & Tablet Sticky CTA Bar (Hidden on Large Desktop) -->
+    <div class="lg:hidden fixed bottom-16 md:bottom-0 left-0 md:left-16 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40">
         @if(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id)
             <div class="flex gap-3">
                 <a href="{{ route('projects.edit', $project->id) }}" class="flex-1 py-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold rounded-xl text-center text-sm shadow-sm transition-colors flex justify-center items-center gap-1.5">

@@ -27,15 +27,7 @@
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased h-screen flex flex-col md:flex-row overflow-hidden relative">
     
-    <!-- Mobile Header (Only on Beranda) -->
-    @if(request()->is('rfp-saya'))
-    <header class="md:hidden bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 sticky top-0 z-40 shrink-0">
-        <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
-            Mitra DPMPTSP
-        </h1>
-    </header>
-    @endif
+
 
     <!-- Sidebar (Desktop Only) -->
     <aside id="sidebar" x-data="{ profileMenuOpen: false }" @mouseleave="profileMenuOpen = false" class="hidden md:flex absolute inset-y-0 left-0 z-50 w-16 hover:w-64 group bg-white border-r border-slate-200 flex-col h-full transition-all duration-300 shadow-2xl shadow-slate-900/5">
