@@ -124,8 +124,15 @@
                         }
                     @endphp
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group hover:border-blue-300 transition-colors">
-                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3 border {!! $badgeClass !!}">
-                            {{ $badgeText }}
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider border {!! $badgeClass !!}">
+                                {{ $badgeText }}
+                            </div>
+                            @if($project->status === 'draft')
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider border bg-slate-100 text-slate-600 border-slate-200">
+                                    Draf
+                                </div>
+                            @endif
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-2">
                             <a href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>

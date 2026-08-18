@@ -22,6 +22,7 @@ class ProjectController extends Controller
         $company = auth()->user()->company;
 
         $validated = $request->validate([
+            'status' => 'nullable|in:draft,published,closed',
             'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -68,6 +69,8 @@ class ProjectController extends Controller
 
         $metrics = $request->input('metrics', []);
 
+        $validated['status'] = $validated['status'] ?? 'published';
+
         $project = $company->projects()->create(array_merge($validated, [
             'attachments' => $attachments,
             'metrics' => $metrics,
@@ -76,11 +79,19 @@ class ProjectController extends Controller
             'offerings' => array_values(array_filter($offerings)),
         ]));
 
-        return redirect()->route('projects.show', $project->id)->with('success', 'Proyek berhasil diterbitkan!');
+        $message = $validated['status'] === 'draft' ? 'Proyek berhasil disimpan sebagai draf!' : 'Proyek berhasil diterbitkan!';
+        return redirect()->route('projects.show', $project->id)->with('success', $message);
     }
 
     public function show(\App\Models\Project $project)
     {
+        // Protect draft from being viewed by non-owners
+        if ($project->status !== 'published') {
+            if (!auth()->check() || !auth()->user()->company || auth()->user()->company->id !== $project->company_id) {
+                abort(404);
+            }
+        }
+
         $invitation = null;
         if (auth()->check() && auth()->user()->company) {
             $invitation = \App\Models\ProjectInvitation::where('project_id', $project->id)
@@ -111,6 +122,7 @@ class ProjectController extends Controller
         }
 
         $validated = $request->validate([
+            'status' => 'nullable|in:draft,published,closed',
             'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -164,6 +176,13 @@ class ProjectController extends Controller
 
         $metrics = $request->input('metrics', []);
 
+        // Prevent reverting a published project back to a draft
+        if ($project->status === 'published' && ($validated['status'] ?? '') === 'draft') {
+            $validated['status'] = 'published';
+        } else {
+            $validated['status'] = $validated['status'] ?? 'published';
+        }
+
         $project->update(array_merge($validated, [
             'attachments' => $attachments,
             'metrics' => $metrics,
@@ -171,7 +190,8 @@ class ProjectController extends Controller
             'offerings' => array_values(array_filter($offerings)),
         ]));
 
-        return redirect()->route('projects.show', $project->id)->with('success', 'Proyek berhasil diperbarui!');
+        $message = $validated['status'] === 'draft' ? 'Draf berhasil diperbarui!' : 'Proyek berhasil diperbarui!';
+        return redirect()->route('projects.show', $project->id)->with('success', $message);
     }
 
     public function destroy(\App\Models\Project $project)

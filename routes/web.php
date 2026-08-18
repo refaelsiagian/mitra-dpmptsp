@@ -92,8 +92,9 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
 
     Route::get('/dashboard', function () {
         $company = auth()->user()->company;
-        $projects = $company ? $company->projects()->latest()->get() : collect();
-        return view('company.dashboard', compact('projects'));
+        $publishedProjects = $company ? $company->projects()->where('status', 'published')->latest()->get() : collect();
+        $draftProjects = $company ? $company->projects()->where('status', 'draft')->latest()->get() : collect();
+        return view('company.dashboard', compact('publishedProjects', 'draftProjects'));
     })->name('dashboard');
 });
 

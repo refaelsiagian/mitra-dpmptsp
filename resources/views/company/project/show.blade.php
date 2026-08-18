@@ -11,6 +11,24 @@
         <!-- Left Column (col-span-2) -->
         <div class="lg:col-span-2 space-y-6">
             
+            <!-- Draft Banner -->
+            @if($project->status === 'draft')
+            <div class="bg-slate-100 border border-slate-200 p-4 md:p-5 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3 text-slate-700">
+                    <div class="bg-white p-2 rounded-full shrink-0 shadow-sm border border-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg leading-tight">Proyek ini masih berupa draf</h4>
+                        <p class="text-sm opacity-90 mt-0.5">Hanya Anda yang dapat melihat halaman ini. Terbitkan proyek agar dapat dilihat publik.</p>
+                    </div>
+                </div>
+                <div class="flex shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                    <a href="{{ route('projects.edit', $project->id) }}" class="w-full md:w-auto text-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm whitespace-nowrap">Lanjutkan Edit</a>
+                </div>
+            </div>
+            @endif
+
             <!-- Invitation Banner -->
             @if(isset($invitation) && $invitation->status === 'pending')
             <div class="bg-blue-50 border border-blue-200 p-5 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

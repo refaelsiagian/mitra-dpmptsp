@@ -16,7 +16,14 @@ class VendorController extends Controller
             abort(404);
         }
 
-        $company->load(['portfolios', 'projects', 'kblis']);
+        $company->load(['portfolios', 'kblis']);
+
+        // Only load published projects unless the viewer is the owner
+        $company->load(['projects' => function ($query) use ($company) {
+            if (!auth()->check() || !auth()->user()->company || auth()->user()->company->id !== $company->id) {
+                $query->where('status', 'published');
+            }
+        }]);
 
         $myProjects = collect();
         if (auth()->check() && auth()->user()->company) {
