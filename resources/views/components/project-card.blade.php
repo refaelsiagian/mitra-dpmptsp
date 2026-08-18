@@ -16,30 +16,40 @@
 @php
     // Color theme based on project type
     $theme = match($type) {
-        'tender' => [
+        'konstruksi' => [
             'badgeBg' => 'bg-blue-50', 'badgeText' => 'text-blue-700', 'badgeBorder' => 'border-blue-200',
             'btnBg' => 'bg-blue-600 hover:bg-blue-700', 'btnShadow' => 'shadow-blue-200',
             'valueColor' => 'text-emerald-600', 'accent' => 'border-l-blue-500'
         ],
-        'subcon' => [
+        'subkontrak' => [
             'badgeBg' => 'bg-purple-50', 'badgeText' => 'text-purple-700', 'badgeBorder' => 'border-purple-200',
             'btnBg' => 'bg-purple-600 hover:bg-purple-700', 'btnShadow' => 'shadow-purple-200',
             'valueColor' => 'text-emerald-600', 'accent' => 'border-l-purple-500'
         ],
-        'kso-bot', 'kso' => [
+        'kso' => [
             'badgeBg' => 'bg-teal-50', 'badgeText' => 'text-teal-700', 'badgeBorder' => 'border-teal-200',
             'btnBg' => 'bg-teal-600 hover:bg-teal-700', 'btnShadow' => 'shadow-teal-200',
             'valueColor' => 'text-teal-700', 'accent' => 'border-l-teal-500'
         ],
-        'kso-supply' => [
+        'rantai_pasok' => [
             'badgeBg' => 'bg-amber-50', 'badgeText' => 'text-amber-800', 'badgeBorder' => 'border-amber-200',
             'btnBg' => 'bg-amber-700 hover:bg-amber-800', 'btnShadow' => 'shadow-amber-200',
-            'valueColor' => 'text-amber-800', 'accent' => 'border-l-amber-600'
+            'valueColor' => 'text-amber-800', 'accent' => 'border-l-amber-500'
         ],
-        'kso-explore' => [
+        'outsourcing' => [
+            'badgeBg' => 'bg-indigo-50', 'badgeText' => 'text-indigo-700', 'badgeBorder' => 'border-indigo-200',
+            'btnBg' => 'bg-indigo-600 hover:bg-indigo-700', 'btnShadow' => 'shadow-indigo-200',
+            'valueColor' => 'text-indigo-700', 'accent' => 'border-l-indigo-500'
+        ],
+        'distribusi' => [
             'badgeBg' => 'bg-cyan-50', 'badgeText' => 'text-cyan-800', 'badgeBorder' => 'border-cyan-200',
             'btnBg' => 'bg-cyan-600 hover:bg-cyan-700', 'btnShadow' => 'shadow-cyan-200',
             'valueColor' => 'text-cyan-700', 'accent' => 'border-l-cyan-500'
+        ],
+        'perdagangan' => [
+            'badgeBg' => 'bg-rose-50', 'badgeText' => 'text-rose-700', 'badgeBorder' => 'border-rose-200',
+            'btnBg' => 'bg-rose-600 hover:bg-rose-700', 'btnShadow' => 'shadow-rose-200',
+            'valueColor' => 'text-rose-700', 'accent' => 'border-l-rose-500'
         ],
         default => [
             'badgeBg' => 'bg-slate-50', 'badgeText' => 'text-slate-700', 'badgeBorder' => 'border-slate-200',
@@ -65,7 +75,7 @@
         </div>
 
         <!-- Project Title -->
-        <h3 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-1.5 leading-snug">
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-1.5 leading-snug">
             <a href="{{ $url }}">{{ $title }}</a>
         </h3>
 

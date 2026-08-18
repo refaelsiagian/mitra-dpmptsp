@@ -16,8 +16,16 @@ class ExploreController extends Controller
         $location = $request->query('location');
         $scheme = $request->query('scheme');
 
+        $userScale = auth()->check() && auth()->user()->company ? auth()->user()->company->skala_usaha : null;
+
         // Fetch Vendors
         $vendorsQuery = Company::with(['kblis', 'locations.regency'])->where('status', 'verified');
+
+        if ($userScale === 'besar') {
+            $vendorsQuery->whereIn('skala_usaha', ['mikro', 'kecil', 'menengah']);
+        } elseif (in_array($userScale, ['mikro', 'kecil', 'menengah'])) {
+            $vendorsQuery->where('skala_usaha', 'besar');
+        }
 
         if ($search) {
             $vendorsQuery->where(function($q) use ($search) {
@@ -45,6 +53,16 @@ class ExploreController extends Controller
 
         // Fetch Projects
         $projectsQuery = Project::with(['company.locations.regency'])->where('status', 'published');
+
+        if ($userScale === 'besar') {
+            $projectsQuery->whereHas('company', function($q) {
+                $q->whereIn('skala_usaha', ['mikro', 'kecil', 'menengah']);
+            });
+        } elseif (in_array($userScale, ['mikro', 'kecil', 'menengah'])) {
+            $projectsQuery->whereHas('company', function($q) {
+                $q->where('skala_usaha', 'besar');
+            });
+        }
 
         if ($search) {
             $projectsQuery->where(function($q) use ($search) {

@@ -1,5 +1,21 @@
 @extends('layouts.dashboard')
 
+@php
+    $userScale = auth()->check() && auth()->user()->company ? auth()->user()->company->skala_usaha : null;
+    
+    // Default Tab Labels
+    $tab1Label = 'Mitra & Vendor';
+    $tab2Label = 'Peluang Proyek (RFP/KSO)';
+
+    if ($userScale === 'besar') {
+        $tab1Label = 'Mitra UMKM';
+        $tab2Label = 'Tawaran Kemitraan';
+    } elseif (in_array($userScale, ['mikro', 'kecil', 'menengah'])) {
+        $tab1Label = 'Mitra Usaha Besar';
+        $tab2Label = 'Proyek Kemitraan';
+    }
+@endphp
+
 @section('content')
 <div class="max-w-5xl mx-auto flex flex-col h-full">
     
@@ -8,16 +24,16 @@
         <h2 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Eksplorasi Peluang & Mitra Bisnis</h2>
         
         <!-- Compact Marketplace Tab Bar -->
-        <div class="bg-slate-200/80 p-1 rounded-xl flex items-center gap-1 self-start md:self-auto flex-shrink-0 border border-slate-300/50">
-            <button id="tab-btn-vendors" onclick="switchTab('vendors')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 bg-white text-blue-700 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
-                <span>Mitra & Vendor</span>
-                <span class="px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-700 text-[10px] font-extrabold">11</span>
+        <div class="bg-slate-200/80 p-1 rounded-xl flex items-center gap-1 self-start md:self-auto border border-slate-300/50 w-full sm:w-auto overflow-x-auto custom-scrollbar flex-nowrap">
+            <button id="tab-btn-vendors" onclick="switchTab('vendors')" class="flex-1 sm:flex-initial min-w-0 justify-center px-2 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 bg-white text-blue-700 shadow-sm text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+                <span class="truncate">{{ $tab1Label }}</span>
+                <span class="flex-shrink-0 px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-700 text-[10px] font-extrabold">{{ $vendors->total() }}</span>
             </button>
-            <button id="tab-btn-projects" onclick="switchTab('projects')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-white/50">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <span>Peluang Proyek (RFP/KSO)</span>
-                <span class="px-1.5 py-0.2 rounded-full bg-slate-300 text-slate-800 text-[10px] font-extrabold">10</span>
+            <button id="tab-btn-projects" onclick="switchTab('projects')" class="flex-1 sm:flex-initial min-w-0 justify-center px-2 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-white/50 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="truncate">{{ $tab2Label }}</span>
+                <span class="flex-shrink-0 px-1.5 py-0.2 rounded-full bg-slate-300 text-slate-800 text-[10px] font-extrabold">{{ $projects->total() }}</span>
             </button>
         </div>
     </div>
@@ -37,9 +53,9 @@
             </div>
 
             <!-- Filter Toggle Button -->
-            <button type="button" onclick="toggleFilters()" id="filter-toggle-btn" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 transition-colors shadow-2xs flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500 {{ (request('kbli') || request('location') || request('scheme')) ? 'bg-blue-50 border-blue-300 text-blue-700' : '' }}">
+            <button type="button" onclick="toggleFilters()" id="filter-toggle-btn" class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 transition-colors shadow-2xs flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500 {{ (request('kbli') || request('location') || request('scheme')) ? 'bg-blue-50 border-blue-300 text-blue-700' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-                <span>Filter KBLI / Lokasi</span>
+                <span class="hidden sm:inline">Filter</span>
                 <span id="filter-badge" class="{{ (request('kbli') || request('location') || request('scheme')) ? 'block' : 'hidden' }} w-1.5 h-1.5 rounded-full bg-blue-600 ml-0.5"></span>
             </button>
         </div>
@@ -50,8 +66,8 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                 
-                <!-- Kategori KBLI Dropdown -->
-                <div class="relative">
+                <!-- Kategori KBLI Dropdown (Mitra Only) -->
+                <div class="relative {{ request('tab') == 'projects' ? 'hidden' : '' }}" id="filter-kbli">
                     <select name="kbli" onchange="document.getElementById('explore-form').submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-1.5 pl-3.5 pr-8 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer hover:bg-slate-100 transition-colors">
                         <option value="" selected>Kategori KBLI (Semua)</option>
                         <option value="konstruksi" {{ request('kbli') == 'konstruksi' ? 'selected' : '' }}>Konstruksi & Infrastruktur</option>
@@ -78,8 +94,8 @@
                     </div>
                 </div>
 
-                <!-- Skema / Peluang Dropdown -->
-                <div class="relative">
+                <!-- Skema / Peluang Dropdown (Project Only) -->
+                <div class="relative {{ request('tab') == 'projects' ? '' : 'hidden' }}" id="filter-scheme">
                     <select name="scheme" onchange="document.getElementById('explore-form').submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-1.5 pl-3.5 pr-8 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer hover:bg-slate-100 transition-colors">
                         <option value="" selected>Skema Peluang (Semua)</option>
                         <option value="konstruksi" {{ request('scheme') == 'konstruksi' ? 'selected' : '' }}>Konstruksi (RFP)</option>
@@ -111,11 +127,10 @@
             <div class="card-item">
                 @include('components.vendor-card', [
                     'name' => $vendor->name, 
-                    'category' => (optional($vendor->kblis->first())->name ?? 'Umum') . ' • ' . ucfirst($vendor->skala_usaha ?? 'Usaha'), 
+                    'category' => 'Usaha ' . ucfirst($vendor->skala_usaha ?? 'Lainnya') . ' - ' . ($vendor->pelaku_usaha_detail ?: 'Perorangan'), 
                     'location' => optional(optional($vendor->locations->first())->regency)->name ?? 'Lokasi belum diset',
                     'profileUrl' => route('vendor.show', $vendor->id),
-                    'projectUrl' => '#',
-                    'activeProject' => $vendor->projects()->count() . ' Proyek Aktif',
+                    'logo' => $vendor->logo,
                     'chips' => $vendor->kblis->pluck('name')->take(3)->toArray()
                 ])
             </div>
@@ -205,6 +220,10 @@
             const url = new URL(window.location);
             url.searchParams.set('tab', 'projects');
             window.history.replaceState({}, '', url);
+            
+            // Toggle filters
+            document.getElementById('filter-kbli')?.classList.add('hidden');
+            document.getElementById('filter-scheme')?.classList.remove('hidden');
         } else {
             document.getElementById('form-tab-input').value = '';
             feedProjects.classList.add('hidden');
@@ -219,6 +238,10 @@
             const url = new URL(window.location);
             url.searchParams.delete('tab');
             window.history.replaceState({}, '', url);
+            
+            // Toggle filters
+            document.getElementById('filter-kbli')?.classList.remove('hidden');
+            document.getElementById('filter-scheme')?.classList.add('hidden');
         }
     }
 
