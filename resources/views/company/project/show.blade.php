@@ -126,16 +126,6 @@
                             Lokasi: {{ $project->location }}
                         </span>
                     @endif
-                    @if($project->start_date)
-                        <span class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
-                            Target Mulai: {{ $project->start_date->format('d M Y') }}
-                        </span>
-                    @endif
-                    @if($project->project_end_date)
-                        <span class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
-                            Target Selesai: {{ $project->project_end_date->format('d M Y') }}
-                        </span>
-                    @endif
                 </div>
             </div>
             
@@ -161,15 +151,40 @@
                 </div>
                 @endif
                 
-                @if($project->end_date)
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center justify-center gap-3 mt-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <div>
-                        <p class="text-xs text-amber-800 font-medium leading-none">Batas Penawaran</p>
-                        <p class="text-sm font-bold text-amber-900 mt-1 leading-none">{{ \Carbon\Carbon::parse($project->end_date)->diffForHumans() }}</p>
-                    </div>
+                <!-- Mobile Informasi Jadwal -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-4">
+                    <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Informasi Jadwal
+                    </h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex justify-between items-start gap-4">
+                            <span class="text-slate-500">Diterbitkan</span>
+                            <span class="font-semibold text-slate-700 text-right">{{ $project->created_at->format('d M Y') }}</span>
+                        </li>
+                        @if($project->offer_end_date)
+                        <li class="flex justify-between items-start gap-4 pt-3 border-t border-slate-200/80">
+                            <span class="text-slate-500">Batas Penawaran</span>
+                            <div class="text-right">
+                                <span class="font-bold text-amber-600 block">{{ \Carbon\Carbon::parse($project->offer_end_date)->format('d M Y') }}</span>
+                                <span class="text-[10px] font-bold text-amber-700/70 uppercase tracking-wider">{{ \Carbon\Carbon::parse($project->offer_end_date)->locale('id')->diffForHumans() }}</span>
+                            </div>
+                        </li>
+                        @endif
+                        @if($project->project_start_date)
+                        <li class="flex justify-between items-start gap-4 pt-3 border-t border-slate-200/80">
+                            <span class="text-slate-500">Mulai Pelaksanaan</span>
+                            <span class="font-semibold text-slate-700 text-right">{{ $project->project_start_date->format('d M Y') }}</span>
+                        </li>
+                        @endif
+                        @if($project->project_end_date)
+                        <li class="flex justify-between items-start gap-4 pt-3 border-t border-slate-200/80">
+                            <span class="text-slate-500">Selesai Pelaksanaan</span>
+                            <span class="font-semibold text-slate-700 text-right">{{ $project->project_end_date->format('d M Y') }}</span>
+                        </li>
+                        @endif
+                    </ul>
                 </div>
-                @endif
             </div>
 
             <!-- Detail Proyek (Consolidated) -->
@@ -268,15 +283,40 @@
                 </div>
                 @endif
                 
-                @if($project->end_date)
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-center gap-3 mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <div>
-                        <p class="text-sm text-amber-800 font-medium leading-none">Batas Penawaran</p>
-                        <p class="text-lg font-bold text-amber-900 mt-1 leading-none">{{ \Carbon\Carbon::parse($project->end_date)->diffForHumans() }}</p>
-                    </div>
+                <!-- Desktop Informasi Jadwal -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Informasi Jadwal
+                    </h3>
+                    <ul class="space-y-3.5 text-sm">
+                        <li class="flex justify-between items-start gap-4">
+                            <span class="text-slate-500">Diterbitkan</span>
+                            <span class="font-semibold text-slate-700 text-right">{{ $project->created_at->format('d M Y') }}</span>
+                        </li>
+                        @if($project->offer_end_date)
+                        <li class="flex justify-between items-start gap-4 pt-3.5 border-t border-slate-200/80">
+                            <span class="text-slate-500">Batas Penawaran</span>
+                            <div class="text-right">
+                                <span class="font-bold text-amber-600 block">{{ \Carbon\Carbon::parse($project->offer_end_date)->format('d M Y') }}</span>
+                                <span class="text-[10px] font-bold text-amber-700/70 uppercase tracking-wider">{{ \Carbon\Carbon::parse($project->offer_end_date)->locale('id')->diffForHumans() }}</span>
+                            </div>
+                        </li>
+                        @endif
+                        @if($project->project_start_date)
+                        <li class="flex justify-between items-start gap-4 pt-3.5 border-t border-slate-200/80">
+                            <span class="text-slate-500">Mulai Pelaksanaan</span>
+                            <span class="font-semibold text-slate-700 text-right">{{ $project->project_start_date->format('d M Y') }}</span>
+                        </li>
+                        @endif
+                        @if($project->project_end_date)
+                        <li class="flex justify-between items-start gap-4 pt-3.5 border-t border-slate-200/80">
+                            <span class="text-slate-500">Selesai Pelaksanaan</span>
+                            <span class="font-semibold text-slate-700 text-right">{{ $project->project_end_date->format('d M Y') }}</span>
+                        </li>
+                        @endif
+                    </ul>
                 </div>
-                @endif
                 
                 <!-- Calls to Action -->
                 @if(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id)

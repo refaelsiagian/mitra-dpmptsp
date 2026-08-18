@@ -29,12 +29,16 @@ class ProjectController extends Controller
             'estimated_value' => 'nullable|numeric',
             'is_budget_negotiable' => 'nullable|boolean',
             'location' => 'nullable|string|max:255',
-            'offer_end_date' => 'nullable|date',
-            'project_start_date' => 'nullable|date',
-            'project_end_date' => 'nullable|date',
+            'offer_end_date' => 'nullable|date|after_or_equal:today',
+            'project_start_date' => 'nullable|date|after:offer_end_date',
+            'project_end_date' => 'nullable|date|after:project_start_date',
             'metrics' => 'nullable|array',
             'requirements' => 'required|array',
             'offerings' => 'required|array',
+        ], [
+            'offer_end_date.after_or_equal' => 'Batas penawaran tidak boleh lebih awal dari tanggal proyek diterbitkan (hari ini).',
+            'project_start_date.after' => 'Mulai pelaksanaan tidak boleh lebih awal dari batas penawaran.',
+            'project_end_date.after' => 'Selesai pelaksanaan tidak boleh lebih awal dari mulai pelaksanaan.',
         ]);
         
         $requirements = $request->input('requirements', []);
@@ -114,12 +118,29 @@ class ProjectController extends Controller
             'estimated_value' => 'nullable|numeric',
             'is_budget_negotiable' => 'nullable|boolean',
             'location' => 'nullable|string|max:255',
-            'offer_end_date' => 'nullable|date',
-            'project_start_date' => 'nullable|date',
-            'project_end_date' => 'nullable|date',
+            'offer_end_date' => [
+                'nullable',
+                'date',
+                function ($attribute, $value, $fail) use ($project) {
+                    $newDate = \Carbon\Carbon::parse($value)->startOfDay();
+                    $oldDate = $project->offer_end_date ? \Carbon\Carbon::parse($project->offer_end_date)->startOfDay() : null;
+                    $today = \Carbon\Carbon::now()->startOfDay();
+                    
+                    if (!$oldDate || $newDate->notEqualTo($oldDate)) {
+                        if ($newDate->isBefore($today)) {
+                            $fail('Batas penawaran yang baru tidak boleh diatur ke masa lalu.');
+                        }
+                    }
+                }
+            ],
+            'project_start_date' => 'nullable|date|after:offer_end_date',
+            'project_end_date' => 'nullable|date|after:project_start_date',
             'metrics' => 'nullable|array',
             'requirements' => 'required|array',
             'offerings' => 'required|array',
+        ], [
+            'project_start_date.after' => 'Mulai pelaksanaan tidak boleh lebih awal dari batas penawaran.',
+            'project_end_date.after' => 'Selesai pelaksanaan tidak boleh lebih awal dari mulai pelaksanaan.',
         ]);
         
         $requirements = $request->input('requirements', []);

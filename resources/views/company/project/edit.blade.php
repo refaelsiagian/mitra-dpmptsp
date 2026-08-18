@@ -105,6 +105,9 @@
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Batas Waktu Penawaran / Pendaftaran (Opsional)</label>
                         <input type="date" name="offer_end_date" value="{{ old('offer_end_date', $project->offer_end_date ? \Carbon\Carbon::parse($project->offer_end_date)->format('Y-m-d') : '') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        @error('offer_end_date')
+                            <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -112,10 +115,16 @@
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target Mulai Pelaksanaan Proyek (Opsional)</label>
                         <input type="date" name="project_start_date" value="{{ old('project_start_date', $project->project_start_date ? \Carbon\Carbon::parse($project->project_start_date)->format('Y-m-d') : '') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        @error('project_start_date')
+                            <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target Selesai Pelaksanaan Proyek (Opsional)</label>
                         <input type="date" name="project_end_date" value="{{ old('project_end_date', $project->project_end_date ? \Carbon\Carbon::parse($project->project_end_date)->format('Y-m-d') : '') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        @error('project_end_date')
+                            <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
