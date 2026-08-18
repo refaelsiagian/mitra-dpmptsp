@@ -23,6 +23,6 @@ class VendorController extends Controller
             $myProjects = auth()->user()->company->projects()->where('status', 'published')->get();
         }
 
-        return view('vendor-profile', compact('company', 'myProjects'));
+        return view('company.show', compact('company', 'myProjects'));
     }
 }

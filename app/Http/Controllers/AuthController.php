@@ -13,7 +13,7 @@ class AuthController extends Controller
     // Show login page
     public function showLogin()
     {
-        return view('login');
+        return view('auth.login');
     }
 
     // Process login
@@ -45,7 +45,7 @@ class AuthController extends Controller
     // Show register page
     public function showRegister()
     {
-        return view('welcome');
+        return view('auth.register');
     }
 
     // Process registration

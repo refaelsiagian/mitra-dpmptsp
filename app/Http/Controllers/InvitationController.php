@@ -37,7 +37,7 @@ class InvitationController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get();
 
-        return view('notifications', compact('invitations'));
+        return view('company.notifications', compact('invitations'));
     }
 
     public function store(Request $request)

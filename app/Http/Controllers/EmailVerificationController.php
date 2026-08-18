@@ -12,7 +12,7 @@ class EmailVerificationController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return redirect('/verify');
         }
-        return view('verify-email');
+        return view('auth.verify-email');
     }
 
     public function verify(EmailVerificationRequest $request)

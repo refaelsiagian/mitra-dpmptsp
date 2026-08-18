@@ -90,11 +90,11 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
 
 
 
-    Route::get('/rfp-saya', function () {
+    Route::get('/dashboard', function () {
         $company = auth()->user()->company;
         $projects = $company ? $company->projects()->latest()->get() : collect();
-        return view('rfp-saya', compact('projects'));
-    })->name('rfp-saya');
+        return view('company.dashboard', compact('projects'));
+    })->name('dashboard');
 });
 
 

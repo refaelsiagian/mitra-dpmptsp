@@ -20,7 +20,7 @@ class VerificationController extends Controller
             if ($company->status === 'pending') {
                 return redirect('/review');
             } elseif ($company->status === 'verified') {
-                return redirect('/rfp-saya');
+                return redirect('/dashboard');
             }
         }
         
@@ -47,9 +47,9 @@ class VerificationController extends Controller
             return redirect('/verify');
         }
         if ($company->status === 'verified') {
-            return redirect('/rfp-saya');
+            return redirect('/dashboard');
         }
-        return view('review');
+        return view('auth.pending-approval');
     }
 
     public function store(VerifyStoreRequest $request)

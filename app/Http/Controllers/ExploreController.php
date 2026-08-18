@@ -71,6 +71,6 @@ class ExploreController extends Controller
 
         $projects = $projectsQuery->paginate(10, ['*'], 'project_page');
 
-        return view('explore', compact('vendors', 'projects', 'search', 'kbli', 'location', 'scheme'));
+        return view('company.explore', compact('vendors', 'projects', 'search', 'kbli', 'location', 'scheme'));
     }
 }

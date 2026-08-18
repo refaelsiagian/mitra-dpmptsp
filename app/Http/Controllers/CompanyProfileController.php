@@ -22,7 +22,7 @@ class CompanyProfileController extends Controller
             return redirect()->route('verify');
         }
 
-        return view('company.profile', compact('company'));
+        return view('company.legalitas', compact('company'));
     }
     public function edit()
     {

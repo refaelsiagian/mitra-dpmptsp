@@ -43,7 +43,7 @@
         <!-- Navigation -->
         <nav class="flex-1 px-3 py-6 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
             @if(auth()->check() && auth()->user()->role === 'user')
-            <a title="Beranda" href="/rfp-saya" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative {{ request()->is('rfp-saya') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold' }}">
+            <a title="Beranda" href="/dashboard" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative {{ request()->is('dashboard') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold' }}">
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap absolute left-14">Beranda</span>
             </a>
@@ -211,9 +211,9 @@
     </style>
     <!-- Mobile Bottom Navigation (Visible only on mobile) -->
     <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-50 md:hidden flex justify-around items-center h-16 px-2 pb-safe shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]" x-data="{ openProfileMenu: false }">
-        <!-- Beranda / RFP Saya -->
-        <a href="/rfp-saya" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('rfp-saya') ? 'text-blue-600' : '' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('rfp-saya') ? 'fill-blue-50/50' : '' }}"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <!-- Beranda / Dashboard -->
+        <a href="/dashboard" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('dashboard') ? 'text-blue-600' : '' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('dashboard') ? 'fill-blue-50/50' : '' }}"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span class="text-[10px] font-semibold">Beranda</span>
         </a>
 
