@@ -165,7 +165,8 @@
                     'value' => $project->estimated_value ? 'Rp ' . number_format($project->estimated_value, 0, ',', '.') : 'Sesuai Kesepakatan',
                     'deadline' => $project->offer_end_date ? 'Batas Waktu: ' . $project->offer_end_date->format('d M Y') : 'Terbuka',
                     'url' => route('projects.show', $project->id),
-                    'description' => \Illuminate\Support\Str::limit($project->description, 120)
+                    'description' => \Illuminate\Support\Str::limit($project->description, 120),
+                    'ctaText' => in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['mikro', 'kecil', 'menengah']) ? 'Lihat Peluang Proyek' : 'Lihat Tawaran Kemitraan'
                 ])
             </div>
             @empty
