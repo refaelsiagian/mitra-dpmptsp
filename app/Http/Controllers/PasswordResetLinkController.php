@@ -22,6 +22,9 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
         ]);
 
         // We will send the password reset link to this user. Once we have attempted
@@ -32,11 +35,11 @@ class PasswordResetLinkController extends Controller
         );
 
         if ($status == Password::RESET_LINK_SENT) {
-            return back()->with('status', __($status));
+            return back()->with('status', 'Tautan reset kata sandi telah dikirim ke email Anda.');
         }
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => __($status)]);
+            ->withErrors(['email' => 'Kami tidak dapat menemukan pengguna dengan alamat email tersebut.']);
     }
 }

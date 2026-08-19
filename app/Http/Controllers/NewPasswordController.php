@@ -27,6 +27,12 @@ class NewPasswordController extends Controller
             'token' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8', 'confirmed'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
@@ -49,11 +55,11 @@ class NewPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         if ($status == Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('success', __($status));
+            return redirect()->route('login')->with('success', 'Kata sandi berhasil diatur ulang.');
         }
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => __($status)]);
+            ->withErrors(['email' => 'Token reset tidak valid atau kedaluwarsa.']);
     }
 }

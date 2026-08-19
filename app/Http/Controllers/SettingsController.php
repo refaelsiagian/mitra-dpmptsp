@@ -24,6 +24,12 @@ class SettingsController extends Controller
                 Rule::unique('users')->ignore($request->user()->id),
             ],
             'current_password_for_email' => ['required', 'current_password'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah digunakan.',
+            'current_password_for_email.required' => 'Kata sandi saat ini wajib diisi.',
+            'current_password_for_email.current_password' => 'Kata sandi saat ini salah.',
         ]);
 
         $user = $request->user();
@@ -46,6 +52,12 @@ class SettingsController extends Controller
         $request->validate([
             'current_password' => ['required', 'current_password'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'current_password.required' => 'Kata sandi saat ini wajib diisi.',
+            'current_password.current_password' => 'Kata sandi saat ini salah.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
         $user = $request->user();
