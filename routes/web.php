@@ -96,6 +96,11 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
         $draftProjects = $company ? $company->projects()->where('status', 'draft')->latest()->get() : collect();
         return view('company.dashboard', compact('publishedProjects', 'draftProjects'));
     })->name('dashboard');
+
+    // Settings Routes
+    Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings/email', [\App\Http\Controllers\SettingsController::class, 'updateEmail'])->name('settings.updateEmail');
+    Route::put('/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('settings.updatePassword');
 });
 
 

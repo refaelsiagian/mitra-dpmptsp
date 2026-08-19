@@ -18,7 +18,7 @@ class EmailVerificationController extends Controller
     public function verify(EmailVerificationRequest $request)
     {
         $request->fulfill();
-        return redirect('/verify');
+        return redirect('/verify')->with('success', 'Email berhasil diverifikasi!');
     }
 
     public function send(Request $request)
