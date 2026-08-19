@@ -111,7 +111,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-show="!isUmkm" x-cloak>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target Mulai Pelaksanaan Proyek (Opsional)</label>
                         <input type="date" name="project_start_date" value="{{ old('project_start_date', $project->project_start_date ? \Carbon\Carbon::parse($project->project_start_date)->format('Y-m-d') : '') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">

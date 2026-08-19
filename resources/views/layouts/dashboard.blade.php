@@ -116,7 +116,11 @@
                         }
                     @endphp
                     <div class="w-9 h-9 rounded-lg bg-blue-100 flex shrink-0 items-center justify-center font-bold text-blue-700 text-sm overflow-hidden border border-blue-200 z-10">
-                        {{ $initials }}
+                        @if($company && $company->logo)
+                            <img src="{{ asset('storage/' . $company->logo) }}" alt="Logo" class="w-full h-full object-cover">
+                        @else
+                            {{ $initials }}
+                        @endif
                     </div>
                     
                     <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 absolute left-14 flex items-center justify-between pr-2 w-[164px]">

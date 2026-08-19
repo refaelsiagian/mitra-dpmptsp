@@ -177,7 +177,8 @@ class ProjectController extends Controller
         $metrics = $request->input('metrics', []);
 
         // Prevent reverting a published project back to a draft
-        if ($project->status === 'published' && ($validated['status'] ?? '') === 'draft') {
+        $oldStatus = $project->status;
+        if ($oldStatus === 'published' && ($validated['status'] ?? '') === 'draft') {
             $validated['status'] = 'published';
         } else {
             $validated['status'] = $validated['status'] ?? 'published';
@@ -190,7 +191,12 @@ class ProjectController extends Controller
             'offerings' => array_values(array_filter($offerings)),
         ]));
 
-        $message = $validated['status'] === 'draft' ? 'Draf berhasil diperbarui!' : 'Proyek berhasil diperbarui!';
+        if ($oldStatus === 'draft' && $validated['status'] === 'published') {
+            $message = 'Proyek berhasil diterbitkan!';
+        } else {
+            $message = $validated['status'] === 'draft' ? 'Draf berhasil diperbarui!' : 'Proyek berhasil diperbarui!';
+        }
+        
         return redirect()->route('projects.show', $project->id)->with('success', $message);
     }
 

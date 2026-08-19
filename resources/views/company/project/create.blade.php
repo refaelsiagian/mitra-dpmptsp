@@ -87,40 +87,40 @@
                         <label class="block text-sm font-bold text-slate-700 mb-2">Nilai Anggaran / Kontrak (Opsional)</label>
                         <div class="relative mb-2">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 font-bold">Rp</span>
-                            <input type="number" name="estimated_value" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="0">
+                            <input type="number" name="estimated_value" value="{{ old('estimated_value') }}" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="0">
                         </div>
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="is_budget_negotiable" value="1" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <input type="checkbox" name="is_budget_negotiable" value="1" {{ old('is_budget_negotiable') ? 'checked' : '' }} class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                             <span class="text-sm font-medium text-slate-600">Nilai bersifat negosiasi / bisa didiskusikan</span>
                         </label>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Lokasi (Opsional)</label>
-                        <input type="text" name="location" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Surabaya">
+                        <input type="text" name="location" value="{{ old('location') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors" placeholder="Misal: Surabaya">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Batas Waktu Penawaran / Pendaftaran (Opsional)</label>
-                        <input type="date" name="offer_end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        <input type="date" name="offer_end_date" value="{{ old('offer_end_date') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                         @error('offer_end_date')
                             <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-show="!isUmkm" x-cloak>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target Mulai Pelaksanaan Proyek (Opsional)</label>
-                        <input type="date" name="project_start_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        <input type="date" name="project_start_date" value="{{ old('project_start_date') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                         @error('project_start_date')
                             <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Target Selesai Pelaksanaan Proyek (Opsional)</label>
-                        <input type="date" name="project_end_date" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                        <input type="date" name="project_end_date" value="{{ old('project_end_date') }}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
                         @error('project_end_date')
                             <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p>
                         @enderror
