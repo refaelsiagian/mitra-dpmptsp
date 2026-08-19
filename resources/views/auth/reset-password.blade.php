@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Mitra DPMPTSP - Login</title>
+    <title>Atur Ulang Kata Sandi - Mitra DPMPTSP</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style data-purpose="custom-utilities">
         /* Geometric background pattern for the right side */
         .bg-geometric {
         background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="50" height="50" fill="%23c4b5fd"/%3E%3Cpath d="M50 0 L100 50 L50 100 L0 50 Z" fill="%23a78bfa"/%3E%3Ccircle cx="75" cy="25" r="25" fill="%238b5cf6"/%3E%3Cpath d="M0 50 A50 50 0 0 1 50 100 L0 100 Z" fill="%237c3aed"/%3E%3Crect x="50" y="50" width="50" height="50" fill="%236d28d9"/%3E%3Cpath d="M100 50 A50 50 0 0 0 50 100 L100 100 Z" fill="%23c4b5fd"/%3E%3C/svg%3E');
         
-        /* PERUBAHAN: Menggunakan ukuran tetap (pixel) agar pola mengulang secara alami tanpa celah dan tidak kaku */
+        /* Menggunakan ukuran tetap (pixel) agar pola mengulang secara alami */
         background-size: 180px 180px;
         background-position: top left;
         background-repeat: repeat;
@@ -18,13 +18,11 @@
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- AlpineJS for Toast -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="font-sans text-text bg-surface antialiased flex h-screen overflow-hidden">
+<body class="font-sans text-gray-900 bg-white antialiased flex h-screen overflow-hidden">
 
 <!-- BEGIN: Left Section (Form Container) -->
-<main class="w-full lg:w-1/2 flex flex-col p-8 sm:p-12 lg:p-16 xl:p-24 bg-white h-full overflow-y-auto relative" data-purpose="login-form-section">
+<main class="w-full lg:w-1/2 flex flex-col p-8 sm:p-12 lg:p-16 xl:p-24 bg-white h-full overflow-y-auto relative" data-purpose="reset-password-form-section">
   
     <!-- Logo Section -->
     <div class="mb-8 flex-shrink-0 w-full max-w-md mx-auto">
@@ -39,12 +37,16 @@
 
     <!-- Middle Area: Form Content -->
     <div class="w-full max-w-md mx-auto my-auto">
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold text-gray-900 mb-2">Login Akun</h2>
+        <div class="mb-6">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Atur Ulang Kata Sandi</h2>
+            <p class="text-gray-500 text-sm">Silakan masukkan email Anda dan kata sandi baru untuk akun Anda.</p>
         </div>
-        <form action="/login" class="space-y-6" method="POST">
+
+        <form action="{{ route('password.update') }}" class="space-y-6" method="POST">
             @csrf
-        <!-- Account Credentials Section -->
+            
+            <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
             <fieldset class="space-y-4">
                 <!-- Validation Errors -->
                 @if ($errors->any())
@@ -60,38 +62,37 @@
                 <!-- Email -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Email Address <span class="text-red-500">*</span></label>
-                    <input class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="email" name="email" placeholder="Enter work email" required="" type="email"/>
+                    <input class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-gray-50" id="email" name="email" value="{{ old('email', $request->email) }}" required type="email" readonly/>
                 </div>
                 
                 <!-- Password -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Password <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Kata Sandi Baru <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Enter your password" required="" type="password"/>
-                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" type="button">
+                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Min. 8 karakter" required autofocus type="password"/>
+                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" data-target="password" type="button">
                             <i class="ph ph-eye-slash text-xl"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Forgot Password -->
-                <div class="flex justify-end mt-2">
-                    <div class="text-sm">
-                        <a href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500">
-                            Forgot your password?
-                        </a>
+                <!-- Confirm Password -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="password_confirmation">Konfirmasi Kata Sandi Baru <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password_confirmation" name="password_confirmation" placeholder="Ulangi kata sandi baru" required type="password"/>
+                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" data-target="password_confirmation" type="button">
+                            <i class="ph ph-eye-slash text-xl"></i>
+                        </button>
                     </div>
                 </div>
             </fieldset>
+
             <!-- Submit Button -->
-            <div>
+            <div class="pt-2">
                 <button class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors" type="submit">
-                Log in
+                    Simpan Kata Sandi
                 </button>
-            </div>
-            <div class="text-center text-sm mt-4">
-                <span class="text-gray-500">Don't have an account?</span>
-                <a class="font-medium text-blue-600 hover:underline" href="/">Register here</a>
             </div>
         </form>
     </div>
@@ -108,28 +109,29 @@
 <!-- Simple script for password toggle functionality -->
 <script data-purpose="form-interactions">
     document.addEventListener('DOMContentLoaded', function() {
-        const togglePasswordBtn = document.querySelector('[data-purpose="toggle-password"]');
-        const passwordInput = document.getElementById('password');
+        const toggleBtns = document.querySelectorAll('[data-purpose="toggle-password"]');
         
-        if(togglePasswordBtn && passwordInput) {
-            togglePasswordBtn.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            // Toggle icon
-            const icon = this.querySelector('i');
-            if (type === 'text') {
-                icon.classList.remove('ph-eye-slash');
-                icon.classList.add('ph-eye');
-            } else {
-                icon.classList.remove('ph-eye');
-                icon.classList.add('ph-eye-slash');
-            }
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetId);
+                
+                if (passwordInput) {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    const icon = this.querySelector('i');
+                    if (type === 'text') {
+                        icon.classList.remove('ph-eye-slash');
+                        icon.classList.add('ph-eye');
+                    } else {
+                        icon.classList.remove('ph-eye');
+                        icon.classList.add('ph-eye-slash');
+                    }
+                }
             });
-        }
+        });
     });
 </script>
-
-<x-toast />
 </body>
 </html>
