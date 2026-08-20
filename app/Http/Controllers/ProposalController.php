@@ -66,11 +66,19 @@ class ProposalController extends Controller
         $user = auth()->user();
         
         // Ensure user is either the one who sent the proposal or the owner of the project
-        if ($user->company->id !== $proposal->company_id && $user->company->id !== $proposal->project->company_id) {
+        $isSender = $user->company->id === $proposal->company_id;
+        $isProjectOwner = $user->company->id === $proposal->project->company_id;
+        
+        if (!$isSender && !$isProjectOwner) {
             abort(403);
         }
 
-        return view('proposals.show', compact('proposal'));
+        // If the project owner opens a pending proposal, automatically mark it as reviewed
+        if ($isProjectOwner && $proposal->status === 'pending') {
+            $proposal->update(['status' => 'reviewed']);
+        }
+
+        return view('proposals.show', compact('proposal', 'isSender', 'isProjectOwner'));
     }
 
     public function updateStatus(Request $request, Proposal $proposal)
