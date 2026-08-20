@@ -70,10 +70,10 @@
     </div>
 
     <!-- Main Content Area with Tabs -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm relative">
         
         <!-- Tab Navigation -->
-        <div class="border-b border-slate-200 px-4 md:px-6 flex items-center justify-between gap-4 bg-slate-50/50">
+        <div class="sticky top-0 z-30 border-b border-slate-200 px-4 md:px-6 flex items-center justify-between gap-4 bg-white/95 backdrop-blur-sm rounded-t-2xl">
             <div class="flex items-center gap-6 md:gap-8 overflow-x-auto hide-scrollbar snap-x flex-1">
                 <button id="tab-btn-diterbitkan" onclick="switchRfpTab('diterbitkan')" class="whitespace-nowrap py-4 text-sm font-bold text-blue-700 border-b-2 border-blue-600 flex items-center gap-2 tab-btn snap-start">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -117,7 +117,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div class="relative w-full max-w-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    <input type="text" placeholder="{{ $isUMKM ? 'Cari judul penawaran/layanan...' : 'Cari judul pengadaan/proyek...' }}" class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    <input id="search-aktif" type="text" placeholder="{{ $isUMKM ? 'Cari judul penawaran/layanan...' : 'Cari judul pengadaan/proyek...' }}" class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
                 <div class="flex items-center gap-2">
                     <select class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none">
@@ -130,7 +130,9 @@
             </div>
 
             @forelse($publishedProjects as $project)
-            <x-dashboard.project-card :project="$project" />
+            <div class="project-aktif-item">
+                <x-dashboard.project-card :project="$project" />
+            </div>
             @empty
             <div class="text-center py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
                 <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -211,14 +213,16 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div class="relative w-full max-w-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    <input type="text" placeholder="Cari proposal terkirim..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    <input id="search-terkirim" type="text" placeholder="Cari proposal terkirim..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
                 <div class="flex items-center gap-2">
-                    <select class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none">
-                        <option>Semua Status</option>
-                        <option>Menunggu Review</option>
-                        <option>Lolos Seleksi</option>
-                        <option>Ditolak</option>
+                    <select id="filter-status-terkirim" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none">
+                        <option value="">Semua Status</option>
+                        <option value="Menunggu Review">Menunggu Review</option>
+                        <option value="Sedang Direview">Sedang Direview</option>
+                        <option value="Tahap Negosiasi">Tahap Negosiasi</option>
+                        <option value="Diterima">Diterima</option>
+                        <option value="Ditolak">Ditolak</option>
                     </select>
                 </div>
             </div>
@@ -246,7 +250,7 @@
                 $isKetertarikan = $isUMKM ? false : true;
             @endphp
             <!-- Sent Proposal Item -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white">
+            <div class="proposal-terkirim-item flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white" data-status="{{ $statusLabel }}">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusColor }} tracking-wide uppercase">{{ $statusLabel }}</span>
@@ -387,12 +391,55 @@
                     }
                 });
             }
+
+            function filterAktifList(query) {
+                const searchLower = query.toLowerCase();
+                const items = document.querySelectorAll('.project-aktif-item');
+                
+                items.forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    if (text.includes(searchLower)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            function filterTerkirimList() {
+                const searchInput = document.getElementById('search-terkirim');
+                const statusInput = document.getElementById('filter-status-terkirim');
+                const searchLower = searchInput ? searchInput.value.toLowerCase() : '';
+                const statusFilter = statusInput ? statusInput.value.toLowerCase() : '';
+                
+                const items = document.querySelectorAll('.proposal-terkirim-item');
+                
+                items.forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    const itemStatus = (item.getAttribute('data-status') || '').toLowerCase();
+                    
+                    const matchesSearch = text.includes(searchLower);
+                    const matchesStatus = statusFilter === '' || itemStatus === statusFilter;
+                    
+                    if (matchesSearch && matchesStatus) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
             
-            // Add event listener to search input
+            // Add event listeners
             document.addEventListener('DOMContentLoaded', function() {
-                const searchInput = document.getElementById('search-masuk');
-                if(searchInput) {
-                    searchInput.addEventListener('input', (e) => filterMasukList(e.target.value));
-                }
+                const searchMasuk = document.getElementById('search-masuk');
+                if(searchMasuk) searchMasuk.addEventListener('input', (e) => filterMasukList(e.target.value));
+
+                const searchAktif = document.getElementById('search-aktif');
+                if(searchAktif) searchAktif.addEventListener('input', (e) => filterAktifList(e.target.value));
+
+                const searchTerkirim = document.getElementById('search-terkirim');
+                const statusTerkirim = document.getElementById('filter-status-terkirim');
+                if(searchTerkirim) searchTerkirim.addEventListener('input', filterTerkirimList);
+                if(statusTerkirim) statusTerkirim.addEventListener('change', filterTerkirimList);
             });
         </script>
