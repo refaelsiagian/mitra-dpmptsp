@@ -29,7 +29,7 @@
     <div class="flex items-center gap-6 md:border-l border-slate-200 md:pl-6">
         <div class="text-center">
             <p class="text-xs text-slate-400 font-medium mb-0.5">Proposal Masuk</p>
-            <p class="text-xl font-black text-slate-800">0</p>
+            <p class="text-xl font-black text-slate-800">{{ $project->proposals_count ?? 0 }}</p>
         </div>
         <div class="text-center">
             <p class="text-xs text-slate-400 font-medium mb-0.5">Sisa Waktu</p>
@@ -42,9 +42,15 @@
             </p>
         </div>
         <div class="flex flex-col gap-2">
-            <a href="{{ route('projects.show', $project->id) }}" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
-                Lihat Detail
-            </a>
+            @if(($project->proposals_count ?? 0) > 0)
+                <button type="button" onclick="filterProposalsByProject({{ $project->id }}, '{{ addslashes($project->title) }}')" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                    Lihat {{ $project->proposals_count }} Proposal
+                </button>
+            @else
+                <a href="{{ route('projects.show', $project->id) }}" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                    Lihat Detail
+                </a>
+            @endif
             <a href="{{ route('projects.edit', $project->id) }}" class="w-full px-4 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
                 Edit Proyek
             </a>

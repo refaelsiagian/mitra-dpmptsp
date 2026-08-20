@@ -54,7 +54,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-slate-500">{{ $isUMKM ? 'Peminat / Kontak Masuk' : 'Total Proposal Masuk' }}</p>
-                <p class="text-2xl font-black text-slate-900">14</p>
+                <p class="text-2xl font-black text-slate-900">{{ $receivedProposals->count() }}</p>
             </div>
         </div>
         <!-- Stat 3 -->
@@ -63,8 +63,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
             </div>
             <div>
-                <p class="text-sm font-medium text-slate-500">Proposal Terkirim (Menunggu)</p>
-                <p class="text-2xl font-black text-slate-900">3</p>
+                <p class="text-sm font-medium text-slate-500">{{ $isUMKM ? 'Proposal Terkirim' : 'Ketertarikan Terkirim' }}</p>
+                <p class="text-2xl font-black text-slate-900">{{ $sentProposals->count() }}</p>
             </div>
         </div>
     </div>
@@ -79,9 +79,16 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                     {{ $isUMKM ? 'Katalog Penawaran Aktif' : 'Proyek Diterbitkan' }}
                 </button>
+                <button id="tab-btn-masuk" onclick="switchRfpTab('masuk')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    {{ $isUMKM ? 'Ketertarikan Masuk' : 'Proposal Masuk' }}
+                    @if($receivedProposals->count() > 0)
+                    <span class="ml-1 bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">{{ $receivedProposals->count() }}</span>
+                    @endif
+                </button>
                 <button id="tab-btn-terkirim" onclick="switchRfpTab('terkirim')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                    Proposal Terkirim
+                    {{ $isUMKM ? 'Proposal Terkirim' : 'Ketertarikan Terkirim' }}
                 </button>
                 <button id="tab-btn-draf" onclick="switchRfpTab('draf')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
@@ -135,7 +142,70 @@
             @endforelse
         </div>
 
-        <!-- Project List Content: Proposal Terkirim -->
+        <!-- Project List Content: Proposal Masuk -->
+        <div id="content-masuk" class="tab-content p-6 space-y-4 hidden">
+            <!-- Filter & Search Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div class="relative w-full max-w-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input id="search-masuk" type="text" placeholder="Cari {{ $isUMKM ? 'ketertarikan' : 'proposal' }} masuk..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                </div>
+            </div>
+
+            @forelse($receivedProposals as $proposal)
+            @php
+                $statusColor = match($proposal->status) {
+                    'pending' => 'bg-amber-100 text-amber-700',
+                    'reviewed' => 'bg-blue-100 text-blue-700',
+                    'negotiating' => 'bg-purple-100 text-purple-700',
+                    'accepted' => 'bg-emerald-100 text-emerald-700',
+                    'rejected' => 'bg-red-100 text-red-700',
+                    default => 'bg-slate-100 text-slate-700',
+                };
+                
+                $statusLabel = match($proposal->status) {
+                    'pending' => 'Menunggu Review',
+                    'reviewed' => 'Sedang Direview',
+                    'negotiating' => 'Tahap Negosiasi',
+                    'accepted' => 'Diterima',
+                    'rejected' => 'Ditolak',
+                    default => 'Tidak Diketahui',
+                };
+            @endphp
+            <!-- Received Proposal Item -->
+            <div class="proposal-masuk-item flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white" data-project-id="{{ $proposal->project_id }}">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusColor }} tracking-wide uppercase">{{ $statusLabel }}</span>
+                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Diterima: {{ $proposal->created_at->format('d M Y') }}</span>
+                    </div>
+                    <a href="{{ route('proposals.show', $proposal->id) }}" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
+                        Dari: {{ $proposal->company->name }}
+                    </a>
+                    <p class="text-sm text-slate-500 mb-2">Terkait Proyek/Katalog: <a href="{{ route('projects.show', $proposal->project->id) }}" class="font-semibold text-blue-600 hover:underline">{{ $proposal->project->title }}</a></p>
+                </div>
+                
+                <div class="flex items-center gap-6 md:border-l border-slate-200 md:pl-6">
+                    <div class="text-center">
+                        <p class="text-xs text-slate-400 font-medium mb-0.5">{{ $isUMKM ? 'Anggaran Diajukan' : 'Nilai Penawaran' }}</p>
+                        <p class="text-sm font-black text-slate-800">{{ $proposal->estimated_value ? 'Rp ' . number_format($proposal->estimated_value, 0, ',', '.') : 'TBA' }}</p>
+                    </div>
+                    <a href="{{ route('proposals.show', $proposal->id) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
+                        Lihat & Review
+                    </a>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h3 class="text-slate-900 font-bold mb-1">Belum ada {{ $isUMKM ? 'Ketertarikan' : 'Proposal' }} Masuk</h3>
+                <p class="text-slate-500 text-sm">Belum ada yang mengirimkan penawaran atau ketertarikan pada proyek Anda.</p>
+            </div>
+            @endforelse
+        </div>
+<!-- Project List Content: Proposal Terkirim -->
         <div id="content-terkirim" class="tab-content p-6 space-y-4 hidden">
             <!-- Filter & Search Bar -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -153,53 +223,60 @@
                 </div>
             </div>
 
-            <!-- Sent Proposal Item 1 -->
+            @forelse($sentProposals as $proposal)
+            @php
+                $statusColor = match($proposal->status) {
+                    'pending' => 'bg-amber-100 text-amber-700',
+                    'reviewed' => 'bg-blue-100 text-blue-700',
+                    'negotiating' => 'bg-purple-100 text-purple-700',
+                    'accepted' => 'bg-emerald-100 text-emerald-700',
+                    'rejected' => 'bg-red-100 text-red-700',
+                    default => 'bg-slate-100 text-slate-700',
+                };
+                
+                $statusLabel = match($proposal->status) {
+                    'pending' => 'Menunggu Review',
+                    'reviewed' => 'Sedang Direview',
+                    'negotiating' => 'Tahap Negosiasi',
+                    'accepted' => 'Diterima',
+                    'rejected' => 'Ditolak',
+                    default => 'Tidak Diketahui',
+                };
+                
+                $isKetertarikan = $isUMKM ? false : true;
+            @endphp
+            <!-- Sent Proposal Item -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-700 tracking-wide uppercase">Menunggu Review</span>
-                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Terkirim: 27 Jul 2026</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusColor }} tracking-wide uppercase">{{ $statusLabel }}</span>
+                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Terkirim: {{ $proposal->created_at->format('d M Y') }}</span>
                     </div>
-                    <a href="#" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
-                        Pengadaan Katering Karyawan Pabrik Cikarang
+                    <a href="{{ route('projects.show', $proposal->project->id) }}" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
+                        {{ $proposal->project->title }}
                     </a>
-                    <p class="text-sm text-slate-500 mb-2">Penyelenggara: <span class="font-semibold text-slate-700">PT Astra Manufaktur</span></p>
+                    <p class="text-sm text-slate-500 mb-2">Penyelenggara: <span class="font-semibold text-slate-700">{{ $proposal->project->company->name ?? 'Tidak Diketahui' }}</span></p>
                 </div>
                 
                 <div class="flex items-center gap-6 md:border-l border-slate-200 md:pl-6">
                     <div class="text-center">
-                        <p class="text-xs text-slate-400 font-medium mb-0.5">Penawaran Anda</p>
-                        <p class="text-sm font-black text-slate-800">Rp 125.000.000</p>
+                        <p class="text-xs text-slate-400 font-medium mb-0.5">{{ $isKetertarikan ? 'Nilai / Anggaran' : 'Penawaran Anda' }}</p>
+                        <p class="text-sm font-black text-slate-800">{{ $proposal->estimated_value ? 'Rp ' . number_format($proposal->estimated_value, 0, ',', '.') : 'TBA' }}</p>
                     </div>
-                    <a href="#" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
-                        Lihat Proposal
+                    <a href="{{ route('proposals.show', $proposal->id) }}" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
+                        Lihat Detail
                     </a>
                 </div>
             </div>
-            
-            <!-- Sent Proposal Item 2 -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white">
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700 tracking-wide uppercase">Lolos Seleksi</span>
-                        <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Terkirim: 10 Jul 2026</span>
-                    </div>
-                    <a href="#" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
-                        Kemitraan Jasa Pembersihan Area Pabrik (Cleaning Service)
-                    </a>
-                    <p class="text-sm text-slate-500 mb-2">Penyelenggara: <span class="font-semibold text-slate-700">PT Waskita Karya (Persero)</span></p>
+            @empty
+            <div class="text-center py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                 </div>
-                
-                <div class="flex items-center gap-6 md:border-l border-slate-200 md:pl-6">
-                    <div class="text-center">
-                        <p class="text-xs text-slate-400 font-medium mb-0.5">Penawaran Anda</p>
-                        <p class="text-sm font-black text-slate-800">Sistem Bagi Hasil / KSO</p>
-                    </div>
-                    <a href="#" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
-                        Tindak Lanjut
-                    </a>
-                </div>
+                <h3 class="text-slate-900 font-bold mb-1">Belum ada {{ $isUMKM ? 'Proposal' : 'Ketertarikan' }} Terkirim</h3>
+                <p class="text-slate-500 text-sm">Anda belum mengirimkan ketertarikan atau penawaran ke proyek manapun.</p>
             </div>
+            @endforelse
         </div>
 
         <!-- Project List Content: Draft Tersimpan -->
@@ -278,3 +355,44 @@
     }
 </script>
 @endsection
+
+        <script>
+            function filterProposalsByProject(projectId, projectTitle) {
+                // Switch to the proposal masuk tab
+                switchRfpTab('masuk');
+                
+                // Set the search input value
+                const searchInput = document.getElementById('search-masuk');
+                if (searchInput) {
+                    searchInput.value = projectTitle;
+                    // Trigger input event to do the filtering if we had a JS filter, 
+                    // or we can just implement the filter right here
+                    filterMasukList(projectTitle);
+                }
+                
+                // Scroll to top of list
+                document.getElementById('content-masuk').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function filterMasukList(query) {
+                const searchLower = query.toLowerCase();
+                const items = document.querySelectorAll('.proposal-masuk-item');
+                
+                items.forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    if (text.includes(searchLower)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Add event listener to search input
+            document.addEventListener('DOMContentLoaded', function() {
+                const searchInput = document.getElementById('search-masuk');
+                if(searchInput) {
+                    searchInput.addEventListener('input', (e) => filterMasukList(e.target.value));
+                }
+            });
+        </script>

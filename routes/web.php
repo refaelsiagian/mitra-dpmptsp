@@ -57,6 +57,12 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::put('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('projects.destroy');
 
+    // Proposals
+    Route::get('/projects/{project}/proposals/create', [\App\Http\Controllers\ProposalController::class, 'create'])->name('proposals.create');
+    Route::post('/projects/{project}/proposals', [\App\Http\Controllers\ProposalController::class, 'store'])->name('proposals.store');
+    Route::get('/proposals/{proposal}', [\App\Http\Controllers\ProposalController::class, 'show'])->name('proposals.show');
+    Route::put('/proposals/{proposal}/status', [\App\Http\Controllers\ProposalController::class, 'updateStatus'])->name('proposals.updateStatus');
+
     // Invitations
     Route::get('/notifications', [\App\Http\Controllers\InvitationController::class, 'index'])->name('notifications.index');
     Route::post('/invitations', [\App\Http\Controllers\InvitationController::class, 'store'])->name('invitations.store');
@@ -98,9 +104,13 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
 
     Route::get('/dashboard', function () {
         $company = auth()->user()->company;
-        $publishedProjects = $company ? $company->projects()->where('status', 'published')->latest()->get() : collect();
+        $publishedProjects = $company ? $company->projects()->withCount('proposals')->where('status', 'published')->latest()->get() : collect();
         $draftProjects = $company ? $company->projects()->where('status', 'draft')->latest()->get() : collect();
-        return view('company.dashboard', compact('publishedProjects', 'draftProjects'));
+        $sentProposals = $company ? $company->proposals()->with('project.company')->latest()->get() : collect();
+        $receivedProposals = $company ? \App\Models\Proposal::whereHas('project', function($q) use ($company) {
+            $q->where('company_id', $company->id);
+        })->with(['project', 'company'])->latest()->get() : collect();
+        return view('company.dashboard', compact('publishedProjects', 'draftProjects', 'sentProposals', 'receivedProposals'));
     })->name('dashboard');
 
     // Settings Routes

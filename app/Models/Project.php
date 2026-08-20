@@ -43,4 +43,9 @@ class Project extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class);
+    }
 }
