@@ -94,6 +94,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
                     Draft Tersimpan
                 </button>
+                <button id="tab-btn-selesai" onclick="switchRfpTab('selesai')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Proyek Selesai
+                </button>
             </div>
             
             <!-- Mobile Action Button (Near Tabs) -->
@@ -108,6 +112,7 @@
                 </a>
                 @endif
             </div>
+
         </div>
 
         <!-- Project List Content: Diterbitkan -->
@@ -321,6 +326,177 @@
                 <p class="text-slate-500 text-sm">Anda tidak memiliki draf penawaran atau proyek yang tersimpan.</p>
             </div>
             @endforelse
+        </div>
+
+        <!-- Project List Content: Selesai -->
+        <div id="content-selesai" class="tab-content p-6 space-y-4 hidden">
+            @if($closedProjects->count() > 0)
+                <div class="space-y-4">
+                    @foreach($closedProjects as $project)
+                        @php
+                            $badgeClass = 'bg-slate-50 text-slate-700 border-slate-200';
+                            $badgeText = ucfirst($project->type);
+
+                            switch($project->type) {
+                                case 'subkontrak':
+                                    $badgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                                    $badgeText = 'Subkontrak';
+                                    break;
+                                case 'rantai_pasok':
+                                    $badgeClass = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                                    $badgeText = 'Rantai Pasok';
+                                    break;
+                                case 'outsourcing':
+                                    $badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+                                    $badgeText = 'Penyumberluaran (Outsourcing)';
+                                    break;
+                                case 'konstruksi':
+                                    $badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                                    $badgeText = 'Konstruksi';
+                                    break;
+                                case 'kso':
+                                    $badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                                    $badgeText = 'Kerja Sama Operasional (KSO)';
+                                    break;
+                                case 'perdagangan':
+                                    $badgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
+                                    $badgeText = 'Perdagangan Umum';
+                                    break;
+                                case 'distribusi':
+                                    $badgeClass = 'bg-teal-50 text-teal-700 border-teal-200';
+                                    $badgeText = 'Distribusi & Keagenan';
+                                    break;
+                            }
+                        @endphp
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                            <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider border {!! $badgeClass !!}">
+                                            {{ $badgeText }}
+                                        </div>
+                                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider border bg-slate-200 text-slate-700 border-slate-300">
+                                            Selesai
+                                        </div>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-slate-900 mb-2">
+                                        <a href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
+                                    </h3>
+                                    <p class="text-slate-600 text-sm mb-4 leading-relaxed line-clamp-2">{{ Str::limit($project->description, 150) }}</p>
+                                    
+                                    <div class="flex items-center gap-3">
+                                        <a href="{{ route('projects.show', $project->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors shadow-sm">
+                                            Lihat Detail Proyek
+                                        </a>
+                                        
+                                        <!-- Toggle Visibility Form -->
+                                        @if($project->is_public)
+                                            <div x-data="{ showHideModal: false }">
+                                                <button type="button" @click="showHideModal = true" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors shadow-sm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                                                    Sembunyikan
+                                                </button>
+
+                                                <!-- Hide Modal -->
+                                                <template x-teleport="body">
+                                                    <div x-show="showHideModal" 
+                                                         x-transition:enter="transition ease-out duration-300"
+                                                         x-transition:enter-start="opacity-0"
+                                                         x-transition:enter-end="opacity-100"
+                                                         x-transition:leave="transition ease-in duration-200"
+                                                         x-transition:leave-start="opacity-100"
+                                                         x-transition:leave-end="opacity-0"
+                                                         class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+                                                         style="display: none;">
+                                                         
+                                                         <div x-show="showHideModal"
+                                                              @click.away="showHideModal = false"
+                                                              x-transition:enter="transition ease-out duration-300"
+                                                              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                                              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                                              x-transition:leave="transition ease-in duration-200"
+                                                              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                                              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                                              class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
+                                                            <div class="p-6 overflow-y-auto">
+                                                                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                                                                </div>
+                                                                <h3 class="text-xl font-black text-slate-900 mb-2">Sembunyikan Proyek?</h3>
+                                                                <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                                                                    Proyek <span class="font-bold">"{{ $project->title }}"</span> tidak akan lagi ditampilkan di profil publik Anda. Namun, data dan riwayat kemitraan akan tetap tersimpan di dashboard ini.
+                                                                </p>
+                                                            </div>
+                                                            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+                                                                <button type="button" @click="showHideModal = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
+                                                                    Batal
+                                                                </button>
+                                                                <form action="{{ route('projects.toggle-visibility', $project->id) }}" method="POST" class="m-0">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition-colors shadow-sm">
+                                                                        Ya, Sembunyikan
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        @else
+                                            <form action="{{ route('projects.toggle-visibility', $project->id) }}" method="POST" class="m-0">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-lg transition-colors shadow-sm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                    Tampilkan di Profil
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <!-- Selected Partners -->
+                                <div class="w-full md:w-1/3 bg-white border border-slate-200 rounded-xl p-4 shrink-0">
+                                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                        Mitra Terpilih
+                                    </h4>
+                                    @if($project->proposals && $project->proposals->where('status', 'accepted')->count() > 0)
+                                        <div class="space-y-3">
+                                            @foreach($project->proposals->where('status', 'accepted') as $proposal)
+                                                <a href="{{ route('vendor.show', $proposal->company->id) }}" class="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 transition-colors group/partner">
+                                                    @if($proposal->company->logo)
+                                                        <img src="{{ Storage::url($proposal->company->logo) }}" alt="{{ $proposal->company->name }}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-sm">
+                                                    @else
+                                                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200 shrink-0 shadow-sm">
+                                                            {{ substr($proposal->company->name, 0, 1) }}
+                                                        </div>
+                                                    @endif
+                                                    <div class="overflow-hidden">
+                                                        <p class="text-sm font-bold text-slate-900 truncate group-hover/partner:text-blue-600 transition-colors">{{ $proposal->company->name }}</p>
+                                                        <p class="text-xs text-slate-500 truncate">{{ $proposal->company->kblis->first()->description ?? 'Mitra Usaha' }}</p>
+                                                    </div>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-slate-500 italic mt-2">Selesai tanpa kemitraan terjalin via platform.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="bg-slate-50 border border-slate-200 border-dashed rounded-2xl p-12 text-center">
+                    <div class="w-16 h-16 bg-white border border-slate-200 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-400 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Belum ada Proyek Selesai</h3>
+                    <p class="text-slate-500 max-w-md mx-auto text-sm">Proyek yang telah Anda tutup akan tampil di sini sebagai riwayat.</p>
+                </div>
+            @endif
         </div>
 
     </div>

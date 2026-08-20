@@ -18,11 +18,20 @@ class VendorController extends Controller
 
         $company->load(['portfolios', 'kblis']);
 
-        // Only load published projects unless the viewer is the owner
+        // Load published and closed projects, along with accepted proposals for closed projects
         $company->load(['projects' => function ($query) use ($company) {
             if (!auth()->check() || !auth()->user()->company || auth()->user()->company->id !== $company->id) {
-                $query->where('status', 'published');
+                // Public viewers only see published projects, and closed projects that are public
+                $query->where('status', 'published')
+                      ->orWhere(function ($q) {
+                          $q->where('status', 'closed')->where('is_public', 'true');
+                      });
+            } else {
+                // Owner sees everything, but for the profile view we only care about published and closed
+                $query->whereIn('status', ['published', 'closed']);
             }
+        }, 'projects.proposals' => function ($query) {
+            $query->where('status', 'accepted')->with('company');
         }]);
 
         $myProjects = collect();

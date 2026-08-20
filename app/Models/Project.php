@@ -26,6 +26,7 @@ class Project extends Model
         'requirements',
         'offerings',
         'attachments',
+        'is_public',
     ];
 
     protected $casts = [
@@ -37,6 +38,7 @@ class Project extends Model
         'requirements' => 'array',
         'offerings' => 'array',
         'attachments' => 'array',
+        'is_public' => 'boolean',
     ];
 
     public function company()

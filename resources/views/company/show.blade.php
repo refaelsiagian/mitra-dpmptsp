@@ -75,9 +75,15 @@
                     @endif
                 </div>
                 @else
+                @php
+                    $publishedProjects = $company->projects->where('status', 'published');
+                    $closedProjects = $company->projects->where('status', 'closed');
+                    $draftProjects = $company->projects->where('status', 'draft');
+                @endphp
+
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-base md:text-lg font-bold text-slate-900">
-                        Proyek Aktif <span class="text-slate-400 font-medium text-sm md:text-base ml-1">({{ $company->projects->count() }})</span>
+                        Proyek Aktif <span class="text-slate-400 font-medium text-sm md:text-base ml-1">({{ $publishedProjects->count() }})</span>
                     </h2>
                     @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
                     <a href="{{ route('projects.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold rounded-lg transition-colors shadow-sm shrink-0">
@@ -87,7 +93,7 @@
                     @endif
                 </div>
                 
-                    @foreach($company->projects as $project)
+                    @foreach($publishedProjects->merge($draftProjects) as $project)
                     @php
                         $badgeClass = 'bg-slate-50 text-slate-700 border-slate-200';
                         $badgeText = ucfirst($project->type);
@@ -159,6 +165,69 @@
                         </div>
                     </div>
                     @endforeach
+
+                    @if($closedProjects->count() > 0)
+                    <div class="pt-8 mt-4 border-t border-slate-200">
+                        <h2 class="text-base md:text-lg font-bold text-slate-900 mb-6">
+                            Riwayat Proyek Selesai <span class="text-slate-400 font-medium text-sm md:text-base ml-1">({{ $closedProjects->count() }})</span>
+                        </h2>
+                        <div class="space-y-6">
+                            @foreach($closedProjects as $project)
+                                @php
+                                    $badgeClass = 'bg-slate-50 text-slate-700 border-slate-200';
+                                    $badgeText = ucfirst($project->type);
+                                @endphp
+                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+                                    <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-3">
+                                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider border {!! $badgeClass !!}">
+                                                    {{ $badgeText }}
+                                                </div>
+                                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider border bg-slate-200 text-slate-700 border-slate-300">
+                                                    Selesai
+                                                </div>
+                                            </div>
+                                            <h3 class="text-xl font-bold text-slate-900 mb-2">
+                                                <a href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
+                                            </h3>
+                                            <p class="text-slate-600 text-sm mb-0 leading-relaxed line-clamp-2">{{ Str::limit($project->description, 150) }}</p>
+                                        </div>
+                                        
+                                        <!-- Selected Partners -->
+                                        <div class="w-full md:w-1/3 bg-white border border-slate-200 rounded-xl p-4 shrink-0">
+                                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                                Mitra Terpilih
+                                            </h4>
+                                            @if($project->proposals && $project->proposals->count() > 0)
+                                                <div class="space-y-3">
+                                                    @foreach($project->proposals as $proposal)
+                                                        <a href="{{ route('vendor.show', $proposal->company->id) }}" class="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 transition-colors group/partner">
+                                                            @if($proposal->company->logo)
+                                                                <img src="{{ Storage::url($proposal->company->logo) }}" alt="{{ $proposal->company->name }}" class="w-8 h-8 rounded-full object-cover border border-slate-200">
+                                                            @else
+                                                                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200 shrink-0">
+                                                                    {{ substr($proposal->company->name, 0, 1) }}
+                                                                </div>
+                                                            @endif
+                                                            <div class="overflow-hidden">
+                                                                <p class="text-sm font-bold text-slate-900 truncate group-hover/partner:text-blue-600 transition-colors">{{ $proposal->company->name }}</p>
+                                                                <p class="text-xs text-slate-500 truncate">{{ $proposal->company->kblis->first()->description ?? 'Mitra Usaha' }}</p>
+                                                            </div>
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <p class="text-sm text-slate-500 italic">Diselesaikan tanpa kemitraan via platform.</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
                 @endif
             </div>
             @endif

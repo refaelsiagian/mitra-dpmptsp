@@ -104,14 +104,43 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
 
     Route::get('/dashboard', function () {
         $company = auth()->user()->company;
-        $publishedProjects = $company ? $company->projects()->withCount('proposals')->where('status', 'published')->latest()->get() : collect();
+        $publishedProjects = $company ? $company->projects()
+            ->withCount('proposals')
+            ->withCount(['proposals as accepted_proposals_count' => function($q) {
+                $q->where('status', 'accepted');
+            }])
+            ->where('status', 'published')->latest()->get() : collect();
         $draftProjects = $company ? $company->projects()->where('status', 'draft')->latest()->get() : collect();
+        $closedProjects = $company ? $company->projects()
+            ->withCount('proposals')
+            ->withCount(['proposals as accepted_proposals_count' => function($q) {
+                $q->where('status', 'accepted');
+            }])
+            ->where('status', 'closed')->latest()->get() : collect();
         $sentProposals = $company ? $company->proposals()->with('project.company')->latest()->get() : collect();
         $receivedProposals = $company ? \App\Models\Proposal::whereHas('project', function($q) use ($company) {
             $q->where('company_id', $company->id);
         })->with(['project', 'company'])->latest()->get() : collect();
-        return view('company.dashboard', compact('publishedProjects', 'draftProjects', 'sentProposals', 'receivedProposals'));
+        return view('company.dashboard', compact('publishedProjects', 'draftProjects', 'closedProjects', 'sentProposals', 'receivedProposals'));
     })->name('dashboard');
+
+    Route::put('/projects/{project}/close', function (\App\Models\Project $project) {
+        if (!auth()->check() || !auth()->user()->company || auth()->user()->company->id !== $project->company_id) {
+            abort(403);
+        }
+        $project->update(['status' => 'closed']);
+        return back()->with('success', 'Proyek berhasil ditutup dan dipindahkan ke Riwayat Anda.');
+    })->name('projects.close');
+
+    Route::put('/projects/{project}/toggle-visibility', function (\App\Models\Project $project) {
+        if ($project->company_id !== auth()->user()->company->id) {
+            abort(403);
+        }
+        $project->update(['is_public' => !$project->is_public]);
+        
+        $status = $project->is_public ? 'publik' : 'tersembunyi';
+        return back()->with('success', "Proyek berhasil diubah menjadi {$status}.");
+    })->name('projects.toggle-visibility');
 
     // Settings Routes
     Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');

@@ -131,7 +131,17 @@
                         {{ $badgeText }}
                     </span>
                 
-                <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2 leading-tight">{{ $project->title }}</h1>
+                <div class="flex items-center gap-3 mb-2">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 leading-tight">{{ $project->title }}</h1>
+                    @php
+                        $acceptedCount = $project->proposals()->where('status', 'accepted')->count();
+                    @endphp
+                    @if($acceptedCount > 0 && $project->status === 'published')
+                        <span class="px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+                            {{ $acceptedCount }} Kemitraan Terjalin
+                        </span>
+                    @endif
+                </div>
                 
                 <a href="{{ route('vendor.show', $project->company_id) }}" class="text-blue-600 font-semibold hover:underline text-base sm:text-lg flex items-center gap-1.5 mb-5 inline-flex">
                     {{ $project->company->name }}
