@@ -82,8 +82,11 @@
                 <button id="tab-btn-masuk" onclick="switchRfpTab('masuk')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     {{ $isUMKM ? 'Ketertarikan Masuk' : 'Proposal Masuk' }}
-                    @if($receivedProposals->count() > 0)
-                    <span class="ml-1 bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">{{ $receivedProposals->count() }}</span>
+                    @php
+                        $pendingReceivedCount = $receivedProposals->where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingReceivedCount > 0)
+                    <span class="ml-1 bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-[10px] font-black">{{ $pendingReceivedCount }}</span>
                     @endif
                 </button>
                 <button id="tab-btn-terkirim" onclick="switchRfpTab('terkirim')" class="whitespace-nowrap py-4 text-sm font-bold text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition-colors flex items-center gap-2 tab-btn snap-start">
@@ -124,14 +127,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input id="search-aktif" type="text" placeholder="{{ $isUMKM ? 'Cari judul penawaran/layanan...' : 'Cari judul pengadaan/proyek...' }}" class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
-                <div class="flex items-center gap-2">
-                    <select class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none">
-                        <option>Semua Status</option>
-                        <option>Aktif Bidding</option>
-                        <option>Sedang Berjalan</option>
-                        <option>Selesai</option>
-                    </select>
-                </div>
+
             </div>
 
             @forelse($publishedProjects as $project)
@@ -157,6 +153,16 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input id="search-masuk" type="text" placeholder="Cari {{ $isUMKM ? 'ketertarikan' : 'proposal' }} masuk..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
+                <div class="relative w-auto shrink-0 self-start sm:self-auto">
+                    <select id="filter-status-masuk" class="w-auto min-w-[200px] appearance-none pl-4 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer text-slate-700 font-medium">
+                        <option value="pending" selected>Menunggu Review</option>
+                        <option value="reviewed">Sedang Direview</option>
+                        <option value="negotiating">Tahap Negosiasi</option>
+                        <option value="accepted">Diterima</option>
+                        <option value="rejected">Ditolak</option>
+                    </select>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
             </div>
 
             @forelse($receivedProposals as $proposal)
@@ -180,7 +186,7 @@
                 };
             @endphp
             <!-- Received Proposal Item -->
-            <div class="proposal-masuk-item flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white" data-project-id="{{ $proposal->project_id }}">
+            <div class="proposal-masuk-item flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white" data-project-id="{{ $proposal->project_id }}" data-status="{{ $proposal->status }}">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusColor }} tracking-wide uppercase">{{ $statusLabel }}</span>
@@ -211,6 +217,15 @@
                 <p class="text-slate-500 text-sm">Belum ada yang mengirimkan penawaran atau ketertarikan pada proyek Anda.</p>
             </div>
             @endforelse
+            
+            <!-- JS Filter Empty State -->
+            <div id="empty-state-masuk" class="text-center py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed" style="display: none;">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+                <h3 class="text-slate-900 font-bold mb-1">Tidak Ada Hasil</h3>
+                <p class="text-slate-500 text-sm">Tidak ada proposal yang sesuai dengan filter status atau pencarian Anda.</p>
+            </div>
         </div>
 <!-- Project List Content: Proposal Terkirim -->
         <div id="content-terkirim" class="tab-content p-6 space-y-4 hidden">
@@ -554,18 +569,49 @@
                 document.getElementById('content-masuk').scrollIntoView({ behavior: 'smooth' });
             }
 
-            function filterMasukList(query) {
-                const searchLower = query.toLowerCase();
+            function filterMasukList() {
+                const searchInput = document.getElementById('search-masuk');
+                const statusInput = document.getElementById('filter-status-masuk');
+                const searchLower = searchInput ? searchInput.value.toLowerCase() : '';
+                const statusFilter = statusInput ? statusInput.value.toLowerCase() : 'pending';
+                
                 const items = document.querySelectorAll('.proposal-masuk-item');
+                let visibleCount = 0;
                 
                 items.forEach(item => {
                     const text = item.innerText.toLowerCase();
-                    if (text.includes(searchLower)) {
+                    const itemStatus = (item.getAttribute('data-status') || '').toLowerCase();
+                    
+                    const matchesSearch = text.includes(searchLower);
+                    const matchesStatus = itemStatus === statusFilter;
+                    
+                    if (matchesSearch && matchesStatus) {
                         item.style.display = 'flex';
+                        visibleCount++;
                     } else {
                         item.style.display = 'none';
                     }
                 });
+                
+                const emptyState = document.getElementById('empty-state-masuk');
+                if (emptyState && items.length > 0) {
+                    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+                    if (visibleCount === 0) {
+                        const statusText = statusInput && statusInput.options[statusInput.selectedIndex] ? statusInput.options[statusInput.selectedIndex].text : '';
+                        const typeText = '{{ $isUMKM ? 'Ketertarikan' : 'Proposal' }}';
+                        
+                        const titleEl = emptyState.querySelector('h3');
+                        const descEl = emptyState.querySelector('p');
+                        
+                        if (searchLower === '') {
+                            titleEl.innerText = `Belum ada ${typeText} ${statusText}`;
+                            descEl.innerText = `Tidak ada ${typeText.toLowerCase()} yang berada dalam tahap ${statusText}.`;
+                        } else {
+                            titleEl.innerText = `Pencarian Tidak Ditemukan`;
+                            descEl.innerText = `Tidak ada ${typeText.toLowerCase()} dengan status ${statusText} yang sesuai dengan pencarian "${searchInput.value}".`;
+                        }
+                    }
+                }
             }
 
             function filterAktifList(query) {
@@ -608,7 +654,12 @@
             // Add event listeners
             document.addEventListener('DOMContentLoaded', function() {
                 const searchMasuk = document.getElementById('search-masuk');
-                if(searchMasuk) searchMasuk.addEventListener('input', (e) => filterMasukList(e.target.value));
+                const statusMasuk = document.getElementById('filter-status-masuk');
+                if(searchMasuk) searchMasuk.addEventListener('input', filterMasukList);
+                if(statusMasuk) statusMasuk.addEventListener('change', filterMasukList);
+                
+                // Initial filter run for 'masuk' to enforce default 'pending'
+                filterMasukList();
 
                 const searchAktif = document.getElementById('search-aktif');
                 if(searchAktif) searchAktif.addEventListener('input', (e) => filterAktifList(e.target.value));

@@ -18,6 +18,11 @@
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $badgeColor }} tracking-wide uppercase">
                 {{ str_replace('_', ' ', $project->type) }}
             </span>
+            @if($project->is_expired)
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-red-700 tracking-wide uppercase">
+                Kadaluarsa
+            </span>
+            @endif
             <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Dipublikasikan: {{ $project->created_at->format('d M Y') }}</span>
         </div>
         <div class="flex items-center gap-3 mb-1">
@@ -42,8 +47,10 @@
             <div class="text-center">
                 <p class="text-xs text-slate-400 font-medium mb-0.5">Sisa Waktu</p>
                 <p class="text-sm font-bold text-amber-600">
-                    @if($project->offer_end_date)
-                        {{ \Carbon\Carbon::parse($project->offer_end_date)->diffForHumans(null, true) }}
+                    @if($project->is_expired)
+                        <span class="text-red-600">Berakhir</span>
+                    @elseif($project->offer_end_date)
+                        {{ \Carbon\Carbon::parse($project->offer_end_date)->locale('id')->diffForHumans(null, true) }}
                     @else
                         Terbuka
                     @endif
@@ -125,13 +132,57 @@
                 </a>
                 @if($project->proposals()->count() === 0)
                 <!-- Form Delete -->
-                <form action="{{ route('projects.destroy', $project->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');" class="flex-1 md:flex-none">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="w-full px-4 py-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                <div x-data="{ showDeleteModal: false }" class="flex-1 md:flex-none">
+                    <button type="button" @click="showDeleteModal = true" class="w-full px-4 py-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
                         Hapus
                     </button>
-                </form>
+
+                    <!-- Modal Hapus Proyek -->
+                    <template x-teleport="body">
+                        <div x-show="showDeleteModal" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+                             style="display: none;">
+                             
+                             <div x-show="showDeleteModal"
+                                  @click.away="showDeleteModal = false"
+                                  x-transition:enter="transition ease-out duration-300"
+                                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                  x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                  x-transition:leave="transition ease-in duration-200"
+                                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                  class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
+                                <div class="p-6 overflow-y-auto">
+                                    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                    </div>
+                                    <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Proyek Ini?</h3>
+                                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                                        Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.
+                                    </p>
+                                </div>
+                                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+                                    <button type="button" @click="showDeleteModal = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
+                                        Batal
+                                    </button>
+                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                            Ya, Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
                 @endif
             </div>
         </div>

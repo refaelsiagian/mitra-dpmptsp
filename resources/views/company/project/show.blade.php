@@ -130,6 +130,11 @@
                         {!! $badgeIcon !!}
                         {{ $badgeText }}
                     </span>
+                    @if($project->is_expired)
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold border mb-3 bg-red-50 text-red-700 border-red-200 ml-2">
+                        Kadaluarsa
+                    </span>
+                    @endif
                 
                 <div class="flex items-center gap-3 mb-2">
                     <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 leading-tight">{{ $project->title }}</h1>
@@ -195,7 +200,13 @@
                             <span class="text-slate-500">Batas Penawaran</span>
                             <div class="text-right">
                                 <span class="font-bold text-amber-600 block">{{ \Carbon\Carbon::parse($project->offer_end_date)->format('d M Y') }}</span>
-                                <span class="text-[10px] font-bold text-amber-700/70 uppercase tracking-wider">{{ \Carbon\Carbon::parse($project->offer_end_date)->locale('id')->diffForHumans() }}</span>
+                                <span class="text-[10px] font-bold text-amber-700/70 uppercase tracking-wider">
+                                    @if($project->is_expired)
+                                        <span class="text-red-600">Berakhir</span>
+                                    @else
+                                        {{ \Carbon\Carbon::parse($project->offer_end_date)->locale('id')->diffForHumans() }}
+                                    @endif
+                                </span>
                             </div>
                         </li>
                         @endif
@@ -327,7 +338,13 @@
                             <span class="text-slate-500">Batas Penawaran</span>
                             <div class="text-right">
                                 <span class="font-bold text-amber-600 block">{{ \Carbon\Carbon::parse($project->offer_end_date)->format('d M Y') }}</span>
-                                <span class="text-[10px] font-bold text-amber-700/70 uppercase tracking-wider">{{ \Carbon\Carbon::parse($project->offer_end_date)->locale('id')->diffForHumans() }}</span>
+                                <span class="text-[10px] font-bold text-amber-700/70 uppercase tracking-wider">
+                                    @if($project->is_expired)
+                                        <span class="text-red-600">Berakhir</span>
+                                    @else
+                                        {{ \Carbon\Carbon::parse($project->offer_end_date)->locale('id')->diffForHumans() }}
+                                    @endif
+                                </span>
                             </div>
                         </li>
                         @endif
@@ -354,14 +371,59 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                             Edit Proyek
                         </a>
-                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="w-full py-3 bg-white hover:bg-red-50 border border-red-200 text-red-600 font-bold rounded-xl transition-colors shadow-sm flex justify-center items-center gap-2">
+                        @if($project->proposals()->count() === 0)
+                        <div x-data="{ showDeleteModalDesktop: false }" class="w-full">
+                            <button type="button" @click="showDeleteModalDesktop = true" class="w-full py-3 bg-white hover:bg-red-50 border border-red-200 text-red-600 font-bold rounded-xl transition-colors shadow-sm flex justify-center items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                                 Hapus Proyek
                             </button>
-                        </form>
+                            <!-- Delete Modal -->
+                            <template x-teleport="body">
+                                <div x-show="showDeleteModalDesktop" 
+                                     x-transition:enter="transition ease-out duration-300"
+                                     x-transition:enter-start="opacity-0"
+                                     x-transition:enter-end="opacity-100"
+                                     x-transition:leave="transition ease-in duration-200"
+                                     x-transition:leave-start="opacity-100"
+                                     x-transition:leave-end="opacity-0"
+                                     class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+                                     style="display: none;">
+                                     
+                                     <div x-show="showDeleteModalDesktop"
+                                          @click.away="showDeleteModalDesktop = false"
+                                          x-transition:enter="transition ease-out duration-300"
+                                          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                          x-transition:leave="transition ease-in duration-200"
+                                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                          class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
+                                        <div class="p-6 overflow-y-auto">
+                                            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                            </div>
+                                            <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Proyek Ini?</h3>
+                                            <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                                                Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.
+                                            </p>
+                                        </div>
+                                        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+                                            <button type="button" @click="showDeleteModalDesktop = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
+                                                Batal
+                                            </button>
+                                            <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                                    Ya, Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        @endif
                     </div>
                 @else
                     <!-- Viewer View -->
@@ -371,10 +433,17 @@
                             $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
                             $buttonTextDesktop = ($isViewerUB && !$isProjectUB) ? 'Kirim Ketertarikan' : 'Kirim Penawaran';
                         @endphp
+                        @if($project->is_expired)
+                        <button disabled class="w-full py-3.5 bg-slate-200 text-slate-500 font-bold rounded-xl flex justify-center items-center gap-2 cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            Waktu Penawaran Berakhir
+                        </button>
+                        @else
                         <a href="{{ route('proposals.create', $project->id) }}" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-600/20 flex justify-center items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
                             {{ $buttonTextDesktop }}
                         </a>
+                        @endif
                         <button class="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-300 rounded-xl transition-colors flex justify-center items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                             Kirim Pesan
@@ -395,14 +464,59 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                     Edit
                 </a>
-                <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="flex-1 m-0" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl text-sm border border-red-200 transition-colors flex justify-center items-center gap-1.5">
+                @if($project->proposals()->count() === 0)
+                <div x-data="{ showDeleteModalMobile: false }" class="flex-1">
+                    <button type="button" @click="showDeleteModalMobile = true" class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl text-sm border border-red-200 transition-colors flex justify-center items-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                         Hapus
                     </button>
-                </form>
+                    <!-- Delete Modal -->
+                    <template x-teleport="body">
+                        <div x-show="showDeleteModalMobile" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+                             style="display: none;">
+                             
+                             <div x-show="showDeleteModalMobile"
+                                  @click.away="showDeleteModalMobile = false"
+                                  x-transition:enter="transition ease-out duration-300"
+                                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                  x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                  x-transition:leave="transition ease-in duration-200"
+                                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                  class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
+                                <div class="p-6 overflow-y-auto">
+                                    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                    </div>
+                                    <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Proyek Ini?</h3>
+                                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                                        Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.
+                                    </p>
+                                </div>
+                                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+                                    <button type="button" @click="showDeleteModalMobile = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
+                                        Batal
+                                    </button>
+                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                            Ya, Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                @endif
             </div>
         @else
             <div class="flex gap-3">
@@ -411,10 +525,17 @@
                     $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
                     $buttonTextMobile = ($isViewerUB && !$isProjectUB) ? 'Ketertarikan' : 'Penawaran';
                 @endphp
+                @if($project->is_expired)
+                <button disabled class="flex-[1.5] py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Berakhir
+                </button>
+                @else
                 <a href="{{ route('proposals.create', $project->id) }}" class="flex-[1.5] py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
                     {{ $buttonTextMobile }}
                 </a>
+                @endif
                 <button class="flex-1 py-3 bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-300 rounded-xl text-sm transition-colors flex justify-center items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     Pesan
