@@ -64,7 +64,6 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::put('/proposals/{proposal}/status', [\App\Http\Controllers\ProposalController::class, 'updateStatus'])->name('proposals.updateStatus');
 
     // Invitations
-    Route::get('/notifications', [\App\Http\Controllers\InvitationController::class, 'index'])->name('notifications.index');
     Route::post('/invitations', [\App\Http\Controllers\InvitationController::class, 'store'])->name('invitations.store');
     Route::put('/invitations/{invitation}', [\App\Http\Controllers\InvitationController::class, 'update'])->name('invitations.update');
 
@@ -121,7 +120,11 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
         $receivedProposals = $company ? \App\Models\Proposal::whereHas('project', function($q) use ($company) {
             $q->where('company_id', $company->id);
         })->with(['project', 'company'])->latest()->get() : collect();
-        return view('company.dashboard', compact('publishedProjects', 'draftProjects', 'closedProjects', 'sentProposals', 'receivedProposals'));
+        
+        $receivedInvitations = $company ? $company->receivedInvitations()->with(['project', 'invitingCompany'])->latest()->get() : collect();
+        $sentInvitations = $company ? $company->sentInvitations()->with(['project', 'invitedCompany'])->latest()->get() : collect();
+
+        return view('company.dashboard', compact('publishedProjects', 'draftProjects', 'closedProjects', 'sentProposals', 'receivedProposals', 'receivedInvitations', 'sentInvitations'));
     })->name('dashboard');
 
     Route::put('/projects/{project}/close', function (\App\Models\Project $project) {

@@ -41,33 +41,10 @@
                         <p class="text-sm opacity-90 mt-0.5">{{ $project->company->name }} telah mengundang Anda secara langsung untuk berpartisipasi.</p>
                     </div>
                 </div>
-                <div class="flex shrink-0 w-full md:w-auto gap-2" x-data="{ showRejectModal: false }">
-                    <button type="button" @click="showRejectModal = true" class="w-full md:w-auto px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-sm transition-colors shadow-sm whitespace-nowrap">Tolak</button>
-                    <form action="{{ route('invitations.update', $invitation->id) }}" method="POST" class="w-full md:w-auto">
-                        @csrf
-                        @method('PUT')
-                        <input type="hidden" name="action" value="accept">
-                        <button type="submit" class="w-full md:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm whitespace-nowrap">Terima Tawaran</button>
-                    </form>
-
-                    <!-- Reject Modal -->
-                    <div x-show="showRejectModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center">
-                        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showRejectModal = false"></div>
-                        <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-2xl p-6 sm:max-w-md w-full border border-slate-200 z-10 m-4">
-                            <h3 class="text-lg font-bold text-slate-900 mb-2">Tolak Undangan?</h3>
-                            <p class="text-sm text-slate-500 mb-5">Apakah Anda yakin ingin menolak tawaran proyek "{{ $project->title }}" dari {{ $project->company->name }}?</p>
-                            
-                            <div class="flex justify-end gap-3">
-                                <button type="button" @click="showRejectModal = false" class="px-4 py-2 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50">Batal</button>
-                                <form action="{{ route('invitations.update', $invitation->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="action" value="reject">
-                                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-red-600 border border-transparent rounded-lg shadow-sm hover:bg-red-700">Ya, Tolak</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                    <span class="text-sm font-medium text-blue-700 bg-blue-100/50 px-3 py-1.5 rounded-lg border border-blue-200 shadow-sm">
+                        Kirim Penawaran untuk merespons
+                    </span>
                 </div>
             </div>
             @elseif(isset($invitation) && $invitation->status === 'rejected' && $invitation->invited_company_id === (auth()->user()->company->id ?? null))
@@ -449,10 +426,7 @@
                             {{ $buttonTextDesktop }}
                         </a>
                         @endif
-                        <button class="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-300 rounded-xl transition-colors flex justify-center items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                            Kirim Pesan
-                        </button>
+
                     </div>
                 @endif
                 
@@ -531,25 +505,21 @@
                     $buttonTextMobile = ($isViewerUB && !$isProjectUB) ? 'Ketertarikan' : 'Penawaran';
                 @endphp
                 @if($project->status === 'closed')
-                <button disabled class="flex-[1.5] py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     Ditutup
                 </button>
                 @elseif($project->is_expired)
-                <button disabled class="flex-[1.5] py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     Berakhir
                 </button>
                 @else
-                <a href="{{ route('proposals.create', $project->id) }}" class="flex-[1.5] py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
+                <a href="{{ route('proposals.create', $project->id) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
                     {{ $buttonTextMobile }}
                 </a>
                 @endif
-                <button class="flex-1 py-3 bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-300 rounded-xl text-sm transition-colors flex justify-center items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    Pesan
-                </button>
             </div>
         @endif
     </div>

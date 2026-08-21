@@ -32,4 +32,11 @@ class Proposal extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function getIsInvitedAttribute()
+    {
+        return \App\Models\ProjectInvitation::where('project_id', $this->project_id)
+            ->where('invited_company_id', $this->company_id)
+            ->exists();
+    }
 }

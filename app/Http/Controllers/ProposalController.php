@@ -55,6 +55,12 @@ class ProposalController extends Controller
             'status' => 'pending',
         ]);
 
+        // Auto-accept any pending invitations for this project and company
+        \App\Models\ProjectInvitation::where('project_id', $project->id)
+            ->where('invited_company_id', $user->company->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'accepted']);
+
         $isUB = in_array(strtolower($user->company->skala_usaha ?? ''), ['menengah', 'besar']);
         $message = $isUB ? 'Ketertarikan/Permintaan berhasil dikirim!' : 'Proposal/Penawaran berhasil dikirim!';
 

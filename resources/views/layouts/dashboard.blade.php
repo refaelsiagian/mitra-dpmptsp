@@ -58,26 +58,7 @@
                 <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap absolute left-14">Eksplorasi</span>
             </a>
 
-            <a title="Notifikasi" href="{{ route('notifications.index') }}" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative {{ request()->routeIs('notifications.index') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold' }}">
-                <div class="relative shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                    @php
-                        $pendingCount = auth()->user()->company ? auth()->user()->company->receivedInvitations()->whereNull('read_at')->count() : 0;
-                        $sentUpdateCount = auth()->user()->company ? auth()->user()->company->sentInvitations()->whereIn('status', ['accepted', 'rejected'])->whereNull('sender_read_at')->count() : 0;
-                        $totalBadge = $pendingCount + $sentUpdateCount;
-                    @endphp
-                    @if($totalBadge > 0)
-                        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
-                    @endif
-                </div>
-                
-                <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 absolute left-14 flex items-center justify-between w-32">
-                    <span class="whitespace-nowrap">Notifikasi</span>
-                    @if($totalBadge > 0)
-                        <span class="px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-extrabold">{{ $totalBadge }}</span>
-                    @endif
-                </div>
-            </a>
+
 
             <a title="Pengaturan" href="#" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold">
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -227,21 +208,6 @@
             <span class="text-[10px] font-semibold">Eksplorasi</span>
         </a>
 
-        <!-- Notifikasi -->
-        <a href="{{ route('notifications.index') }}" class="relative flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->routeIs('notifications.index') ? 'text-blue-600' : '' }}">
-            <div class="relative mb-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{{ request()->routeIs('notifications.index') ? 'fill-blue-50/50' : '' }}"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                @php
-                    $pendingCount = auth()->user()->company ? auth()->user()->company->receivedInvitations()->whereNull('read_at')->count() : 0;
-                    $sentUpdateCount = auth()->user()->company ? auth()->user()->company->sentInvitations()->whereIn('status', ['accepted', 'rejected'])->whereNull('sender_read_at')->count() : 0;
-                    $totalBadge = $pendingCount + $sentUpdateCount;
-                @endphp
-                @if($totalBadge > 0)
-                <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full"></span>
-                @endif
-            </div>
-            <span class="text-[10px] font-semibold">Notifikasi</span>
-        </a>
 
         <!-- Profil -->
         <div class="relative w-full h-full">
