@@ -141,7 +141,7 @@
                     @php
                         $acceptedCount = $project->proposals()->where('status', 'accepted')->count();
                     @endphp
-                    @if($acceptedCount > 0 && $project->status === 'published')
+                    @if($acceptedCount > 0 && in_array($project->status, ['published', 'closed']))
                         <span class="px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm whitespace-nowrap">
                             {{ $acceptedCount }} Kemitraan Terjalin
                         </span>
@@ -433,7 +433,12 @@
                             $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
                             $buttonTextDesktop = ($isViewerUB && !$isProjectUB) ? 'Kirim Ketertarikan' : 'Kirim Penawaran';
                         @endphp
-                        @if($project->is_expired)
+                        @if($project->status === 'closed')
+                        <button disabled class="w-full py-3.5 bg-slate-200 text-slate-500 font-bold rounded-xl flex justify-center items-center gap-2 cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Proyek Telah Ditutup
+                        </button>
+                        @elseif($project->is_expired)
                         <button disabled class="w-full py-3.5 bg-slate-200 text-slate-500 font-bold rounded-xl flex justify-center items-center gap-2 cursor-not-allowed">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             Waktu Penawaran Berakhir
@@ -525,7 +530,12 @@
                     $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
                     $buttonTextMobile = ($isViewerUB && !$isProjectUB) ? 'Ketertarikan' : 'Penawaran';
                 @endphp
-                @if($project->is_expired)
+                @if($project->status === 'closed')
+                <button disabled class="flex-[1.5] py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Ditutup
+                </button>
+                @elseif($project->is_expired)
                 <button disabled class="flex-[1.5] py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     Berakhir

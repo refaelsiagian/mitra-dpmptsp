@@ -52,7 +52,12 @@ class ExploreController extends Controller
         $vendors = $vendorsQuery->paginate(10, ['*'], 'vendor_page');
 
         // Fetch Projects
-        $projectsQuery = Project::with(['company.locations.regency'])->where('status', 'published');
+        $projectsQuery = Project::with(['company.locations.regency'])
+            ->where('status', 'published')
+            ->where(function($q) {
+                $q->whereNull('offer_end_date')
+                  ->orWhere('offer_end_date', '>=', now()->startOfDay());
+            });
 
         if ($userScale === 'besar') {
             $projectsQuery->whereHas('company', function($q) {

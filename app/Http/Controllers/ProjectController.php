@@ -86,7 +86,7 @@ class ProjectController extends Controller
     public function show(\App\Models\Project $project)
     {
         // Protect draft from being viewed by non-owners
-        if ($project->status !== 'published') {
+        if ($project->status === 'draft') {
             if (!auth()->check() || !auth()->user()->company || auth()->user()->company->id !== $project->company_id) {
                 abort(404);
             }

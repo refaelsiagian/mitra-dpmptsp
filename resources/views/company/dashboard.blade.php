@@ -154,10 +154,16 @@
                     <input id="search-masuk" type="text" placeholder="Cari {{ $isUMKM ? 'ketertarikan' : 'proposal' }} masuk..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
                 <div class="relative w-auto shrink-0 self-start sm:self-auto">
+                    @php
+                        $pendingCount = $receivedProposals->where('status', 'pending')->count();
+                        $reviewedCount = $receivedProposals->where('status', 'reviewed')->count();
+                        $negotiatingCount = $receivedProposals->where('status', 'negotiating')->count();
+                    @endphp
                     <select id="filter-status-masuk" class="w-auto min-w-[200px] appearance-none pl-4 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer text-slate-700 font-medium">
-                        <option value="pending" selected>Menunggu Review</option>
-                        <option value="reviewed">Sedang Direview</option>
-                        <option value="negotiating">Tahap Negosiasi</option>
+                        <option value="">Semua Status</option>
+                        <option value="pending" selected>Menunggu Review {{ $pendingCount > 0 ? "($pendingCount)" : "" }}</option>
+                        <option value="reviewed">Sedang Direview {{ $reviewedCount > 0 ? "($reviewedCount)" : "" }}</option>
+                        <option value="negotiating">Tahap Negosiasi {{ $negotiatingCount > 0 ? "($negotiatingCount)" : "" }}</option>
                         <option value="accepted">Diterima</option>
                         <option value="rejected">Ditolak</option>
                     </select>
@@ -552,20 +558,28 @@
 @endsection
 
         <script>
-            function filterProposalsByProject(projectId, projectTitle) {
-                // Switch to the proposal masuk tab
+            function filterProposalsByProject(projectId, title) {
+                // Switch to masuk tab
                 switchRfpTab('masuk');
                 
-                // Set the search input value
+                // Set search query to the exact project title
                 const searchInput = document.getElementById('search-masuk');
                 if (searchInput) {
-                    searchInput.value = projectTitle;
-                    // Trigger input event to do the filtering if we had a JS filter, 
-                    // or we can just implement the filter right here
-                    filterMasukList(projectTitle);
+                    searchInput.value = title;
                 }
                 
-                // Scroll to top of list
+                // Reset status filter to 'Semua Status' so all proposals for this project are visible
+                const statusInput = document.getElementById('filter-status-masuk');
+                if (statusInput) {
+                    statusInput.value = '';
+                }
+                
+                // Trigger input event to run the filter logic
+                if (searchInput) {
+                    searchInput.dispatchEvent(new Event('input'));
+                }
+                
+                // Scroll to content
                 document.getElementById('content-masuk').scrollIntoView({ behavior: 'smooth' });
             }
 
@@ -573,7 +587,7 @@
                 const searchInput = document.getElementById('search-masuk');
                 const statusInput = document.getElementById('filter-status-masuk');
                 const searchLower = searchInput ? searchInput.value.toLowerCase() : '';
-                const statusFilter = statusInput ? statusInput.value.toLowerCase() : 'pending';
+                const statusFilter = statusInput ? statusInput.value.toLowerCase() : '';
                 
                 const items = document.querySelectorAll('.proposal-masuk-item');
                 let visibleCount = 0;
@@ -583,7 +597,7 @@
                     const itemStatus = (item.getAttribute('data-status') || '').toLowerCase();
                     
                     const matchesSearch = text.includes(searchLower);
-                    const matchesStatus = itemStatus === statusFilter;
+                    const matchesStatus = statusFilter === '' || itemStatus === statusFilter;
                     
                     if (matchesSearch && matchesStatus) {
                         item.style.display = 'flex';
@@ -608,7 +622,8 @@
                             descEl.innerText = `Tidak ada ${typeText.toLowerCase()} yang berada dalam tahap ${statusText}.`;
                         } else {
                             titleEl.innerText = `Pencarian Tidak Ditemukan`;
-                            descEl.innerText = `Tidak ada ${typeText.toLowerCase()} dengan status ${statusText} yang sesuai dengan pencarian "${searchInput.value}".`;
+                            const statusPart = statusFilter === '' ? '' : ` dengan status ${statusText}`;
+                            descEl.innerText = `Tidak ada ${typeText.toLowerCase()}${statusPart} yang sesuai dengan pencarian "${searchInput.value}".`;
                         }
                     }
                 }
