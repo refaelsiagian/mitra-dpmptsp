@@ -27,17 +27,29 @@
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased h-screen flex flex-col md:flex-row overflow-hidden relative">
     
+    <!-- Splash Screen -->
+    <div x-data="{ showSplash: true }" x-init="setTimeout(() => showSplash = false, 1500)" x-show="showSplash" x-transition.opacity.duration.500ms class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white" style="display: flex;">
+        <div class="flex-1 flex items-center justify-center">
+            <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-20 md:h-24 w-auto animate-pulse">
+        </div>
+        <div class="pb-12 flex flex-col items-center">
+            <span class="text-xs font-semibold text-slate-400 mb-2">Dari</span>
+            <img src="{{ asset('images/logo-dpmptsp.png') }}" alt="DPMPTSP Sumut" class="h-10 md:h-12 w-auto">
+        </div>
+    </div>
 
 
     <!-- Sidebar (Desktop Only) -->
     <aside id="sidebar" x-data="{ profileMenuOpen: false }" @mouseleave="profileMenuOpen = false" class="hidden md:flex absolute inset-y-0 left-0 z-50 w-16 hover:w-64 group bg-white border-r border-slate-200 flex-col h-full transition-all duration-300 shadow-2xl shadow-slate-900/5">
 
         <!-- Logo -->
-        <div class="h-16 flex items-center px-5 border-b border-slate-200 shrink-0">
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-4">
-                <span class="w-3 h-3 rounded-full bg-blue-600 inline-block shrink-0"></span>
-                <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap">Mitra DPMPTSP</span>
-            </h1>
+        <div class="h-16 flex items-center justify-center group-hover:justify-start px-4 border-b border-slate-200 shrink-0">
+            <a href="/dashboard" class="flex items-center">
+                <!-- Collapsed State Logo (Icon Only) -->
+                <img src="{{ asset('images/logo-2.svg') }}" alt="KIS Berkah Icon" class="h-8 w-auto shrink-0 block group-hover:hidden transition-all">
+                <!-- Expanded State Logo (Full Lockup) -->
+                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah Logo" class="h-8 w-auto shrink-0 hidden group-hover:block transition-all">
+            </a>
         </div>
         
         <!-- Navigation -->

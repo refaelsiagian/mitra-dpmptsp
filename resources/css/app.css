@@ -6,8 +6,9 @@
 @source '../**/*.js';
 
 @theme {
-    --color-primary: #002147;
-    --color-secondary: #1d4ed8;
+    --color-primary: #271A87;
+    --color-primary-light: #216691;
+    --color-secondary: #D4AF37;
     --color-error: #ef4444;
     --color-surface: #ffffff;
     --color-surface-muted: #f8f9ff;
