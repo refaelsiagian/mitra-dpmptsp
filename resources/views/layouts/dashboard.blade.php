@@ -44,12 +44,12 @@
     <aside id="sidebar" x-data="{ profileMenuOpen: false, expanded: false }" @mouseenter="expanded = true" @mouseleave="expanded = false" :class="expanded ? 'w-64' : 'w-16'" class="hidden md:flex absolute inset-y-0 left-0 z-50 bg-white flex-col h-full transition-all duration-300 shadow-2xl shadow-slate-900/5">
 
         <!-- Logo -->
-        <div class="h-16 flex items-center px-4 shrink-0" :class="expanded ? 'justify-start' : 'justify-center'">
-            <a wire:navigate href="/dashboard" class="flex items-center">
+        <div class="h-16 flex items-center px-4 shrink-0 relative">
+            <a wire:navigate href="/dashboard" class="flex items-center relative w-full h-8">
                 <!-- Collapsed State Logo (Icon Only) -->
-                <img src="{{ asset('images/logo-2.svg') }}" alt="KIS Berkah Icon" class="h-8 w-auto shrink-0 transition-all" :class="expanded ? 'hidden' : 'block'">
+                <img src="{{ asset('images/logo-2.svg') }}" alt="KIS Berkah Icon" class="h-8 w-auto absolute left-0 max-w-none">
                 <!-- Expanded State Logo (Full Lockup) -->
-                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah Logo" class="h-8 w-auto shrink-0 transition-all" :class="expanded ? 'block' : 'hidden'">
+                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah Logo" class="h-8 w-auto absolute left-0 max-w-none transition-opacity duration-300" :class="expanded ? 'opacity-100' : 'opacity-0 pointer-events-none'">
             </a>
         </div>
         
@@ -88,11 +88,11 @@
         </nav>
         
         <!-- Sidebar Footer: Profile Widget & Logout -->
-        <div class="p-3 space-y-2">
+        <div class="p-2 space-y-2">
             
             <!-- User Info & Notifications Widget -->
             <div class="relative">
-                <button @click="profileMenuOpen = !profileMenuOpen" @click.away="profileMenuOpen = false" class="w-full flex items-center gap-2 p-1.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-blue-300 hover:ring-1 hover:ring-blue-100 transition-all text-left relative overflow-hidden" :class="expanded ? 'justify-start' : 'justify-center'">
+                <button @click="profileMenuOpen = !profileMenuOpen" @click.away="profileMenuOpen = false" class="w-full flex items-center gap-3 rounded-xl hover:bg-slate-100 transition-all text-left relative overflow-hidden" :class="expanded ? 'p-2 justify-start' : 'p-1 justify-center'">
                     @php
                         $user = auth()->user();
                         $company = $user ? $user->company : null;
