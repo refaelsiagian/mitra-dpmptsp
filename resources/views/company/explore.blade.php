@@ -67,44 +67,101 @@
             <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                 
                 <!-- Kategori KBLI Dropdown (Mitra Only) -->
-                <div class="relative {{ request('tab') == 'projects' ? 'hidden' : '' }}" id="filter-kbli">
-                    <select name="kbli" onchange="document.getElementById('explore-form').submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-1.5 pl-3.5 pr-8 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer hover:bg-slate-100 transition-colors">
-                        <option value="" selected>Kategori KBLI (Semua)</option>
-                        <option value="konstruksi" {{ request('kbli') == 'konstruksi' ? 'selected' : '' }}>Konstruksi & Infrastruktur</option>
-                        <option value="pariwisata" {{ request('kbli') == 'pariwisata' ? 'selected' : '' }}>Pariwisata & Hospitality</option>
-                        <option value="pertanian" {{ request('kbli') == 'pertanian' ? 'selected' : '' }}>Pertanian & Komoditas</option>
-                        <option value="logistik" {{ request('kbli') == 'logistik' ? 'selected' : '' }}>Logistik & Pergudangan</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                <div class="relative {{ request('tab') == 'projects' ? 'hidden' : '' }} z-20" id="filter-kbli" x-data="{ 
+                    open: false, 
+                    value: '{{ request('kbli') }}', 
+                    options: {
+                        '': 'Kategori KBLI (Semua)',
+                        'konstruksi': 'Konstruksi & Infrastruktur',
+                        'pariwisata': 'Pariwisata & Hospitality',
+                        'pertanian': 'Pertanian & Komoditas',
+                        'logistik': 'Logistik & Pergudangan'
+                    }
+                }">
+                    <input type="hidden" name="kbli" x-ref="input" value="{{ request('kbli') }}">
+                    <button type="button" @click="open = !open" @click.away="open = false" class="w-full sm:w-auto min-w-[200px] flex items-center justify-between gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-blue-300 hover:ring-1 hover:ring-blue-100 rounded-xl text-sm transition-all text-left text-slate-700 font-medium shadow-sm">
+                        <span x-text="options[value]"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 shrink-0 transition-transform duration-200" :class="open ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         class="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                         style="display: none;">
+                        <template x-for="(label, key) in options" :key="key">
+                            <button type="button" @click="value = key; $refs.input.value = key; $nextTick(() => document.getElementById('explore-form').submit()); open = false" class="w-full flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 text-left transition-colors" :class="value === key ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
+                                <span x-text="label"></span>
+                                <svg x-show="value === key" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ml-auto text-blue-600"><polyline points="20 6 9 17 4 12"/></svg>
+                            </button>
+                        </template>
                     </div>
                 </div>
 
                 <!-- Lokasi Dropdown -->
-                <div class="relative">
-                    <select name="location" onchange="document.getElementById('explore-form').submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-1.5 pl-3.5 pr-8 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer hover:bg-slate-100 transition-colors">
-                        <option value="" selected>Lokasi (Semua)</option>
-                        <option value="medan" {{ request('location') == 'medan' ? 'selected' : '' }}>Sumatera Utara (Medan / Belawan)</option>
-                        <option value="jakarta" {{ request('location') == 'jakarta' ? 'selected' : '' }}>DKI Jakarta & Sekitarnya</option>
-                        <option value="surabaya" {{ request('location') == 'surabaya' ? 'selected' : '' }}>Jawa Timur (Surabaya)</option>
-                        <option value="aceh" {{ request('location') == 'aceh' ? 'selected' : '' }}>Aceh</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                <div class="relative z-10" x-data="{ 
+                    open: false, 
+                    value: '{{ request('location') }}', 
+                    options: {
+                        '': 'Lokasi (Semua)',
+                        'medan': 'Sumatera Utara (Medan / Belawan)',
+                        'jakarta': 'DKI Jakarta & Sekitarnya',
+                        'surabaya': 'Jawa Timur (Surabaya)',
+                        'aceh': 'Aceh'
+                    }
+                }">
+                    <input type="hidden" name="location" x-ref="input" value="{{ request('location') }}">
+                    <button type="button" @click="open = !open" @click.away="open = false" class="w-full sm:w-auto min-w-[200px] flex items-center justify-between gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-blue-300 hover:ring-1 hover:ring-blue-100 rounded-xl text-sm transition-all text-left text-slate-700 font-medium shadow-sm">
+                        <span x-text="options[value]"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 shrink-0 transition-transform duration-200" :class="open ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         class="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                         style="display: none;">
+                        <template x-for="(label, key) in options" :key="key">
+                            <button type="button" @click="value = key; $refs.input.value = key; $nextTick(() => document.getElementById('explore-form').submit()); open = false" class="w-full flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 text-left transition-colors" :class="value === key ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
+                                <span x-text="label"></span>
+                                <svg x-show="value === key" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ml-auto text-blue-600"><polyline points="20 6 9 17 4 12"/></svg>
+                            </button>
+                        </template>
                     </div>
                 </div>
 
                 <!-- Skema / Peluang Dropdown (Project Only) -->
-                <div class="relative {{ request('tab') == 'projects' ? '' : 'hidden' }}" id="filter-scheme">
-                    <select name="scheme" onchange="document.getElementById('explore-form').submit()" class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-1.5 pl-3.5 pr-8 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer hover:bg-slate-100 transition-colors">
-                        <option value="" selected>Skema Peluang (Semua)</option>
-                        <option value="konstruksi" {{ request('scheme') == 'konstruksi' ? 'selected' : '' }}>Konstruksi (RFP)</option>
-                        <option value="subkontrak" {{ request('scheme') == 'subkontrak' ? 'selected' : '' }}>Sub-Pekerjaan</option>
-                        <option value="kso" {{ request('scheme') == 'kso' ? 'selected' : '' }}>Kemitraan (KSO)</option>
-                        <option value="rantai_pasok" {{ request('scheme') == 'rantai_pasok' ? 'selected' : '' }}>Rantai Pasok (Suplai)</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                <div class="relative {{ request('tab') == 'projects' ? '' : 'hidden' }} z-0" id="filter-scheme" x-data="{ 
+                    open: false, 
+                    value: '{{ request('scheme') }}', 
+                    options: {
+                        '': 'Skema Peluang (Semua)',
+                        'konstruksi': 'Konstruksi (RFP)',
+                        'subkontrak': 'Sub-Pekerjaan',
+                        'kso': 'Kemitraan (KSO)',
+                        'rantai_pasok': 'Rantai Pasok (Suplai)'
+                    }
+                }">
+                    <input type="hidden" name="scheme" x-ref="input" value="{{ request('scheme') }}">
+                    <button type="button" @click="open = !open" @click.away="open = false" class="w-full sm:w-auto min-w-[200px] flex items-center justify-between gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-blue-300 hover:ring-1 hover:ring-blue-100 rounded-xl text-sm transition-all text-left text-slate-700 font-medium shadow-sm">
+                        <span x-text="options[value]"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 shrink-0 transition-transform duration-200" :class="open ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         class="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                         style="display: none;">
+                        <template x-for="(label, key) in options" :key="key">
+                            <button type="button" @click="value = key; $refs.input.value = key; $nextTick(() => document.getElementById('explore-form').submit()); open = false" class="w-full flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 text-left transition-colors" :class="value === key ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
+                                <span x-text="label"></span>
+                                <svg x-show="value === key" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ml-auto text-blue-600"><polyline points="20 6 9 17 4 12"/></svg>
+                            </button>
+                        </template>
                     </div>
                 </div>
 

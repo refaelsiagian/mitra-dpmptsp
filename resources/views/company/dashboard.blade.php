@@ -163,21 +163,47 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input id="search-masuk" type="text" placeholder="Cari {{ $isUMKM ? 'ketertarikan' : 'proposal' }} masuk..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
-                <div class="relative w-auto shrink-0 self-start sm:self-auto">
-                    @php
-                        $pendingCount = $receivedProposals->where('status', 'pending')->count();
-                        $reviewedCount = $receivedProposals->where('status', 'reviewed')->count();
-                        $negotiatingCount = $receivedProposals->where('status', 'negotiating')->count();
-                    @endphp
-                    <select id="filter-status-masuk" class="w-auto min-w-[200px] appearance-none pl-4 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer text-slate-700 font-medium">
+                <div class="relative w-auto shrink-0 self-start sm:self-auto z-20" x-data="{ 
+                    open: false, 
+                    value: 'pending', 
+                    options: {
+                        '': 'Semua Status',
+                        'pending': 'Menunggu Review {{ $receivedProposals->where('status', 'pending')->count() > 0 ? '('.$receivedProposals->where('status', 'pending')->count().')' : '' }}',
+                        'reviewed': 'Sedang Direview {{ $receivedProposals->where('status', 'reviewed')->count() > 0 ? '('.$receivedProposals->where('status', 'reviewed')->count().')' : '' }}',
+                        'negotiating': 'Tahap Negosiasi {{ $receivedProposals->where('status', 'negotiating')->count() > 0 ? '('.$receivedProposals->where('status', 'negotiating')->count().')' : '' }}',
+                        'accepted': 'Diterima',
+                        'rejected': 'Ditolak'
+                    }
+                }">
+                    <!-- Hidden actual select for JS -->
+                    <select id="filter-status-masuk" x-ref="select" class="hidden">
                         <option value="">Semua Status</option>
-                        <option value="pending" selected>Menunggu Review {{ $pendingCount > 0 ? "($pendingCount)" : "" }}</option>
-                        <option value="reviewed">Sedang Direview {{ $reviewedCount > 0 ? "($reviewedCount)" : "" }}</option>
-                        <option value="negotiating">Tahap Negosiasi {{ $negotiatingCount > 0 ? "($negotiatingCount)" : "" }}</option>
+                        <option value="pending" selected>Menunggu Review</option>
+                        <option value="reviewed">Sedang Direview</option>
+                        <option value="negotiating">Tahap Negosiasi</option>
                         <option value="accepted">Diterima</option>
                         <option value="rejected">Ditolak</option>
                     </select>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"><path d="m6 9 6 6 6-6"/></svg>
+
+                    <button type="button" @click="open = !open" @click.away="open = false" class="w-full sm:w-auto min-w-[200px] flex items-center justify-between gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-blue-300 hover:ring-1 hover:ring-blue-100 rounded-xl text-sm transition-all text-left text-slate-700 font-medium shadow-sm">
+                        <span x-text="options[value]"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 shrink-0 transition-transform duration-200" :class="open ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         class="absolute top-full right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                         style="display: none;">
+                        <template x-for="(label, key) in options" :key="key">
+                            <button type="button" @click="value = key; $refs.select.value = key; $refs.select.dispatchEvent(new Event('change')); open = false" class="w-full flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 text-left transition-colors" :class="value === key ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
+                                <span x-text="label"></span>
+                                <svg x-show="value === key" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ml-auto text-blue-600"><polyline points="20 6 9 17 4 12"/></svg>
+                            </button>
+                        </template>
+                    </div>
                 </div>
             </div>
 
@@ -257,8 +283,20 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input id="search-terkirim" type="text" placeholder="Cari proposal terkirim..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
-                <div class="flex items-center gap-2">
-                    <select id="filter-status-terkirim" class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none">
+                <div class="relative w-auto shrink-0 self-start sm:self-auto z-10" x-data="{ 
+                    open: false, 
+                    value: '', 
+                    options: {
+                        '': 'Semua Status',
+                        'menunggu review': 'Menunggu Review',
+                        'sedang direview': 'Sedang Direview',
+                        'tahap negosiasi': 'Tahap Negosiasi',
+                        'diterima': 'Diterima',
+                        'ditolak': 'Ditolak'
+                    }
+                }">
+                    <!-- Hidden actual select for JS -->
+                    <select id="filter-status-terkirim" x-ref="select" class="hidden">
                         <option value="">Semua Status</option>
                         <option value="Menunggu Review">Menunggu Review</option>
                         <option value="Sedang Direview">Sedang Direview</option>
@@ -266,6 +304,26 @@
                         <option value="Diterima">Diterima</option>
                         <option value="Ditolak">Ditolak</option>
                     </select>
+
+                    <button type="button" @click="open = !open" @click.away="open = false" class="w-full sm:w-auto min-w-[160px] flex items-center justify-between gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-blue-300 hover:ring-1 hover:ring-blue-100 rounded-xl text-sm transition-all text-left text-slate-700 font-medium shadow-sm">
+                        <span x-text="options[value] || 'Semua Status'"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 shrink-0 transition-transform duration-200" :class="open ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         class="absolute top-full right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                         style="display: none;">
+                        <template x-for="(label, key) in options" :key="key">
+                            <button type="button" @click="value = key; $refs.select.value = label === 'Semua Status' ? '' : label; $refs.select.dispatchEvent(new Event('change')); open = false" class="w-full flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 text-left transition-colors" :class="value === key ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
+                                <span x-text="label"></span>
+                                <svg x-show="value === key" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="ml-auto text-blue-600"><polyline points="20 6 9 17 4 12"/></svg>
+                            </button>
+                        </template>
+                    </div>
                 </div>
             </div>
 
