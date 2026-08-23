@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mitra DPMPTSP - Dashboard</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <!-- AlpineJS -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Livewire -->
+    @livewireStyles
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Cabin', sans-serif;
         }
         /* Role-based visibility toggles */
         html.role_umkm .besar-only { display: none !important; }
@@ -28,7 +28,7 @@
 <body class="bg-slate-50 text-slate-900 antialiased h-screen flex flex-col md:flex-row overflow-hidden relative">
     
     <!-- Splash Screen -->
-    <div x-data="{ showSplash: true }" x-init="setTimeout(() => showSplash = false, 1500)" x-show="showSplash" x-transition.opacity.duration.500ms class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white" style="display: flex;">
+    <div x-data="{ showSplash: true }" x-init="if (!sessionStorage.getItem('splash_shown')) { setTimeout(() => showSplash = false, 1500); sessionStorage.setItem('splash_shown', 'true'); } else { showSplash = false; }" x-show="showSplash" x-transition.opacity.duration.500ms class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white" style="display: flex;">
         <div class="flex-1 flex items-center justify-center">
             <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-20 md:h-24 w-auto animate-pulse">
         </div>
@@ -40,58 +40,59 @@
 
 
     <!-- Sidebar (Desktop Only) -->
-    <aside id="sidebar" x-data="{ profileMenuOpen: false }" @mouseleave="profileMenuOpen = false" class="hidden md:flex absolute inset-y-0 left-0 z-50 w-16 hover:w-64 group bg-white border-r border-slate-200 flex-col h-full transition-all duration-300 shadow-2xl shadow-slate-900/5">
+    @persist('sidebar')
+    <aside id="sidebar" x-data="{ profileMenuOpen: false, expanded: false }" @mouseenter="expanded = true" @mouseleave="expanded = false" :class="expanded ? 'w-64' : 'w-16'" class="hidden md:flex absolute inset-y-0 left-0 z-50 bg-white flex-col h-full transition-all duration-300 shadow-2xl shadow-slate-900/5">
 
         <!-- Logo -->
-        <div class="h-16 flex items-center justify-center group-hover:justify-start px-4 border-b border-slate-200 shrink-0">
-            <a href="/dashboard" class="flex items-center">
+        <div class="h-16 flex items-center px-4 shrink-0" :class="expanded ? 'justify-start' : 'justify-center'">
+            <a wire:navigate href="/dashboard" class="flex items-center">
                 <!-- Collapsed State Logo (Icon Only) -->
-                <img src="{{ asset('images/logo-2.svg') }}" alt="KIS Berkah Icon" class="h-8 w-auto shrink-0 block group-hover:hidden transition-all">
+                <img src="{{ asset('images/logo-2.svg') }}" alt="KIS Berkah Icon" class="h-8 w-auto shrink-0 transition-all" :class="expanded ? 'hidden' : 'block'">
                 <!-- Expanded State Logo (Full Lockup) -->
-                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah Logo" class="h-8 w-auto shrink-0 hidden group-hover:block transition-all">
+                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah Logo" class="h-8 w-auto shrink-0 transition-all" :class="expanded ? 'block' : 'hidden'">
             </a>
         </div>
         
         <!-- Navigation -->
-        <nav class="flex-1 px-3 py-6 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <nav x-data="{ currentPath: window.location.pathname }" @@livewire:navigated.window="currentPath = window.location.pathname" class="flex-1 px-3 py-6 space-y-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
             @if(auth()->check() && auth()->user()->role === 'user')
-            <a title="Beranda" href="/dashboard" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative {{ request()->is('dashboard') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold' }}">
+            <a wire:navigate title="Beranda" href="/dashboard" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative" :class="[currentPath === '/dashboard' ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold', expanded ? 'justify-start' : 'justify-center']">
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap absolute left-14">Beranda</span>
+                <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Beranda</span>
             </a>
 
-            <a title="Data Legalitas" href="/company/profile" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative {{ request()->is('company/profile') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold' }}">
+            <a wire:navigate title="Data Legalitas" href="/company/profile" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative" :class="[currentPath === '/company/profile' ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold', expanded ? 'justify-start' : 'justify-center']">
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
-                <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap absolute left-14">Data Legalitas</span>
+                <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Data Legalitas</span>
             </a>
             
-            <a title="Eksplorasi" href="/explore" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold' }}">
+            <a wire:navigate title="Eksplorasi" href="/explore" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative" :class="[(currentPath === '/explore' || currentPath.startsWith('/vendor') || currentPath.startsWith('/project')) ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold', expanded ? 'justify-start' : 'justify-center']">
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap absolute left-14">Eksplorasi</span>
+                <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Eksplorasi</span>
             </a>
 
 
 
-            <a title="Pengaturan" href="#" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold">
+            <a title="Pengaturan" href="#" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold" :class="expanded ? 'justify-start' : 'justify-center'">
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap absolute left-14">Pengaturan</span>
+                <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Pengaturan</span>
             </a>
             @endif
 
             @if(auth()->check() && auth()->user()->role === 'admin')
-            <a title="Dashboard Admin" href="{{ route('admin.dashboard') }}" class="flex items-center justify-center group-hover:justify-start gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold' }}">
+            <a wire:navigate title="Dashboard Admin" href="{{ route('admin.dashboard') }}" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative" :class="[currentPath.startsWith('/admin') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold', expanded ? 'justify-start' : 'justify-center']">
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-                <span class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 whitespace-nowrap absolute left-14">Dashboard Admin</span>
+                <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Dashboard Admin</span>
             </a>
             @endif
         </nav>
         
         <!-- Sidebar Footer: Profile Widget & Logout -->
-        <div class="p-3 border-t border-slate-200 bg-slate-50/50 space-y-2">
+        <div class="p-3 space-y-2">
             
             <!-- User Info & Notifications Widget -->
             <div class="relative">
-                <button @click="profileMenuOpen = !profileMenuOpen" @click.away="profileMenuOpen = false" class="w-full flex items-center justify-center group-hover:justify-start gap-2 p-1.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-blue-300 hover:ring-1 hover:ring-blue-100 transition-all text-left relative overflow-hidden">
+                <button @click="profileMenuOpen = !profileMenuOpen" @click.away="profileMenuOpen = false" class="w-full flex items-center gap-2 p-1.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-blue-300 hover:ring-1 hover:ring-blue-100 transition-all text-left relative overflow-hidden" :class="expanded ? 'justify-start' : 'justify-center'">
                     @php
                         $user = auth()->user();
                         $company = $user ? $user->company : null;
@@ -116,7 +117,7 @@
                         @endif
                     </div>
                     
-                    <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 absolute left-14 flex items-center justify-between pr-2 w-[164px]">
+                    <div class="transition-all duration-300 absolute left-14 flex items-center justify-between pr-2 w-[164px]" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">
                         <div class="flex-1 overflow-hidden">
                             <p class="text-xs font-bold text-slate-800 leading-none mb-1 truncate">{{ $displayName }}</p>
                             <p class="text-[10px] text-slate-500 font-semibold leading-none truncate">{{ $typeName }}{{ $statusName ? ' • ' . $statusName : '' }}</p>
@@ -135,16 +136,16 @@
                      style="display: none;">
                     
                     @if($company)
-                        <a href="{{ route('vendor.show', $company->id) }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600">
+                        <a wire:navigate href="{{ route('vendor.show', $company->id) }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                             Lihat Profil Publik
                         </a>
                     @endif
-                    <a href="{{ route('company.profile.edit') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600">
+                    <a wire:navigate href="{{ route('company.profile.edit') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                         Edit Profil
                     </a>
-                    <a href="{{ route('settings.index') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 {{ request()->routeIs('settings.index') ? 'bg-slate-50 text-blue-600' : '' }}">
+                    <a wire:navigate href="{{ route('settings.index') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600" :class="currentPath.startsWith('/settings') ? 'bg-slate-50 text-blue-600' : ''">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                         Pengaturan Akun
                     </a>
@@ -169,6 +170,7 @@
             </div>
         </div>
     </aside>
+    @endpersist
 
     <!-- Main Wrapper (Full Height Canvas!) -->
     <div class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 relative md:ml-16">
@@ -209,13 +211,13 @@
     <!-- Mobile Bottom Navigation (Visible only on mobile) -->
     <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 z-50 md:hidden flex justify-around items-center h-16 px-2 pb-safe shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]" x-data="{ openProfileMenu: false }">
         <!-- Beranda / Dashboard -->
-        <a href="/dashboard" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('dashboard') ? 'text-blue-600' : '' }}">
+        <a wire:navigate href="/dashboard" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('dashboard') ? 'text-blue-600' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('dashboard') ? 'fill-blue-50/50' : '' }}"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span class="text-[10px] font-semibold">Beranda</span>
         </a>
 
         <!-- Eksplorasi -->
-        <a href="/explore" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'text-blue-600' : '' }}">
+        <a wire:navigate href="/explore" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'text-blue-600' : '' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'fill-blue-50/50' : '' }}"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <span class="text-[10px] font-semibold">Eksplorasi</span>
         </a>
@@ -291,5 +293,7 @@
     
     <!-- Global Toast Notifications -->
     <x-toast />
+    @livewireScripts
 </body>
 </html>
+

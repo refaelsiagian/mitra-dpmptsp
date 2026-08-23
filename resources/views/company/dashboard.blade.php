@@ -11,7 +11,7 @@
             <p class="text-sm font-semibold text-slate-500 mb-0.5">
                 Selamat datang 👋
             </p>
-            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight mb-1.5">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-1.5">
                 {{ auth()->user()->company->name ?? 'Mitra DPMPTSP' }}
             </h1>
             <p class="text-xs font-medium text-slate-400">
@@ -44,7 +44,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-slate-500">{{ $isUMKM ? 'Penawaran Aktif' : 'Pengadaan Aktif (Diterbitkan)' }}</p>
-                <p class="text-2xl font-black text-slate-900">2</p>
+                <p class="text-2xl font-bold text-slate-900">2</p>
             </div>
         </div>
         <!-- Stat 2 -->
@@ -54,7 +54,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-slate-500">{{ $isUMKM ? 'Peminat / Kontak Masuk' : 'Total Proposal Masuk' }}</p>
-                <p class="text-2xl font-black text-slate-900">{{ $receivedProposals->count() }}</p>
+                <p class="text-2xl font-bold text-slate-900">{{ $receivedProposals->count() }}</p>
             </div>
         </div>
         <!-- Stat 3 -->

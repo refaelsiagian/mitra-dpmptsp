@@ -12,10 +12,10 @@
             background-size: 180px 180px;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body class="font-['Inter'] text-slate-800 antialiased min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+<body class="font-['Cabin'] text-slate-800 antialiased min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
 
     <!-- Decorative blobs -->
     <div class="fixed top-[-10%] left-[-5%] w-[40%] h-[40%] bg-blue-400/20 rounded-full blur-3xl pointer-events-none z-[-1]"></div>
@@ -89,3 +89,4 @@
 
 </body>
 </html>
+

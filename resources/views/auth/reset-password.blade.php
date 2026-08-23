@@ -16,7 +16,7 @@
         background-repeat: repeat;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body class="font-sans text-gray-900 bg-white antialiased flex h-screen overflow-hidden">
@@ -135,3 +135,4 @@
 </script>
 </body>
 </html>
+
