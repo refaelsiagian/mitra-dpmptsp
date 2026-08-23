@@ -28,6 +28,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+            
+            // Set session variable to trigger splash screen exactly once
+            session(['show_splash' => true]);
 
             $user = Auth::user();
             if ($user->role === 'admin') {
@@ -69,6 +72,7 @@ class AuthController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+        session(['show_splash' => true]);
 
         return redirect('/email/verify');
     }

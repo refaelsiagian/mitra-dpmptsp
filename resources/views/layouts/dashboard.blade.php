@@ -28,15 +28,18 @@
 <body class="bg-slate-50 text-slate-900 antialiased h-screen flex flex-col md:flex-row overflow-hidden relative">
     
     <!-- Splash Screen -->
-    <div x-data="{ showSplash: true }" x-init="if (!sessionStorage.getItem('splash_shown')) { setTimeout(() => showSplash = false, 1500); sessionStorage.setItem('splash_shown', 'true'); } else { showSplash = false; }" x-show="showSplash" x-transition.opacity.duration.500ms class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white" style="display: flex;">
-        <div class="flex-1 flex items-center justify-center">
-            <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-20 md:h-24 w-auto animate-pulse">
+    @if(session('show_splash'))
+        @php session()->forget('show_splash'); @endphp
+        <div x-data="{ showSplash: true }" x-init="setTimeout(() => showSplash = false, 1500);" x-show="showSplash" x-transition.opacity.duration.500ms class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white">
+            <div class="flex-1 flex items-center justify-center">
+                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-20 md:h-24 w-auto animate-pulse">
+            </div>
+            <div class="pb-12 flex flex-col items-center">
+                <span class="text-xs font-semibold text-slate-400 mb-2">Dari</span>
+                <img src="{{ asset('images/logo-dpmptsp.png') }}" alt="DPMPTSP Sumut" class="h-10 md:h-12 w-auto">
+            </div>
         </div>
-        <div class="pb-12 flex flex-col items-center">
-            <span class="text-xs font-semibold text-slate-400 mb-2">Dari</span>
-            <img src="{{ asset('images/logo-dpmptsp.png') }}" alt="DPMPTSP Sumut" class="h-10 md:h-12 w-auto">
-        </div>
-    </div>
+    @endif
 
 
     <!-- Sidebar (Desktop Only) -->
@@ -49,7 +52,7 @@
                 <!-- Collapsed State Logo (Icon Only) -->
                 <img src="{{ asset('images/logo-2.svg') }}" alt="KIS Berkah Icon" class="h-8 w-auto absolute left-0 max-w-none">
                 <!-- Expanded State Logo (Full Lockup) -->
-                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah Logo" class="h-8 w-auto absolute left-0 max-w-none transition-opacity duration-300" :class="expanded ? 'opacity-100' : 'opacity-0 pointer-events-none'">
+                <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah Logo" class="h-8 w-auto absolute left-0 max-w-none transition-opacity duration-300 opacity-0 pointer-events-none" :class="expanded ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'">
             </a>
         </div>
         
