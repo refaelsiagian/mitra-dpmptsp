@@ -70,10 +70,10 @@
     </div>
 
     <!-- Main Content Area with Tabs -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm relative">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm relative flex flex-col h-[calc(100vh-16rem)] min-h-[600px] max-h-[800px]">
         
         <!-- Tab Navigation -->
-        <div class="sticky top-0 z-30 border-b border-slate-200 px-4 md:px-6 flex items-center justify-between gap-4 bg-white/95 backdrop-blur-sm rounded-t-2xl">
+        <div class="shrink-0 z-30 border-b border-slate-200 px-4 md:px-6 flex items-center justify-between gap-4 bg-white/95 backdrop-blur-sm rounded-t-2xl">
             <div class="flex items-center gap-6 md:gap-8 overflow-x-auto hide-scrollbar snap-x flex-1">
                 <button id="tab-btn-diterbitkan" onclick="switchRfpTab('diterbitkan')" class="whitespace-nowrap py-4 text-sm font-bold text-blue-700 border-b-2 border-blue-600 flex items-center gap-2 tab-btn snap-start">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -128,11 +128,14 @@
 
         </div>
 
+        <!-- Scrollable Contents Wrapper -->
+        <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar relative rounded-b-2xl">
+
         <!-- Project List Content: Diterbitkan -->
         <div id="content-diterbitkan" class="tab-content p-6 space-y-4 block">
             
             <!-- Filter & Search Bar -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="sticky top-0 z-20 bg-white/95 backdrop-blur-sm -mt-6 pt-6 -mx-6 px-6 pb-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div class="relative w-full max-w-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input id="search-aktif" type="text" placeholder="{{ $isUMKM ? 'Cari judul penawaran/layanan...' : 'Cari judul pengadaan/proyek...' }}" class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
@@ -158,12 +161,12 @@
         <!-- Project List Content: Proposal Masuk -->
         <div id="content-masuk" class="tab-content p-6 space-y-4 hidden">
             <!-- Filter & Search Bar -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="sticky top-0 z-20 bg-white/95 backdrop-blur-sm -mt-6 pt-6 -mx-6 px-6 pb-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div class="relative w-full max-w-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input id="search-masuk" type="text" placeholder="Cari {{ $isUMKM ? 'ketertarikan' : 'proposal' }} masuk..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
                 </div>
-                <div class="relative w-auto shrink-0 self-start sm:self-auto z-20" x-data="{ 
+                <div class="relative w-auto shrink-0 self-start sm:self-auto z-20" @reset-filter-masuk.window="value = ''" x-data="{ 
                     open: false, 
                     value: 'pending', 
                     options: {
@@ -195,7 +198,7 @@
                          x-transition:enter="transition ease-out duration-100"
                          x-transition:enter-start="transform opacity-0 scale-95"
                          x-transition:enter-end="transform opacity-100 scale-100"
-                         class="absolute top-full right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                         class="absolute top-full left-0 sm:left-auto sm:right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
                          style="display: none;">
                         <template x-for="(label, key) in options" :key="key">
                             <button type="button" @click="value = key; $refs.select.value = key; $refs.select.dispatchEvent(new Event('change')); open = false" class="w-full flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 text-left transition-colors" :class="value === key ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
@@ -278,7 +281,7 @@
 <!-- Project List Content: Proposal Terkirim -->
         <div id="content-terkirim" class="tab-content p-6 space-y-4 hidden">
             <!-- Filter & Search Bar -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="sticky top-0 z-20 bg-white/95 backdrop-blur-sm -mt-6 pt-6 -mx-6 px-6 pb-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div class="relative w-full max-w-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input id="search-terkirim" type="text" placeholder="Cari proposal terkirim..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
@@ -315,7 +318,7 @@
                          x-transition:enter="transition ease-out duration-100"
                          x-transition:enter-start="transform opacity-0 scale-95"
                          x-transition:enter-end="transform opacity-100 scale-100"
-                         class="absolute top-full right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
+                         class="absolute top-full left-0 sm:left-auto sm:right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden py-1"
                          style="display: none;">
                         <template x-for="(label, key) in options" :key="key">
                             <button type="button" @click="value = key; $refs.select.value = label === 'Semua Status' ? '' : label; $refs.select.dispatchEvent(new Event('change')); open = false" class="w-full flex items-center px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 text-left transition-colors" :class="value === key ? 'bg-blue-50 text-blue-700 font-semibold' : ''">
@@ -381,6 +384,15 @@
                 <p class="text-slate-500 text-sm">Anda belum mengirimkan ketertarikan atau penawaran ke proyek manapun.</p>
             </div>
             @endforelse
+            
+            <!-- JS Filter Empty State -->
+            <div id="empty-state-terkirim" class="text-center py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed" style="display: none;">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+                <h3 class="text-slate-900 font-bold mb-1">Tidak Ada Hasil</h3>
+                <p class="text-slate-500 text-sm">Tidak ada proposal yang sesuai dengan filter status atau pencarian Anda.</p>
+            </div>
         </div>
         
         <!-- Project List Content: Undangan -->
@@ -508,13 +520,58 @@
                 </div>
                 
                 <div class="flex items-center gap-3">
-                    <form action="{{ route('projects.destroy', $draft->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus draf ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
+                    <!-- Form Delete -->
+                    <div x-data="{ showDeleteDraftModal: false }">
+                        <button type="button" @click="showDeleteDraftModal = true" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
                             Hapus Draft
                         </button>
-                    </form>
+
+                        <!-- Modal Hapus Draft -->
+                        <template x-teleport="body">
+                            <div x-show="showDeleteDraftModal" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0"
+                                 x-transition:enter-end="opacity-100"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100"
+                                 x-transition:leave-end="opacity-0"
+                                 class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+                                 style="display: none;">
+                                 
+                                 <div x-show="showDeleteDraftModal"
+                                      @click.away="showDeleteDraftModal = false"
+                                      x-transition:enter="transition ease-out duration-300"
+                                      x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                      x-transition:leave="transition ease-in duration-200"
+                                      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                      class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
+                                    <div class="p-6 overflow-y-auto">
+                                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                        </div>
+                                        <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Draf Ini?</h3>
+                                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                                            Apakah Anda yakin ingin menghapus draf <span class="font-bold">"{{ $draft->title ?: 'Tanpa Judul' }}"</span>? Tindakan ini tidak dapat dibatalkan.
+                                        </p>
+                                    </div>
+                                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+                                        <button type="button" @click="showDeleteDraftModal = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
+                                            Batal
+                                        </button>
+                                        <form action="{{ route('projects.destroy', $draft->id) }}" method="POST" class="m-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                                Ya, Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
                     <a href="{{ route('projects.edit', $draft->id) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                         Lanjutkan Edit
@@ -702,6 +759,8 @@
                 </div>
             @endif
         </div>
+        
+        </div> <!-- End Scrollable Wrapper -->
 
     </div>
 </div>
@@ -755,6 +814,7 @@
                 const statusInput = document.getElementById('filter-status-masuk');
                 if (statusInput) {
                     statusInput.value = '';
+                    window.dispatchEvent(new Event('reset-filter-masuk'));
                 }
                 
                 // Trigger input event to run the filter logic
@@ -833,6 +893,7 @@
                 const statusFilter = statusInput ? statusInput.value.toLowerCase() : '';
                 
                 const items = document.querySelectorAll('.proposal-terkirim-item');
+                let visibleCount = 0;
                 
                 items.forEach(item => {
                     const text = item.innerText.toLowerCase();
@@ -843,10 +904,32 @@
                     
                     if (matchesSearch && matchesStatus) {
                         item.style.display = 'flex';
+                        visibleCount++;
                     } else {
                         item.style.display = 'none';
                     }
                 });
+                
+                const emptyState = document.getElementById('empty-state-terkirim');
+                if (emptyState && items.length > 0) {
+                    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+                    if (visibleCount === 0) {
+                        const statusText = statusInput && statusInput.options[statusInput.selectedIndex] ? statusInput.options[statusInput.selectedIndex].text : '';
+                        const typeText = '{{ $isUMKM ? 'Proposal' : 'Ketertarikan' }}';
+                        
+                        const titleEl = emptyState.querySelector('h3');
+                        const descEl = emptyState.querySelector('p');
+                        
+                        if (searchLower === '') {
+                            titleEl.innerText = `Belum ada ${typeText} ${statusText}`;
+                            descEl.innerText = `Tidak ada ${typeText.toLowerCase()} yang berada dalam tahap ${statusText}.`;
+                        } else {
+                            titleEl.innerText = `Pencarian Tidak Ditemukan`;
+                            const statusPart = statusFilter === '' ? '' : ` dengan status ${statusText}`;
+                            descEl.innerText = `Tidak ada ${typeText.toLowerCase()}${statusPart} yang sesuai dengan pencarian "${searchInput.value}".`;
+                        }
+                    }
+                }
             }
             
             // Add event listeners

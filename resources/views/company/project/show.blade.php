@@ -148,7 +148,7 @@
                     </p>
                     <h3 class="text-xl font-bold text-emerald-600 mb-2">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</h3>
                     
-                    @if(isset($project->metrics['is_negotiable']) && $project->metrics['is_negotiable'])
+                    @if($project->is_budget_negotiable)
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>
                         Bisa Didiskusikan
@@ -286,7 +286,7 @@
                     </p>
                     <h3 class="text-xl xl:text-2xl font-bold text-emerald-600 mb-2 break-all sm:break-normal">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</h3>
                     
-                    @if(isset($project->metrics['is_negotiable']) && $project->metrics['is_negotiable'])
+                    @if($project->is_budget_negotiable)
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>
                         Bisa Didiskusikan
