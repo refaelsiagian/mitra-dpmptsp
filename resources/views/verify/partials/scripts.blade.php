@@ -1,5 +1,5 @@
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('livewire:navigated', function() {
             let currentStep = 1;
             const totalSteps = 4;
             

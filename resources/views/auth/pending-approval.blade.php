@@ -65,7 +65,7 @@
                         <i class="ph ph-sign-out"></i> Logout
                     </button>
                 </form>
-                <a href="/rfp-saya" class="w-full sm:w-auto px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                <a wire:navigate href="/rfp-saya" class="w-full sm:w-auto px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
                     <i class="ph ph-squares-four"></i> Dashboard Sementara
                 </a>
             </div>

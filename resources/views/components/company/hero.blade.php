@@ -37,7 +37,7 @@
     <!-- Action Buttons (Desktop) -->
     <div class="hidden sm:block shrink-0 mt-1">
         @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-        <a href="{{ route('company.profile.edit') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+        <a wire:navigate href="{{ route('company.profile.edit') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
             Edit Profil
         </a>
@@ -53,7 +53,7 @@
 <!-- Action Buttons (Mobile) -->
 <div class="sm:hidden mt-4">
     @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-    <a href="{{ route('company.profile.edit') }}" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+    <a wire:navigate href="{{ route('company.profile.edit') }}" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
         Edit Profil
     </a>

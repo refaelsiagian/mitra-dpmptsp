@@ -77,7 +77,7 @@
                 <!-- Forgot Password -->
                 <div class="flex justify-end mt-2">
                     <div class="text-sm">
-                        <a href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                        <a wire:navigate href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500">
                             Forgot your password?
                         </a>
                     </div>
@@ -91,7 +91,7 @@
             </div>
             <div class="text-center text-sm mt-4">
                 <span class="text-gray-500">Don't have an account?</span>
-                <a class="font-medium text-blue-600 hover:underline" href="/">Register here</a>
+                <a wire:navigate class="font-medium text-blue-600 hover:underline" href="/">Register here</a>
             </div>
         </form>
     </div>
@@ -107,7 +107,7 @@
 
 <!-- Simple script for password toggle functionality -->
 <script data-purpose="form-interactions">
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('livewire:navigated', function() {
         const togglePasswordBtn = document.querySelector('[data-purpose="toggle-password"]');
         const passwordInput = document.getElementById('password');
         

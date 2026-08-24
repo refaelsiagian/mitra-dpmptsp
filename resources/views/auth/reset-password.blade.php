@@ -108,7 +108,7 @@
 
 <!-- Simple script for password toggle functionality -->
 <script data-purpose="form-interactions">
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('livewire:navigated', function() {
         const toggleBtns = document.querySelectorAll('[data-purpose="toggle-password"]');
         
         toggleBtns.forEach(btn => {

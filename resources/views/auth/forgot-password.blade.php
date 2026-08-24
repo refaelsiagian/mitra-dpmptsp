@@ -38,7 +38,7 @@
     <!-- Middle Area: Form Content -->
     <div class="w-full max-w-md mx-auto my-auto">
         <div class="mb-6">
-            <a href="{{ route('login') }}" class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors mb-4 group">
+            <a wire:navigate href="{{ route('login') }}" class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors mb-4 group">
                 <i class="ph ph-arrow-left group-hover:-translate-x-1 transition-transform"></i>
                 Kembali ke Login
             </a>

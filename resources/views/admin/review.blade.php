@@ -7,7 +7,7 @@
             <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Profil Perusahaan</h1>
             <p class="text-slate-500 font-medium mt-1">Informasi detail mengenai identitas dan legalitas perusahaan Anda.</p>
         </div>
-        <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 shadow-sm transition-colors flex items-center gap-2">
+        <a wire:navigate href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 shadow-sm transition-colors flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             Kembali ke Dashboard
         </a>
@@ -256,7 +256,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('livewire:navigated', function() {
         const companyId = {{ $company->id ?? 'null' }};
         if(!companyId) return;
 

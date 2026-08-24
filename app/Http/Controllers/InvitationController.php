@@ -64,7 +64,15 @@ class InvitationController extends Controller
             ->first();
 
         if ($existing) {
-            return response()->json(['success' => false, 'message' => 'Vendor sudah diundang ke proyek ini.'], 422);
+            $msg = 'Vendor sudah diundang ke proyek ini.';
+            if ($existing->status === 'accepted') {
+                $msg = 'Vendor ini telah menerima undangan Anda untuk proyek ini.';
+            } elseif ($existing->status === 'rejected') {
+                $msg = 'Vendor ini sebelumnya telah menolak undangan untuk proyek ini.';
+            } elseif ($existing->status === 'pending') {
+                $msg = 'Menunggu respon dari vendor terkait undangan sebelumnya.';
+            }
+            return response()->json(['success' => false, 'type' => 'info', 'message' => $msg], 422);
         }
 
         ProjectInvitation::create([

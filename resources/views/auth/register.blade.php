@@ -93,7 +93,7 @@
             </div>
             <div class="text-center text-sm mt-4">
                 <span class="text-gray-500">Already have an account?</span>
-                <a class="font-medium text-blue-600 hover:underline" href="/login">Log in here</a>
+                <a wire:navigate class="font-medium text-blue-600 hover:underline" href="/login">Log in here</a>
             </div>
         </form>
     </div>
@@ -109,7 +109,7 @@
 
 <!-- Simple script for password toggle functionality -->
 <script data-purpose="form-interactions">
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('livewire:navigated', function() {
         const togglePasswordBtn = document.querySelector('[data-purpose="toggle-password"]');
         const passwordInput = document.getElementById('password');
         

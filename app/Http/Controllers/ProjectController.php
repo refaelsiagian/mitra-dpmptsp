@@ -200,9 +200,17 @@ class ProjectController extends Controller
         return redirect()->route('projects.show', $project->id)->with('success', $message);
     }
 
-    public function destroy(\App\Models\Project $project)
+    public function destroy(Request $request, \App\Models\Project $project)
     {
         $project->delete();
-        return redirect()->back()->with('success', 'Proyek berhasil dihapus.');
+        
+        $redirectTo = $request->input('redirect_to', route('dashboard'));
+        
+        // If it's trying to redirect back to the project page itself, force dashboard
+        if (str_contains($redirectTo, route('projects.show', $project->id))) {
+            $redirectTo = route('dashboard');
+        }
+        
+        return redirect($redirectTo)->with('success', 'Proyek berhasil dihapus.');
     }
 }

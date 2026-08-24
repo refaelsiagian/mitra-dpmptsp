@@ -84,13 +84,13 @@
 
         <!-- Project Title -->
         <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-1.5 leading-snug">
-            <a href="{{ $url }}">{{ $title }}</a>
+            <a wire:navigate href="{{ $url }}">{{ $title }}</a>
         </h3>
 
         <!-- Company Initiator -->
         <div class="flex items-center gap-1.5 mb-3 text-sm font-medium">
             <span class="text-slate-400">Oleh:</span>
-            <a href="{{ $companyUrl }}" class="text-slate-700 hover:text-blue-600 font-semibold transition-colors underline decoration-slate-300 underline-offset-2">{{ $company }}</a>
+            <a wire:navigate href="{{ $companyUrl }}" class="text-slate-700 hover:text-blue-600 font-semibold transition-colors underline decoration-slate-300 underline-offset-2">{{ $company }}</a>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
 
@@ -121,7 +121,7 @@
         </div>
         
         <div class="flex items-center gap-2">
-            <a href="{{ $url }}" class="px-5 py-2.5 {{ $theme['btnBg'] }} text-white text-sm font-bold rounded-xl transition-colors shadow-sm {{ $theme['btnShadow'] }} flex items-center justify-center gap-2 focus:ring-2 focus:ring-offset-1 focus:outline-none">
+            <a wire:navigate href="{{ $url }}" class="px-5 py-2.5 {{ $theme['btnBg'] }} text-white text-sm font-bold rounded-xl transition-colors shadow-sm {{ $theme['btnShadow'] }} flex items-center justify-center gap-2 focus:ring-2 focus:ring-offset-1 focus:outline-none">
                 {{ $ctaText ?? 'Lihat Detail Peluang' }}
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>

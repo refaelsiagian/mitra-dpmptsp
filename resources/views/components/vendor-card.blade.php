@@ -26,7 +26,7 @@
     <!-- Middle: Info -->
     <div class="flex-1 flex flex-col justify-center">
         <h3 class="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-tight">
-            <a href="{{ $profileUrl ?? '/vendor-profile' }}">{{ $name ?? 'CV Baja Nusantara' }}</a>
+            <a wire:navigate href="{{ $profileUrl ?? '/vendor-profile' }}">{{ $name ?? 'CV Baja Nusantara' }}</a>
         </h3>
         <p class="text-[11px] sm:text-sm text-slate-500 mt-1 font-medium">
             {{ $category ?? 'Konstruksi Logam & Fabrikasi' }}
@@ -69,7 +69,7 @@
     <div class="flex flex-col items-start sm:items-end justify-center sm:w-40 gap-4 sm:gap-0 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-6 flex-shrink-0">
         <!-- Button -->
         <div class="w-full">
-            <a href="{{ $profileUrl ?? '/vendor-profile' }}" class="w-full justify-center items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm shadow-blue-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none flex text-center">
+            <a wire:navigate href="{{ $profileUrl ?? '/vendor-profile' }}" class="w-full justify-center items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm shadow-blue-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none flex text-center">
                 Lihat Profil
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>

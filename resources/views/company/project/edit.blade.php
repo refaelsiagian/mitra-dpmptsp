@@ -205,6 +205,4 @@
         </form>
     </div>
 </div>
-
-<script src="{{ asset('js/project-form.js') }}"></script>
 @endsection

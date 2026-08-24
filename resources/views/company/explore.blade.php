@@ -303,7 +303,7 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('livewire:navigated', () => {
         const params = new URLSearchParams(window.location.search);
         if (params.get('tab') === 'projects') {
             switchTab('projects');

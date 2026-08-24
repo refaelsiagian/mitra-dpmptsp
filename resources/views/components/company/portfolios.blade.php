@@ -5,7 +5,7 @@
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-base md:text-lg font-bold text-slate-900">Portofolio Proyek</h2>
         @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-        <a href="{{ route('portfolios.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold rounded-lg transition-colors shadow-sm shrink-0">
+        <a wire:navigate href="{{ route('portfolios.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold rounded-lg transition-colors shadow-sm shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             Tambah Portofolio
         </a>
@@ -41,7 +41,7 @@
                 @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
                 <!-- Action Buttons (Owner Only) -->
                 <div class="absolute top-4 right-4 flex items-center gap-2">
-                    <a href="{{ route('portfolios.edit', $portfolio) }}" class="bg-white/90 hover:bg-blue-50 text-blue-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-blue-100" title="Edit Portofolio">
+                    <a wire:navigate href="{{ route('portfolios.edit', $portfolio) }}" class="bg-white/90 hover:bg-blue-50 text-blue-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-blue-100" title="Edit Portofolio">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                     </a>
                     <form action="{{ route('portfolios.destroy', $portfolio) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus portofolio ini?');">

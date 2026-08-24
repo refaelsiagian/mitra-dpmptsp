@@ -191,6 +191,4 @@
             </div>
             
         </form>
-    </div>
-<script src="{{ asset('js/project-form.js') }}"></script>
-@endsection
+    </div>@endsection
