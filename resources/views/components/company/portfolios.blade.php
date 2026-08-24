@@ -40,17 +40,29 @@
                 
                 @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
                 <!-- Action Buttons (Owner Only) -->
-                <div class="absolute top-4 right-4 flex items-center gap-2">
+                <div x-data="{ showDeleteModal: false }" class="absolute top-4 right-4 flex items-center gap-2">
                     <a wire:navigate href="{{ route('portfolios.edit', $portfolio) }}" class="bg-white/90 hover:bg-blue-50 text-blue-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-blue-100" title="Edit Portofolio">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                     </a>
-                    <form action="{{ route('portfolios.destroy', $portfolio) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus portofolio ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="bg-white/90 hover:bg-red-50 text-red-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-red-100" title="Hapus Portofolio">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                        </button>
-                    </form>
+                    <button type="button" @click.prevent="showDeleteModal = true" class="bg-white/90 hover:bg-red-50 text-red-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-red-100" title="Hapus Portofolio">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                    </button>
+
+                    <x-modal.confirm 
+                        showProperty="showDeleteModal" 
+                        title="Hapus Portofolio Ini?">
+                        <p>Apakah Anda yakin ingin menghapus portofolio <span class="font-bold">"{{ $portfolio->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
+                        
+                        <x-slot:actions>
+                            <form action="{{ route('portfolios.destroy', $portfolio) }}" method="POST" class="m-0">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                    Ya, Hapus
+                                </button>
+                            </form>
+                        </x-slot:actions>
+                    </x-modal.confirm>
                 </div>
                 @endif
             </div>

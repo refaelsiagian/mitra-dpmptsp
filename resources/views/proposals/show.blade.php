@@ -155,193 +155,79 @@
     </div>
 
     <!-- Negotiation Modal -->
-    <div x-show="showNegotiationModal" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
-         style="display: none;">
-         
-         <div x-show="showNegotiationModal"
-              @click.away="showNegotiationModal = false"
-              x-transition:enter="transition ease-out duration-300"
-              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-              x-transition:leave="transition ease-in duration-200"
-              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-             
-             <!-- Modal Header -->
-             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                 <h3 class="text-lg font-bold text-slate-900">Mulai Negosiasi</h3>
-                 <button @click="showNegotiationModal = false" class="text-slate-400 hover:text-slate-500">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                 </button>
-             </div>
-             
-             <!-- Modal Body -->
-             <div class="p-6">
-                 <div class="flex items-start gap-4 mb-4">
-                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                     </div>
-                     <div>
-                         <p class="text-slate-600 text-sm leading-relaxed">
-                             Dengan beralih ke <strong>Tahap Negosiasi</strong>, Anda diharapkan untuk menghubungi pihak pengirim secara mandiri di luar platform ini (misal via WhatsApp atau Email) menggunakan informasi kontak yang tersedia di profil mereka.
-                         </p>
-                         <p class="text-slate-600 text-sm leading-relaxed mt-2">
-                             Apakah Anda siap untuk melanjutkan?
-                         </p>
-                     </div>
-                 </div>
-             </div>
-             
-             <!-- Modal Footer -->
-             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                 <button @click="showNegotiationModal = false" type="button" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors">
-                     Batal
-                 </button>
-                 <form action="{{ route('proposals.updateStatus', $proposal->id) }}" method="POST" class="m-0">
-                     @csrf
-                     @method('PUT')
-                     <input type="hidden" name="status" value="negotiating">
-                     <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm">
-                         Lanjutkan & Hubungi
-                     </button>
-                 </form>
-             </div>
-         </div>
-    </div>
+    <x-modal.confirm 
+        showProperty="showNegotiationModal" 
+        title="Mulai Negosiasi"
+        iconBgClass="bg-blue-100"
+        iconTextClass="text-blue-600">
+        <x-slot:icon>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </x-slot:icon>
+        
+        <p class="mb-2">Dengan beralih ke <strong>Tahap Negosiasi</strong>, Anda diharapkan untuk menghubungi pihak pengirim secara mandiri di luar platform ini (misal via WhatsApp atau Email) menggunakan informasi kontak yang tersedia di profil mereka.</p>
+        <p>Apakah Anda siap untuk melanjutkan?</p>
+        
+        <x-slot:actions>
+            <form action="{{ route('proposals.updateStatus', $proposal->id) }}" method="POST" class="m-0">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="status" value="negotiating">
+                <button type="submit" class="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm">
+                    Lanjutkan & Hubungi
+                </button>
+            </form>
+        </x-slot:actions>
+    </x-modal.confirm>
 
     <!-- Accept Modal -->
-    <div x-show="showAcceptModal" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
-         style="display: none;">
-         
-         <div x-show="showAcceptModal"
-              @click.away="showAcceptModal = false"
-              x-transition:enter="transition ease-out duration-300"
-              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-              x-transition:leave="transition ease-in duration-200"
-              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-             
-             <!-- Modal Header -->
-             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                 <h3 class="text-lg font-bold text-slate-900">Terima Tawaran</h3>
-                 <button @click="showAcceptModal = false" class="text-slate-400 hover:text-slate-500">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                 </button>
-             </div>
-             
-             <!-- Modal Body -->
-             <div class="p-6">
-                 <div class="flex items-start gap-4 mb-4">
-                     <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><polyline points="20 6 9 17 4 12"/></svg>
-                     </div>
-                     <div>
-                         <p class="text-slate-600 text-sm leading-relaxed">
-                             Dengan mengganti status menjadi <strong>Diterima</strong>, ini diartikan bahwa sudah terjadi kesepakatan antara kedua belah pihak di luar platform.
-                         </p>
-                         <p class="text-slate-600 text-sm leading-relaxed mt-2">
-                             Lanjutkan untuk menandai tawaran ini sebagai Diterima?
-                         </p>
-                     </div>
-                 </div>
-             </div>
-             
-             <!-- Modal Footer -->
-             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                 <button @click="showAcceptModal = false" type="button" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors">
-                     Batal
-                 </button>
-                 <form action="{{ route('proposals.updateStatus', $proposal->id) }}" method="POST" class="m-0">
-                     @csrf
-                     @method('PUT')
-                     <input type="hidden" name="status" value="accepted">
-                     <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm">
-                         Ya, Terima Tawaran
-                     </button>
-                 </form>
-             </div>
-         </div>
-    </div>
+    <x-modal.confirm 
+        showProperty="showAcceptModal" 
+        title="Terima Tawaran"
+        iconBgClass="bg-emerald-100"
+        iconTextClass="text-emerald-600">
+        <x-slot:icon>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </x-slot:icon>
+        
+        <p class="mb-2">Dengan mengganti status menjadi <strong>Diterima</strong>, ini diartikan bahwa sudah terjadi kesepakatan antara kedua belah pihak di luar platform.</p>
+        <p>Lanjutkan untuk menandai tawaran ini sebagai Diterima?</p>
+        
+        <x-slot:actions>
+            <form action="{{ route('proposals.updateStatus', $proposal->id) }}" method="POST" class="m-0">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="status" value="accepted">
+                <button type="submit" class="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-colors shadow-sm">
+                    Ya, Terima Tawaran
+                </button>
+            </form>
+        </x-slot:actions>
+    </x-modal.confirm>
 
     <!-- Reject Modal -->
-    <div x-show="showRejectModal" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
-         style="display: none;">
-         
-         <div x-show="showRejectModal"
-              @click.away="showRejectModal = false"
-              x-transition:enter="transition ease-out duration-300"
-              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-              x-transition:leave="transition ease-in duration-200"
-              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-             
-             <!-- Modal Header -->
-             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                 <h3 class="text-lg font-bold text-slate-900">Tolak Tawaran</h3>
-                 <button @click="showRejectModal = false" class="text-slate-400 hover:text-slate-500">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                 </button>
-             </div>
-             
-             <!-- Modal Body -->
-             <div class="p-6">
-                 <div class="flex items-start gap-4 mb-4">
-                     <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                     </div>
-                     <div>
-                         <p class="text-slate-600 text-sm leading-relaxed">
-                             Apakah Anda yakin ingin menolak tawaran ini?
-                         </p>
-                         <p class="text-slate-600 text-sm leading-relaxed mt-2 font-medium">
-                             Tindakan ini tidak dapat dibatalkan dan status akan diubah menjadi Ditolak secara permanen.
-                         </p>
-                     </div>
-                 </div>
-             </div>
-             
-             <!-- Modal Footer -->
-             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                 <button @click="showRejectModal = false" type="button" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors">
-                     Batal
-                 </button>
-                 <form action="{{ route('proposals.updateStatus', $proposal->id) }}" method="POST" class="m-0">
-                     @csrf
-                     @method('PUT')
-                     <input type="hidden" name="status" value="rejected">
-                     <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm">
-                         Ya, Tolak Tawaran
-                     </button>
-                 </form>
-             </div>
-         </div>
-    </div>
+    <x-modal.confirm 
+        showProperty="showRejectModal" 
+        title="Tolak Tawaran"
+        iconBgClass="bg-red-100"
+        iconTextClass="text-red-600">
+        <x-slot:icon>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </x-slot:icon>
+        
+        <p class="mb-2">Apakah Anda yakin ingin menolak tawaran ini?</p>
+        <p class="font-medium">Tindakan ini tidak dapat dibatalkan dan status akan diubah menjadi Ditolak secara permanen.</p>
+        
+        <x-slot:actions>
+            <form action="{{ route('proposals.updateStatus', $proposal->id) }}" method="POST" class="m-0">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="status" value="rejected">
+                <button type="submit" class="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                    Ya, Tolak Tawaran
+                </button>
+            </form>
+        </x-slot:actions>
+    </x-modal.confirm>
 </div>
 
 @endsection

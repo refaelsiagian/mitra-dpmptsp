@@ -425,37 +425,28 @@
                                         Tolak
                                     </button>
                                     <!-- Reject Modal -->
-                                    <div x-show="showRejectModal" 
-
-                                         style="display: none;" 
-                                         class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                                    <x-modal.confirm 
+                                        showProperty="showRejectModal" 
+                                        title="Tolak Undangan?"
+                                        iconBgClass="bg-red-100"
+                                        iconTextClass="text-red-600">
+                                        <x-slot:icon>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                        </x-slot:icon>
                                         
-                                        <div x-show="showRejectModal" 
-                                             x-transition.opacity 
-                                             class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" 
-                                             @click="showRejectModal = false"></div>
+                                        <p>Apakah Anda yakin ingin menolak tawaran proyek <span class="font-bold">"{{ $invitation->project->title }}"</span> dari {{ $invitation->invitingCompany->name }}?</p>
                                         
-                                        <div x-show="showRejectModal" 
-                                             x-transition:enter="transition ease-out duration-300"
-                                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                             x-transition:leave="transition ease-in duration-200"
-                                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                             class="relative bg-white rounded-2xl text-left overflow-hidden shadow-2xl p-6 sm:max-w-md w-full border border-slate-200 z-10">
-                                            <h3 class="text-lg font-bold text-slate-900 mb-2">Tolak Undangan?</h3>
-                                            <p class="text-sm text-slate-500 mb-5">Apakah Anda yakin ingin menolak tawaran proyek "{{ $invitation->project->title }}" dari {{ $invitation->invitingCompany->name }}?</p>
-                                            <div class="flex justify-end gap-3">
-                                                <button type="button" @click="showRejectModal = false" class="px-4 py-2 text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50">Batal</button>
-                                                <form action="{{ route('invitations.update', $invitation->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <input type="hidden" name="action" value="reject">
-                                                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-red-600 border border-transparent rounded-lg shadow-sm hover:bg-red-700">Ya, Tolak</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        <x-slot:actions>
+                                            <form action="{{ route('invitations.update', $invitation->id) }}" method="POST" class="m-0">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="action" value="reject">
+                                                <button type="submit" class="w-full sm:w-auto px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                                    Ya, Tolak
+                                                </button>
+                                            </form>
+                                        </x-slot:actions>
+                                    </x-modal.confirm>
                                 </div>
                                 <a href="{{ route('proposals.create', $invitation->project->id) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
                                     Buat Penawaran

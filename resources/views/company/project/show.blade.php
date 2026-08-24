@@ -348,51 +348,22 @@
                                 Hapus Proyek
                             </button>
                             <!-- Delete Modal -->
-                            <template x-teleport="body">
-                                <div x-show="showDeleteModalDesktop" 
-                                     x-transition:enter="transition ease-out duration-300"
-                                     x-transition:enter-start="opacity-0"
-                                     x-transition:enter-end="opacity-100"
-                                     x-transition:leave="transition ease-in duration-200"
-                                     x-transition:leave-start="opacity-100"
-                                     x-transition:leave-end="opacity-0"
-                                     class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
-                                     style="display: none;">
-                                     
-                                     <div x-show="showDeleteModalDesktop"
-                                          @click.away="showDeleteModalDesktop = false"
-                                          x-transition:enter="transition ease-out duration-300"
-                                          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                          x-transition:leave="transition ease-in duration-200"
-                                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                          class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
-                                        <div class="p-6 overflow-y-auto">
-                                            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                            </div>
-                                            <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Proyek Ini?</h3>
-                                            <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-                                                Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.
-                                            </p>
-                                        </div>
-                                        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
-                                            <button type="button" @click="showDeleteModalDesktop = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
-                                                Batal
-                                            </button>
-                                            <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
-                                                @csrf
-                                                @method('DELETE')
-                                                <input type="hidden" name="redirect_to" value="{{ url()->previous() !== url()->current() ? url()->previous() : route('dashboard') }}">
-                                                <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
-                                                    Ya, Hapus
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
+                            <x-modal.confirm 
+                                showProperty="showDeleteModalDesktop" 
+                                title="Hapus Proyek Ini?">
+                                <p>Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
+                                
+                                <x-slot:actions>
+                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" name="redirect_to" value="{{ url()->previous() !== url()->current() ? url()->previous() : route('dashboard') }}">
+                                        <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                            Ya, Hapus
+                                        </button>
+                                    </form>
+                                </x-slot:actions>
+                            </x-modal.confirm>
                         </div>
                         @endif
                     </div>
@@ -444,50 +415,22 @@
                         Hapus
                     </button>
                     <!-- Delete Modal -->
-                    <template x-teleport="body">
-                        <div x-show="showDeleteModalMobile" 
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0"
-                             x-transition:enter-end="opacity-100"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100"
-                             x-transition:leave-end="opacity-0"
-                             class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
-                             style="display: none;">
-                             
-                             <div x-show="showDeleteModalMobile"
-                                  @click.away="showDeleteModalMobile = false"
-                                  x-transition:enter="transition ease-out duration-300"
-                                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                  x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                  x-transition:leave="transition ease-in duration-200"
-                                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                  class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
-                                <div class="p-6 overflow-y-auto">
-                                    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                    </div>
-                                    <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Proyek Ini?</h3>
-                                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-                                        Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.
-                                    </p>
-                                </div>
-                                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
-                                    <button type="button" @click="showDeleteModalMobile = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
-                                        Batal
-                                    </button>
-                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
-                                            Ya, Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
+                    <x-modal.confirm 
+                        showProperty="showDeleteModalMobile" 
+                        title="Hapus Proyek Ini?">
+                        <p>Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
+                        
+                        <x-slot:actions>
+                            <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
+                                @csrf
+                                @method('DELETE')
+                                <input type="hidden" name="redirect_to" value="{{ url()->previous() !== url()->current() ? url()->previous() : route('dashboard') }}">
+                                <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                    Ya, Hapus
+                                </button>
+                            </form>
+                        </x-slot:actions>
+                    </x-modal.confirm>
                 </div>
                 @endif
             </div>
