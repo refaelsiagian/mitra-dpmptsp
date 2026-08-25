@@ -29,9 +29,12 @@ class CheckCompanyVerification
             return redirect()->route('verify');
         }
 
-        // 2. Pending or Approved -> Allowed to proceed to Dashboard Sementara
-        // (Access limits for pending will be handled later, for now just let them through)
-        
+        // 2. Pending -> Stuck on review
+        if ($company->status === 'pending') {
+            return redirect()->route('review');
+        }
+
+        // 3. Verified -> Allowed to proceed
         return $next($request);
     }
 }

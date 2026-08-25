@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Project;
+use App\Models\Province;
+use App\Models\Kbli;
 
 class ExploreController extends Controller
 {
@@ -13,8 +15,12 @@ class ExploreController extends Controller
     {
         $search = $request->query('search');
         $kbli = $request->query('kbli');
-        $location = $request->query('location');
         $scheme = $request->query('scheme');
+        
+        $provinceId = $request->query('province_id');
+        $regencyId = $request->query('regency_id');
+        $districtId = $request->query('district_id');
+        $villageId = $request->query('village_id');
 
         $userScale = auth()->check() && auth()->user()->company ? auth()->user()->company->skala_usaha : null;
 
@@ -39,13 +45,16 @@ class ExploreController extends Controller
 
         if ($kbli) {
             $vendorsQuery->whereHas('kblis', function($q) use ($kbli) {
-                $q->where('name', 'like', "%{$kbli}%");
+                $q->where('code', $kbli);
             });
         }
 
-        if ($location) {
-            $vendorsQuery->whereHas('locations.regency', function($q) use ($location) {
-                $q->where('name', 'like', "%{$location}%");
+        if ($provinceId) {
+            $vendorsQuery->whereHas('locations', function($q) use ($provinceId, $regencyId, $districtId, $villageId) {
+                $q->where('province_id', $provinceId);
+                if ($regencyId) $q->where('regency_id', $regencyId);
+                if ($districtId) $q->where('district_id', $districtId);
+                if ($villageId) $q->where('village_id', $villageId);
             });
         }
 
@@ -83,17 +92,30 @@ class ExploreController extends Controller
             $projectsQuery->where('type', $scheme);
         }
 
-        if ($location) {
-            $projectsQuery->where(function($q) use ($location) {
-                $q->where('location', 'like', "%{$location}%")
-                  ->orWhereHas('company.locations.regency', function($cQ) use ($location) {
-                      $cQ->where('name', 'like', "%{$location}%");
-                  });
+        if ($provinceId) {
+            $projectsQuery->where(function($q) use ($provinceId, $regencyId, $districtId, $villageId) {
+                // Check project's direct location fields
+                $q->where(function($pQ) use ($provinceId, $regencyId, $districtId, $villageId) {
+                    $pQ->where('province_id', $provinceId);
+                    if ($regencyId) $pQ->where('regency_id', $regencyId);
+                    if ($districtId) $pQ->where('district_id', $districtId);
+                    if ($villageId) $pQ->where('village_id', $villageId);
+                })
+                // Fallback to company location if project doesn't have one set (or in general as an OR)
+                ->orWhereHas('company.locations', function($cQ) use ($provinceId, $regencyId, $districtId, $villageId) {
+                    $cQ->where('province_id', $provinceId);
+                    if ($regencyId) $cQ->where('regency_id', $regencyId);
+                    if ($districtId) $cQ->where('district_id', $districtId);
+                    if ($villageId) $cQ->where('village_id', $villageId);
+                });
             });
         }
 
         $projects = $projectsQuery->paginate(10, ['*'], 'project_page');
+        
+        $provinces = Province::orderBy('name')->get();
+        $kblis = Kbli::orderBy('code')->get();
 
-        return view('company.explore', compact('vendors', 'projects', 'search', 'kbli', 'location', 'scheme'));
+        return view('company.explore', compact('vendors', 'projects', 'search', 'kbli', 'scheme', 'provinceId', 'regencyId', 'districtId', 'villageId', 'provinces', 'kblis'));
     }
 }

@@ -38,34 +38,7 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/verify', [\App\Http\Controllers\VerificationController::class, 'index'])->name('verify');
     Route::post('/verify', [\App\Http\Controllers\VerificationController::class, 'store'])->name('verify.store');
 
-    Route::get('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'index'])->name('company.profile');
-    Route::get('/company/profile/edit', [\App\Http\Controllers\CompanyProfileController::class, 'edit'])->name('company.profile.edit');
-    Route::put('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'update'])->name('company.profile.update');
-    
-    // Portfolios
-    Route::get('/portfolios/create', [\App\Http\Controllers\PortfolioController::class, 'create'])->name('portfolios.create');
-    Route::post('/portfolios', [\App\Http\Controllers\PortfolioController::class, 'store'])->name('portfolios.store');
-    Route::get('/portfolios/{portfolio}/edit', [\App\Http\Controllers\PortfolioController::class, 'edit'])->name('portfolios.edit');
-    Route::put('/portfolios/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'update'])->name('portfolios.update');
-    Route::delete('/portfolios/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'destroy'])->name('portfolios.destroy');
 
-    // Projects
-    Route::get('/projects/create', [\App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');
-    Route::post('/projects', [\App\Http\Controllers\ProjectController::class, 'store'])->name('projects.store');
-    Route::get('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
-    Route::get('/projects/{project}/edit', [\App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
-    Route::put('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
-    Route::delete('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('projects.destroy');
-
-    // Proposals
-    Route::get('/projects/{project}/proposals/create', [\App\Http\Controllers\ProposalController::class, 'create'])->name('proposals.create');
-    Route::post('/projects/{project}/proposals', [\App\Http\Controllers\ProposalController::class, 'store'])->name('proposals.store');
-    Route::get('/proposals/{proposal}', [\App\Http\Controllers\ProposalController::class, 'show'])->name('proposals.show');
-    Route::put('/proposals/{proposal}/status', [\App\Http\Controllers\ProposalController::class, 'updateStatus'])->name('proposals.updateStatus');
-
-    // Invitations
-    Route::post('/invitations', [\App\Http\Controllers\InvitationController::class, 'store'])->name('invitations.store');
-    Route::put('/invitations/{invitation}', [\App\Http\Controllers\InvitationController::class, 'update'])->name('invitations.update');
 
     Route::get('/review', [\App\Http\Controllers\VerificationController::class, 'review'])->name('review');
 });
@@ -96,8 +69,36 @@ Route::get('/api/villages/{district_id}', function ($district_id) {
 
 Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompanyVerification::class])->group(function () {
     Route::get('/explore', [\App\Http\Controllers\ExploreController::class, 'index'])->name('explore');
-
     Route::get('/vendor/{company}', [\App\Http\Controllers\VendorController::class, 'show'])->name('vendor.show')->whereNumber('company');
+
+    Route::get('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'index'])->name('company.profile');
+    Route::get('/company/profile/edit', [\App\Http\Controllers\CompanyProfileController::class, 'edit'])->name('company.profile.edit');
+    Route::put('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'update'])->name('company.profile.update');
+    
+    // Portfolios
+    Route::get('/portfolios/create', [\App\Http\Controllers\PortfolioController::class, 'create'])->name('portfolios.create');
+    Route::post('/portfolios', [\App\Http\Controllers\PortfolioController::class, 'store'])->name('portfolios.store');
+    Route::get('/portfolios/{portfolio}/edit', [\App\Http\Controllers\PortfolioController::class, 'edit'])->name('portfolios.edit');
+    Route::put('/portfolios/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'update'])->name('portfolios.update');
+    Route::delete('/portfolios/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'destroy'])->name('portfolios.destroy');
+
+    // Projects
+    Route::get('/projects/create', [\App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');
+    Route::post('/projects', [\App\Http\Controllers\ProjectController::class, 'store'])->name('projects.store');
+    Route::get('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
+    Route::get('/projects/{project}/edit', [\App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
+    Route::put('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
+    Route::delete('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('projects.destroy');
+
+    // Proposals
+    Route::get('/projects/{project}/proposals/create', [\App\Http\Controllers\ProposalController::class, 'create'])->name('proposals.create');
+    Route::post('/projects/{project}/proposals', [\App\Http\Controllers\ProposalController::class, 'store'])->name('proposals.store');
+    Route::get('/proposals/{proposal}', [\App\Http\Controllers\ProposalController::class, 'show'])->name('proposals.show');
+    Route::put('/proposals/{proposal}/status', [\App\Http\Controllers\ProposalController::class, 'updateStatus'])->name('proposals.updateStatus');
+
+    // Invitations
+    Route::post('/invitations', [\App\Http\Controllers\InvitationController::class, 'store'])->name('invitations.store');
+    Route::put('/invitations/{invitation}', [\App\Http\Controllers\InvitationController::class, 'update'])->name('invitations.update');
 
 
 

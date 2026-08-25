@@ -173,6 +173,7 @@
                         <form action="{{ route('projects.close', $project->id) }}" method="POST" class="m-0 w-full">
                             @csrf
                             @method('PUT')
+                            <input type="hidden" name="redirect_to" value="{{ url()->current() }}">
                             <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition-colors shadow-sm">
                                 Ya, Tutup Proyek
                             </button>
@@ -191,6 +192,7 @@
                         <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0 w-full">
                             @csrf
                             @method('DELETE')
+                            <input type="hidden" name="redirect_to" value="{{ url()->current() }}">
                             <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
                                 Ya, Hapus
                             </button>
