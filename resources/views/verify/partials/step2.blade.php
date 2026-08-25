@@ -164,6 +164,7 @@
                             <div class="mt-6 border-t border-gray-100 pt-6">
                                 <x-form.radio 
                                     name="is_pkp" 
+                                    id="radio-is-pkp"
                                     label="Apakah Perusahaan Anda PKP (Pengusaha Kena Pajak)?" 
                                     :required="true"
                                     :value="$company->is_pkp ?? null"

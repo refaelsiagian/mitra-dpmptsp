@@ -53,8 +53,8 @@
                 kbliList.innerHTML = '';
                 const lowerFilter = filter.toLowerCase();
                 const filtered = kbliData.filter(item => 
-                    (item.id.toLowerCase().includes(lowerFilter) || item.nama.toLowerCase().includes(lowerFilter)) &&
-                    !selectedKbli.some(selected => selected.id === item.id)
+                    (String(item.id).toLowerCase().includes(lowerFilter) || String(item.nama).toLowerCase().includes(lowerFilter)) &&
+                    !selectedKbli.some(selected => String(selected.id) === String(item.id))
                 );
                 
                 if (filtered.length === 0) {
@@ -99,7 +99,9 @@
                 
                 // Hide dropdown on blur
                 kbliSearch.addEventListener('blur', () => {
-                    kbliDropdown.classList.add('hidden');
+                    setTimeout(() => {
+                        kbliDropdown.classList.add('hidden');
+                    }, 200);
                 });
             }
             

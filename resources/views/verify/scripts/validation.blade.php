@@ -129,7 +129,7 @@
                     const pkpNoCheck = document.querySelector('input[name="is_pkp"][value="0"]')?.checked;
                     
                     if (!pkpYesCheck && !pkpNoCheck) {
-                        showError('pkp-yes', 'Pilih status PKP perusahaan');
+                        showError('radio-is-pkp', 'Pilih status PKP perusahaan');
                     } else if (pkpYesCheck) {
                         const pkpLinkVal = document.getElementById('pkp-link').value.trim();
                         if (!pkpLinkVal) {
