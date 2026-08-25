@@ -59,41 +59,54 @@
 
             <!-- Tab Content: Offerings -->
             @if($company->projects->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
-            <div x-show="activeTab === 'offerings'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" class="space-y-6">
-                @if($company->projects->count() === 0)
-                <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 mt-2">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                    </div>
-                    <p class="text-slate-500 mb-1 font-medium">Belum ada proyek yang dipublikasikan.</p>
-                    <p class="text-slate-400 text-sm mb-5">Klik Buat Proyek untuk mulai mencari mitra atau vendor.</p>
-                    @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-                    <a wire:navigate href="{{ route('projects.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                        Buat Proyek Pertama
-                    </a>
-                    @endif
-                </div>
-                @else
+            <div x-show="activeTab === 'offerings'" x-data="{ activeProjectTab: 'aktif' }" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" class="space-y-6">
                 @php
                     $publishedProjects = $company->projects->where('status', 'published');
                     $closedProjects = $company->projects->where('status', 'closed');
                     $draftProjects = $company->projects->where('status', 'draft');
+                    
+                    $activeCount = $publishedProjects->count() + $draftProjects->count();
+                    $closedCount = $closedProjects->count();
                 @endphp
 
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex justify-between items-center mb-6" x-data="{ openDropdown: false }">
                     <h2 class="text-base md:text-lg font-bold text-slate-900">
-                        Proyek Aktif <span class="text-slate-400 font-medium text-sm md:text-base ml-1">({{ $publishedProjects->count() }})</span>
+                        <span x-text="activeProjectTab === 'aktif' ? 'Proyek Aktif' : 'Riwayat Selesai'"></span>
+                        <span class="text-slate-400 font-medium text-sm md:text-base ml-1" x-text="activeProjectTab === 'aktif' ? '({{ $activeCount }})' : '({{ $closedCount }})'"></span>
                     </h2>
-                    @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-                    <a wire:navigate href="{{ route('projects.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold rounded-lg transition-colors shadow-sm shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                        Buat Proyek
-                    </a>
-                    @endif
+                    <div class="relative shrink-0">
+                        <button type="button" @click="openDropdown = !openDropdown" @click.outside="openDropdown = false" class="inline-flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-bold rounded-lg transition-all shadow-sm">
+                            <span x-text="activeProjectTab === 'aktif' ? 'Aktif' : 'Selesai'"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 transition-transform duration-200" :class="{ 'rotate-180': openDropdown }"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div x-show="openDropdown" style="display: none;" class="absolute right-0 top-full mt-2 w-40 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-10" x-transition>
+                            <button type="button" @click="activeProjectTab = 'aktif'; openDropdown = false" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors" :class="activeProjectTab === 'aktif' ? 'text-blue-700 font-bold bg-blue-50/50' : 'text-slate-700 font-medium'">
+                                Proyek Aktif
+                            </button>
+                            <button type="button" @click="activeProjectTab = 'selesai'; openDropdown = false" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors" :class="activeProjectTab === 'selesai' ? 'text-blue-700 font-bold bg-blue-50/50' : 'text-slate-700 font-medium'">
+                                Riwayat Selesai
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
-                    @foreach($publishedProjects->merge($draftProjects) as $project)
+                <div x-show="activeProjectTab === 'aktif'" class="space-y-6">
+                    @if($activeCount === 0)
+                        <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 mt-2">
+                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                            </div>
+                            <p class="text-slate-500 mb-1 font-medium">Belum ada proyek aktif.</p>
+                            @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
+                            <p class="text-slate-400 text-sm mb-5">Klik Buat Proyek untuk mulai mencari mitra atau vendor.</p>
+                            <a wire:navigate href="{{ route('projects.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow-sm transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                Buat Proyek Pertama
+                            </a>
+                            @endif
+                        </div>
+                    @else
+                        @foreach($publishedProjects->merge($draftProjects) as $project)
                     @php
                         $theme = match($project->type) {
                             'konstruksi' => [
@@ -167,14 +180,19 @@
                         </div>
                     </div>
                     @endforeach
+                    @endif
+                </div>
 
-                    @if($closedProjects->count() > 0)
-                    <div class="pt-8 mt-4 border-t border-slate-200">
-                        <h2 class="text-base md:text-lg font-bold text-slate-900 mb-6">
-                            Riwayat Proyek Selesai <span class="text-slate-400 font-medium text-sm md:text-base ml-1">({{ $closedProjects->count() }})</span>
-                        </h2>
-                        <div class="space-y-6">
-                            @foreach($closedProjects as $project)
+                <div x-show="activeProjectTab === 'selesai'" style="display: none;" class="space-y-6">
+                    @if($closedCount === 0)
+                        <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 mt-2">
+                            <div class="w-12 h-12 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            </div>
+                            <p class="text-slate-500 mb-1 font-medium">Belum ada riwayat proyek selesai.</p>
+                        </div>
+                    @else
+                        @foreach($closedProjects as $project)
                                 @php
                                     $theme = match($project->type) {
                                         'konstruksi' => [
@@ -260,10 +278,8 @@
                                     </div>
                                 </div>
                             @endforeach
-                        </div>
-                    </div>
                     @endif
-                @endif
+                </div>
             </div>
             @endif
 

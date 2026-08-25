@@ -40,13 +40,36 @@
                 
                 @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
                 <!-- Action Buttons (Owner Only) -->
-                <div x-data="{ showDeleteModal: false }" class="absolute top-4 right-4 flex items-center gap-2">
-                    <a wire:navigate href="{{ route('portfolios.edit', $portfolio) }}" class="bg-white/90 hover:bg-blue-50 text-blue-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-blue-100" title="Edit Portofolio">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                    </a>
-                    <button type="button" @click.prevent="showDeleteModal = true" class="bg-white/90 hover:bg-red-50 text-red-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-red-100" title="Hapus Portofolio">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                    </button>
+                <div x-data="{ showDeleteModal: false, openDropdown: false }" class="absolute top-4 right-4 flex items-center justify-end z-20">
+                    
+                    <!-- Desktop Buttons -->
+                    <div class="hidden md:flex items-center gap-2">
+                        <a wire:navigate href="{{ route('portfolios.edit', $portfolio) }}" @click.stop class="bg-white/90 hover:bg-blue-50 text-blue-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-blue-100" title="Edit Portofolio">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        </a>
+                        <button type="button" @click.stop="showDeleteModal = true" class="bg-white/90 hover:bg-red-50 text-red-600 backdrop-blur-sm p-2.5 rounded-full shadow-sm transition-colors border border-red-100" title="Hapus Portofolio">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Mobile Three Dots Menu -->
+                    <div class="md:hidden relative">
+                        <button type="button" @click.stop="openDropdown = !openDropdown" @click.outside="openDropdown = false" class="bg-white/90 hover:bg-slate-100 text-slate-700 backdrop-blur-sm p-2 rounded-full shadow-sm transition-colors border border-slate-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div x-show="openDropdown" style="display: none;" class="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-lg border border-slate-200 py-1.5 z-30" x-transition.opacity>
+                            <a wire:navigate href="{{ route('portfolios.edit', $portfolio) }}" @click.stop class="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors w-full text-left font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                Edit
+                            </a>
+                            <button type="button" @click.stop="openDropdown = false; showDeleteModal = true" class="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
 
                     <x-modal.confirm 
                         showProperty="showDeleteModal" 

@@ -352,42 +352,8 @@
                     </ul>
                 </div>
                 
-                <!-- Calls to Action -->
-                @if(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id)
-                    <!-- Owner View -->
-                    <div class="flex flex-col gap-3">
-                        <a href="{{ route('projects.edit', $project->id) }}" wire:navigate class="w-full py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-xl transition-colors shadow-sm flex justify-center items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                            Edit Proyek
-                        </a>
-                        @if($project->proposals()->count() === 0)
-                        <div x-data="{ showDeleteModalDesktop: false }" class="w-full">
-                            <button type="button" @click="showDeleteModalDesktop = true" class="w-full py-3 bg-white hover:bg-red-50 border border-red-200 text-red-600 font-bold rounded-xl transition-colors shadow-sm flex justify-center items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                Hapus Proyek
-                            </button>
-                            <!-- Delete Modal -->
-                            <x-modal.confirm 
-                                showProperty="showDeleteModalDesktop" 
-                                title="Hapus Proyek Ini?">
-                                <p>Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
-                                
-                                <x-slot:actions>
-                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
-                                        @csrf
-                                        @method('DELETE')
-                                        <input type="hidden" name="redirect_to" value="{{ url()->previous() !== url()->current() ? url()->previous() : route('dashboard') }}">
-                                        <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
-                                            Ya, Hapus
-                                        </button>
-                                    </form>
-                                </x-slot:actions>
-                            </x-modal.confirm>
-                        </div>
-                        @endif
-                    </div>
-                @else
-                    <!-- Viewer View -->
+                <!-- Calls to Action (Viewer Only) -->
+                @if(!(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id))
                     <div class="flex flex-col gap-3">
                         @php
                             $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
@@ -410,73 +376,39 @@
                             {{ $buttonTextDesktop }}
                         </a>
                         @endif
-
                     </div>
                 @endif
                 
-            </div>
         </div>
-        
     </div>
     
+    @if(!(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id))
     <!-- Mobile & Tablet Sticky CTA Bar (Hidden on Large Desktop) -->
     <div class="lg:hidden fixed bottom-16 md:bottom-0 left-0 md:left-16 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40">
-        @if(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id)
-            <div class="flex gap-3">
-                <a href="{{ route('projects.edit', $project->id) }}" class="flex-1 py-3 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold rounded-xl text-center text-sm shadow-sm transition-colors flex justify-center items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                    Edit
-                </a>
-                @if($project->proposals()->count() === 0)
-                <div x-data="{ showDeleteModalMobile: false }" class="flex-1">
-                    <button type="button" @click="showDeleteModalMobile = true" class="w-full py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl text-sm border border-red-200 transition-colors flex justify-center items-center gap-1.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                        Hapus
-                    </button>
-                    <!-- Delete Modal -->
-                    <x-modal.confirm 
-                        showProperty="showDeleteModalMobile" 
-                        title="Hapus Proyek Ini?">
-                        <p>Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
-                        
-                        <x-slot:actions>
-                            <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
-                                @csrf
-                                @method('DELETE')
-                                <input type="hidden" name="redirect_to" value="{{ url()->previous() !== url()->current() ? url()->previous() : route('dashboard') }}">
-                                <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
-                                    Ya, Hapus
-                                </button>
-                            </form>
-                        </x-slot:actions>
-                    </x-modal.confirm>
-                </div>
-                @endif
-            </div>
-        @else
-            <div class="flex gap-3">
-                @php
-                    $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
-                    $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
-                    $buttonTextMobile = ($isViewerUB && !$isProjectUB) ? 'Ketertarikan' : 'Penawaran';
-                @endphp
-                @if($project->status === 'closed')
-                <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    Ditutup
-                </button>
-                @elseif($project->is_expired)
-                <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    Berakhir
-                </button>
-                @else
-                <a href="{{ route('proposals.create', $project->id) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
-                    {{ $buttonTextMobile }}
-                </a>
-                @endif
-            </div>
-        @endif
+        <div class="flex gap-3">
+            @php
+                $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
+                $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
+                $buttonTextMobile = ($isViewerUB && !$isProjectUB) ? 'Ketertarikan' : 'Penawaran';
+            @endphp
+            @if($project->status === 'closed')
+            <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Ditutup
+            </button>
+            @elseif($project->is_expired)
+            <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Berakhir
+            </button>
+            @else
+            <a href="{{ route('proposals.create', $project->id) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
+                {{ $buttonTextMobile }}
+            </a>
+            @endif
+        </div>
     </div>
-</div>@endsection
+    @endif
+</div>
+@endsection

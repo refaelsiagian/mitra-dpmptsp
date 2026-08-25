@@ -64,9 +64,13 @@
     </div>
     
     <div class="flex flex-col md:flex-row md:items-center gap-5 md:gap-6 mt-4 md:mt-0 pt-4 md:pt-0 border-t border-slate-100 md:border-t-0 md:border-l md:border-slate-200 md:pl-6">
+        @php 
+            $isUMKM = auth()->check() && in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['mikro', 'kecil']);
+            $proposalLabel = $isUMKM ? 'Ketertarikan' : 'Proposal';
+        @endphp
         <div class="flex items-center justify-around md:justify-start gap-6 w-full md:w-auto">
             <div class="text-center">
-                <p class="text-xs text-slate-400 font-medium mb-0.5">Proposal Masuk</p>
+                <p class="text-xs text-slate-400 font-medium mb-0.5">{{ $proposalLabel }} Masuk</p>
                 <p class="text-xl font-black text-slate-800">{{ $project->proposals_count ?? 0 }}</p>
             </div>
             <div class="text-center">
@@ -82,83 +86,118 @@
                 </p>
             </div>
         </div>
-        <div class="flex flex-col gap-2 w-full md:w-auto mt-2 md:mt-0">
-            @if(($project->proposals_count ?? 0) > 0)
-                <button type="button" onclick="filterProposalsByProject({{ $project->id }}, '{{ addslashes($project->title) }}')" class="w-full md:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
-                    Lihat {{ $project->proposals_count }} Proposal
-                </button>
-            @else
-                <a wire:navigate href="{{ route('projects.show', $project->id) }}" class="w-full md:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
-                    Lihat Detail
-                </a>
-            @endif
-            <div class="flex items-center gap-2 w-full md:w-auto flex-wrap md:flex-nowrap">
-                @if($project->status === 'published' && ($project->proposals_count ?? 0) > 0)
-                <!-- Alpine Modal Wrapper for Tutup Proyek -->
-                <div x-data="{ showCloseModal: false }" class="flex-1 md:flex-none">
-                    <button type="button" @click="showCloseModal = true" class="w-full px-4 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+        <div class="flex flex-row md:flex-col gap-2 w-full md:w-auto mt-2 md:mt-0">
+            <div class="flex-1 md:flex-none w-full">
+                @if(($project->proposals_count ?? 0) > 0)
+                    <button type="button" onclick="filterProposalsByProject({{ $project->id }}, '{{ addslashes($project->title) }}')" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                        Lihat {{ $project->proposals_count }} {{ $proposalLabel }}
+                    </button>
+                @else
+                    <a wire:navigate href="{{ route('projects.show', $project->id) }}" class="block w-full px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                        Lihat Detail
+                    </a>
+                @endif
+            </div>
+            
+            <div x-data="{ showCloseModal: false, showDeleteModal: false, openDropdown: false }" class="relative flex items-center justify-end md:justify-start shrink-0 w-full md:w-auto">
+                
+                <!-- Desktop Full Buttons -->
+                <div class="hidden md:flex items-center gap-2">
+                    @if($project->status === 'published' && ($project->proposals_count ?? 0) > 0)
+                    <button type="button" @click="showCloseModal = true" class="px-4 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
                         Tutup Proyek
                     </button>
+                    @endif
 
-                    <!-- Modal Tutup Proyek -->
-                    <x-modal.confirm 
-                        showProperty="showCloseModal" 
-                        title="Tutup Proyek Ini?"
-                        iconBgClass="bg-slate-100"
-                        iconTextClass="text-slate-600">
-                        <x-slot:icon>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 14v1"/><path d="M15 14v1"/><path d="M9 9v1"/><path d="M15 9v1"/></svg>
-                        </x-slot:icon>
-                        
-                        <p class="mb-4">Apakah Anda yakin ingin menutup proyek <span class="font-bold">"{{ $project->title }}"</span>?</p>
-                        
-                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                            <p class="text-amber-800 text-xs font-medium leading-relaxed">
-                                Proyek yang ditutup tidak akan menerima tawaran baru dan akan dipindahkan ke tab <span class="font-bold">Riwayat Proyek Selesai</span>. Tindakan ini menandakan proyek telah selesai atau Anda telah mendapatkan mitra yang sesuai.
-                            </p>
-                        </div>
-                        
-                        <x-slot:actions>
-                            <form action="{{ route('projects.close', $project->id) }}" method="POST" class="m-0">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition-colors shadow-sm">
-                                    Ya, Tutup Proyek
-                                </button>
-                            </form>
-                        </x-slot:actions>
-                    </x-modal.confirm>
+                    @if($project->proposals()->count() === 0)
+                    <button type="button" @click="showDeleteModal = true" class="px-4 py-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                        Hapus
+                    </button>
+                    @endif
+                    
+                    <a wire:navigate href="{{ route('projects.edit', $project->id) }}" class="px-4 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
+                        Edit
+                    </a>
                 </div>
+
+                <!-- Mobile Three Dots Menu -->
+                <div class="md:hidden">
+                    <button type="button" @click="openDropdown = !openDropdown" @click.outside="openDropdown = false" class="p-2 h-full min-h-[38px] text-slate-400 hover:text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors flex items-center justify-center aspect-square">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="openDropdown" style="display: none;" class="absolute right-0 bottom-full mb-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-10" x-transition.opacity>
+                        
+                        <a wire:navigate href="{{ route('projects.edit', $project->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors w-full text-left font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                            Edit Proyek
+                        </a>
+
+                        @if($project->status === 'published' && ($project->proposals_count ?? 0) > 0)
+                        <button type="button" @click="openDropdown = false; showCloseModal = true" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors w-full text-left font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 14v1"/><path d="M15 14v1"/><path d="M9 9v1"/><path d="M15 9v1"/></svg>
+                            Tutup Proyek
+                        </button>
+                        @endif
+
+                        @if($project->proposals()->count() === 0)
+                        <button type="button" @click="openDropdown = false; showDeleteModal = true" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                            Hapus Proyek
+                        </button>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Modals -->
+                @if($project->status === 'published' && ($project->proposals_count ?? 0) > 0)
+                <x-modal.confirm 
+                    showProperty="showCloseModal" 
+                    title="Tutup Proyek Ini?"
+                    iconBgClass="bg-slate-100"
+                    iconTextClass="text-slate-600">
+                    <x-slot:icon>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 14v1"/><path d="M15 14v1"/><path d="M9 9v1"/><path d="M15 9v1"/></svg>
+                    </x-slot:icon>
+                    
+                    <p class="mb-4 text-left">Apakah Anda yakin ingin menutup proyek <span class="font-bold">"{{ $project->title }}"</span>?</p>
+                    
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-left">
+                        <p class="text-amber-800 text-xs font-medium leading-relaxed">
+                            Proyek yang ditutup tidak akan menerima tawaran baru dan akan dipindahkan ke tab <span class="font-bold">Riwayat Proyek Selesai</span>. Tindakan ini menandakan proyek telah selesai atau Anda telah mendapatkan mitra yang sesuai.
+                        </p>
+                    </div>
+                    
+                    <x-slot:actions>
+                        <form action="{{ route('projects.close', $project->id) }}" method="POST" class="m-0 w-full">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition-colors shadow-sm">
+                                Ya, Tutup Proyek
+                            </button>
+                        </form>
+                    </x-slot:actions>
+                </x-modal.confirm>
                 @endif
 
                 @if($project->proposals()->count() === 0)
-                <!-- Form Delete -->
-                <div x-data="{ showDeleteModal: false }" class="flex-1 md:flex-none">
-                    <button type="button" @click="showDeleteModal = true" class="w-full px-4 py-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
-                        Hapus
-                    </button>
-
-                    <!-- Modal Hapus Proyek -->
-                    <x-modal.confirm 
-                        showProperty="showDeleteModal" 
-                        title="Hapus Proyek Ini?">
-                        <p>Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
-                        
-                        <x-slot:actions>
-                            <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
-                                    Ya, Hapus
-                                </button>
-                            </form>
-                        </x-slot:actions>
-                    </x-modal.confirm>
-                </div>
+                <x-modal.confirm 
+                    showProperty="showDeleteModal" 
+                    title="Hapus Proyek Ini?">
+                    <p class="text-left">Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
+                    
+                    <x-slot:actions>
+                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0 w-full">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                Ya, Hapus
+                            </button>
+                        </form>
+                    </x-slot:actions>
+                </x-modal.confirm>
                 @endif
-                <a wire:navigate href="{{ route('projects.edit', $project->id) }}" class="flex-1 md:flex-none px-4 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
-                    Edit
-                </a>
             </div>
         </div>
     </div>
