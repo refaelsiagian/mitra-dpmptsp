@@ -216,7 +216,7 @@
                     'title' => $project->title,
                     'company' => $project->company->name,
                     'companyUrl' => route('vendor.show', $project->company->id),
-                    'location' => $project->location ?? (optional(optional($project->company->locations->first())->regency)->name ?? 'Lokasi belum diset'),
+                    'location' => $project->village_id ? ucwords(strtolower($project->district?->name)) . ', ' . ucwords(strtolower($project->regency?->name)) : (optional(optional($project->company->locations->first())->regency)->name ?? 'Lokasi belum diset'),
                     'category' => optional($project->company->kblis->first())->name ?? 'Umum',
                     'valueLabel' => 'Estimasi Nilai',
                     'value' => $project->estimated_value ? 'Rp ' . number_format($project->estimated_value, 0, ',', '.') : 'Sesuai Kesepakatan',

@@ -1,5 +1,6 @@
 function projectForm(config) {
     return {
+        ...config,
         type: config.type || '',
         title: config.title || '',
         description: config.description || '',
@@ -106,6 +107,25 @@ function projectForm(config) {
             if (this.type === 'konstruksi') return this.isUmkm ? 'Contoh: Jasa Pengerjaan Atap / Sub-pekerjaan Instalasi Listrik' : 'Contoh: Pembangunan Gudang Logistik / Pekerjaan Sipil Pabrik';
             
             return 'Contoh: Pengadaan Material Besi Baja / Penawaran Jasa Konstruksi Baja';
+        },
+
+        clearLocation() {
+            this.province_id = '';
+            this.regency_id = '';
+            this.district_id = '';
+            this.village_id = '';
+            this.address = '';
+            this.regencies = [];
+            this.districts = [];
+            this.villages = [];
+            
+            this.uncheckShortcuts();
+        },
+
+        uncheckShortcuts() {
+            document.querySelectorAll('input[name="loc_shortcut"]').forEach(r => r.checked = false);
+            const cb = document.querySelector('#loc_shortcut_checkbox');
+            if(cb) cb.checked = false;
         }
     }
 }

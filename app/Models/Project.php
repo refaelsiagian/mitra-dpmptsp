@@ -16,8 +16,13 @@ class Project extends Model
         'description',
         'ruang_lingkup',
         'estimated_value',
+        'image',
         'is_budget_negotiable',
-        'location',
+        'province_id',
+        'regency_id',
+        'district_id',
+        'village_id',
+        'address',
         'offer_end_date',
         'project_start_date',
         'project_end_date',
@@ -54,5 +59,25 @@ class Project extends Model
     public function getIsExpiredAttribute()
     {
         return $this->offer_end_date && $this->offer_end_date->endOfDay()->isPast() && $this->status === 'published';
+    }
+
+    public function province()
+    {
+        return $this->belongsTo(Province::class);
+    }
+
+    public function regency()
+    {
+        return $this->belongsTo(Regency::class);
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function village()
+    {
+        return $this->belongsTo(Village::class);
     }
 }

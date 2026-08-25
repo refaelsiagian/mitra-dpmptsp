@@ -59,7 +59,26 @@
             @endif
 
             <!-- Header Section -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200" x-data="{ lightboxOpen: false, lightboxImage: '' }">
+                    @if($project->image)
+                        <div class="mb-6 relative group cursor-pointer" @click="lightboxImage = '{{ Storage::url($project->image) }}'; lightboxOpen = true">
+                            <img src="{{ Storage::url($project->image) }}" alt="Banner {{ $project->title }}" class="w-full h-48 md:h-64 object-cover rounded-xl border border-slate-200 shadow-sm transition-transform duration-500">
+                            <!-- Hover Overlay for Image -->
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none flex items-center justify-center">
+                                <div class="bg-white/30 backdrop-blur-sm p-3 rounded-full text-white shadow-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Lightbox Modal -->
+                        <div x-show="lightboxOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-10" x-transition.opacity style="display: none;">
+                            <button @click="lightboxOpen = false" class="absolute top-4 right-4 md:top-8 md:right-8 text-white/70 hover:text-white p-2 transition-colors z-[110]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                            <img :src="lightboxImage" @click.outside="lightboxOpen = false" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+                        </div>
+                    @endif
                     @php
                         $theme = match($project->type) {
                             'konstruksi' => [
@@ -124,9 +143,9 @@
                 </a>
                 
                 <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-100">
-                    @if($project->location)
+                    @if($project->village_id)
                         <span class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
-                            Lokasi: {{ $project->location }}
+                            Lokasi: {{ ucwords(strtolower($project->village?->name)) }}, {{ ucwords(strtolower($project->district?->name)) }}, {{ ucwords(strtolower($project->regency?->name)) }}, {{ ucwords(strtolower($project->province?->name)) }}
                         </span>
                     @endif
                 </div>

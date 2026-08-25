@@ -14,7 +14,8 @@ class ProjectController extends Controller
             return redirect()->back()->with('error', 'Lengkapi profil perusahaan terlebih dahulu.');
         }
 
-        return view('company.project.create', compact('company'));
+        $provinces = \App\Models\Province::orderBy('name')->get();
+        return view('company.project.create', compact('company', 'provinces'));
     }
 
     public function store(Request $request)
@@ -29,7 +30,12 @@ class ProjectController extends Controller
             'ruang_lingkup' => 'required|string',
             'estimated_value' => 'nullable|numeric',
             'is_budget_negotiable' => 'nullable|boolean',
-            'location' => 'nullable|string|max:255',
+            'image' => 'nullable|image|max:5120',
+            'province_id' => 'nullable|required_with:regency_id,district_id,village_id,address|string|max:255',
+            'regency_id' => 'nullable|required_with:province_id,district_id,village_id,address|string|max:255',
+            'district_id' => 'nullable|required_with:province_id,regency_id,village_id,address|string|max:255',
+            'village_id' => 'nullable|required_with:province_id,regency_id,district_id,address|string|max:255',
+            'address' => 'nullable|required_with:province_id,regency_id,district_id,village_id|string',
             'offer_end_date' => 'nullable|date|after_or_equal:today',
             'project_start_date' => 'nullable|date|after:offer_end_date',
             'project_end_date' => 'nullable|date|after:project_start_date',
@@ -37,6 +43,11 @@ class ProjectController extends Controller
             'requirements' => 'required|array',
             'offerings' => 'required|array',
         ], [
+            'province_id.required_with' => 'Provinsi wajib diisi jika lokasi proyek lainnya diisi.',
+            'regency_id.required_with' => 'Kabupaten/Kota wajib diisi jika lokasi proyek lainnya diisi.',
+            'district_id.required_with' => 'Kecamatan wajib diisi jika lokasi proyek lainnya diisi.',
+            'village_id.required_with' => 'Desa/Kelurahan wajib diisi jika lokasi proyek lainnya diisi.',
+            'address.required_with' => 'Alamat lengkap wajib diisi jika lokasi proyek lainnya diisi.',
             'offer_end_date.after_or_equal' => 'Batas penawaran tidak boleh lebih awal dari tanggal proyek diterbitkan (hari ini).',
             'project_start_date.after' => 'Mulai pelaksanaan tidak boleh lebih awal dari batas penawaran.',
             'project_end_date.after' => 'Selesai pelaksanaan tidak boleh lebih awal dari mulai pelaksanaan.',
@@ -47,6 +58,16 @@ class ProjectController extends Controller
 
         // Default to false if not checked
         $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable') ? 'true' : 'false';
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $content = file_get_contents($file->getPathname());
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = 'projects/images/' . $filename;
+            
+            \Illuminate\Support\Facades\Storage::disk('public')->put($path, $content);
+            $validated['image'] = $path;
+        }
 
         // Handle file uploads (attachments)
         $attachments = [];
@@ -111,7 +132,8 @@ class ProjectController extends Controller
         }
         
         $company = auth()->user()->company;
-        return view('company.project.edit', compact('project', 'company'));
+        $provinces = \App\Models\Province::orderBy('name')->get();
+        return view('company.project.edit', compact('project', 'company', 'provinces'));
     }
 
     public function update(Request $request, \App\Models\Project $project)
@@ -129,7 +151,12 @@ class ProjectController extends Controller
             'ruang_lingkup' => 'required|string',
             'estimated_value' => 'nullable|numeric',
             'is_budget_negotiable' => 'nullable|boolean',
-            'location' => 'nullable|string|max:255',
+            'image' => 'nullable|image|max:5120',
+            'province_id' => 'nullable|required_with:regency_id,district_id,village_id,address|string|max:255',
+            'regency_id' => 'nullable|required_with:province_id,district_id,village_id,address|string|max:255',
+            'district_id' => 'nullable|required_with:province_id,regency_id,village_id,address|string|max:255',
+            'village_id' => 'nullable|required_with:province_id,regency_id,district_id,address|string|max:255',
+            'address' => 'nullable|required_with:province_id,regency_id,district_id,village_id|string',
             'offer_end_date' => [
                 'nullable',
                 'date',
@@ -151,6 +178,11 @@ class ProjectController extends Controller
             'requirements' => 'required|array',
             'offerings' => 'required|array',
         ], [
+            'province_id.required_with' => 'Provinsi wajib diisi jika lokasi proyek lainnya diisi.',
+            'regency_id.required_with' => 'Kabupaten/Kota wajib diisi jika lokasi proyek lainnya diisi.',
+            'district_id.required_with' => 'Kecamatan wajib diisi jika lokasi proyek lainnya diisi.',
+            'village_id.required_with' => 'Desa/Kelurahan wajib diisi jika lokasi proyek lainnya diisi.',
+            'address.required_with' => 'Alamat lengkap wajib diisi jika lokasi proyek lainnya diisi.',
             'project_start_date.after' => 'Mulai pelaksanaan tidak boleh lebih awal dari batas penawaran.',
             'project_end_date.after' => 'Selesai pelaksanaan tidak boleh lebih awal dari mulai pelaksanaan.',
         ]);
@@ -159,6 +191,20 @@ class ProjectController extends Controller
         $offerings = $request->input('offerings', []);
 
         $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable') ? 'true' : 'false';
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $content = file_get_contents($file->getPathname());
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = 'projects/images/' . $filename;
+            
+            \Illuminate\Support\Facades\Storage::disk('public')->put($path, $content);
+            
+            if ($project->image) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($project->image);
+            }
+            $validated['image'] = $path;
+        }
 
         // Handle file uploads (attachments)
         $attachments = $project->attachments ?? [];
