@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Mitra DPMPTSP - Sedang Ditinjau</title>
+    <title>KIS Berkah - Sedang Ditinjau</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body {
@@ -23,11 +23,7 @@
 
     <!-- Header Logo -->
     <div class="absolute top-6 left-6 md:top-8 md:left-10 flex items-center gap-3 z-20">
-        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-md">M</div>
-        <div class="flex flex-col justify-center">
-            <span class="font-bold text-xl text-blue-600 leading-none">Mitra</span>
-            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">DPMPTSP</span>
-        </div>
+        <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-10 md:h-12 w-auto">
     </div>
 
     <!-- Main Card -->

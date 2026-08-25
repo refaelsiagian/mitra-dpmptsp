@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Mitra DPMPTSP - Verifikasi Usaha</title>
+    <title>KIS Berkah - Verifikasi Usaha</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -11,6 +11,9 @@
     <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <!-- AlpineJS for UI Components -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-sans text-text bg-surface-muted antialiased min-h-screen flex flex-col">
 
@@ -19,8 +22,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-bold">M</div>
-                    <span class="font-bold text-xl text-blue-600 hidden sm:block">Mitra DPMPTSP</span>
+                    <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-8 w-auto">
                 </div>
                 <div>
                     <span class="text-sm font-medium text-gray-500">Verifikasi Data Perusahaan</span>

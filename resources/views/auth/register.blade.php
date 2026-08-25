@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Mitra DPMPTSP - Registrasi</title>
+    <title>KIS Berkah - Registrasi</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style data-purpose="custom-utilities">
         /* Geometric background pattern for the right side */
@@ -28,11 +28,7 @@
     <!-- PERUBAHAN: Menambahkan 'w-full max-w-md mx-auto' agar logo sejajar dengan form yang ada di tengah -->
     <div class="mb-8 flex-shrink-0 w-full max-w-md mx-auto">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl">M</div>
-            <div>
-                <h1 class="text-xl font-bold text-blue-600 leading-tight">Mitra</h1>
-                <h2 class="text-sm font-semibold text-gray-500 leading-tight uppercase tracking-wide">DPMPTSP</h2>
-            </div>
+            <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-12 w-auto">
         </div>
     </div>
 
