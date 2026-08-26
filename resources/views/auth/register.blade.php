@@ -53,43 +53,39 @@
                     </div>
                 @endif
 
-                <!-- Email -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Email Address <span class="text-red-500">*</span></label>
-                    <input class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="email" name="email" placeholder="Enter work email" required="" type="email"/>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Alamat Email <span class="text-red-500">*</span></label>
+                    <input class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="email" name="email" placeholder="Masukkan alamat email Anda" required="" type="email"/>
                 </div>
                 
-                <!-- Password -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Password <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Kata Sandi <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Create a secure password" required="" type="password"/>
+                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Buat kata sandi yang aman" required="" type="password"/>
                         <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" type="button">
                             <i class="ph ph-eye-slash text-xl"></i>
                         </button>
                     </div>
                 </div> <!-- PENUTUP YANG DITAMBAHKAN -->
                 
-                <!-- Confirm Password -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="confirm-password">Confirm Password <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="confirm-password">Konfirmasi Kata Sandi <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required="" type="password"/>
+                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="confirm-password" name="confirm-password" placeholder="Konfirmasi kata sandi Anda" required="" type="password"/>
                         <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-confirm-password" type="button">
                             <i class="ph ph-eye-slash text-xl"></i>
                         </button>
                     </div>
                 </div>
             </fieldset>
-            <!-- Submit Button -->
             <div>
                 <button class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors" type="submit">
-                Register Entity
+                Daftar
                 </button>
             </div>
             <div class="text-center text-sm mt-4">
-                <span class="text-gray-500">Already have an account?</span>
-                <a wire:navigate class="font-medium text-blue-600 hover:underline" href="/login">Log in here</a>
+                <span class="text-gray-500">Sudah punya akun?</span>
+                <a wire:navigate class="font-medium text-blue-600 hover:underline" href="/login">Masuk di sini</a>
             </div>
         </form>
     </div>
