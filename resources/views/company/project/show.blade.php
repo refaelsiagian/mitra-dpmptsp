@@ -356,9 +356,8 @@
                 @if(!(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id))
                     <div class="flex flex-col gap-3">
                         @php
-                            $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
-                            $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
-                            $buttonTextDesktop = ($isViewerUB && !$isProjectUB) ? 'Kirim Ketertarikan' : 'Kirim Penawaran';
+                            $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['besar']) : false;
+                            $buttonTextDesktop = $isViewerUB ? 'Kirim Ketertarikan' : 'Kirim Proposal';
                         @endphp
                         @if($project->status === 'closed')
                         <button disabled class="w-full py-3.5 bg-slate-200 text-slate-500 font-bold rounded-xl flex justify-center items-center gap-2 cursor-not-allowed">
@@ -371,7 +370,7 @@
                             Waktu Penawaran Berakhir
                         </button>
                         @else
-                        <a href="{{ route('proposals.create', $project->id) }}" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-600/20 flex justify-center items-center gap-2">
+                        <a wire:navigate href="{{ route('proposals.create', $project->id) }}" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-lg shadow-blue-600/20 flex justify-center items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
                             {{ $buttonTextDesktop }}
                         </a>
@@ -387,9 +386,8 @@
     <div class="lg:hidden fixed bottom-16 md:bottom-0 left-0 md:left-16 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40">
         <div class="flex gap-3">
             @php
-                $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
-                $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
-                $buttonTextMobile = ($isViewerUB && !$isProjectUB) ? 'Ketertarikan' : 'Penawaran';
+                $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['besar']) : false;
+                $buttonTextMobile = $isViewerUB ? 'Kirim Ketertarikan' : 'Kirim Proposal';
             @endphp
             @if($project->status === 'closed')
             <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
@@ -402,7 +400,7 @@
                 Berakhir
             </button>
             @else
-            <a href="{{ route('proposals.create', $project->id) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
+            <a wire:navigate href="{{ route('proposals.create', $project->id) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
                 {{ $buttonTextMobile }}
             </a>

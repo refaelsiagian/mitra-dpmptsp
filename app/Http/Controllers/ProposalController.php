@@ -61,7 +61,7 @@ class ProposalController extends Controller
             ->where('status', 'pending')
             ->update(['status' => 'accepted']);
 
-        $isUB = in_array(strtolower($user->company->skala_usaha ?? ''), ['menengah', 'besar']);
+        $isUB = in_array(strtolower($user->company->skala_usaha ?? ''), ['besar']);
         $message = $isUB ? 'Ketertarikan/Permintaan berhasil dikirim!' : 'Proposal/Penawaran berhasil dikirim!';
 
         return redirect()->route('projects.show', $project->id)->with('success', $message);

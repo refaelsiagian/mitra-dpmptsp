@@ -2,8 +2,8 @@
 
 @section('content')
 @php
-    $isUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
-    $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['menengah', 'besar']) : false;
+    $isUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['besar']) : false;
+    $isProjectUB = $project->company ? in_array(strtolower($project->company->skala_usaha ?? ''), ['besar']) : false;
     $isKetertarikan = $isUB && !$isProjectUB;
     $pageTitle = $isKetertarikan ? 'Kirim Ketertarikan' : 'Kirim Penawaran';
     $pageDesc = $isKetertarikan ? 'Ajukan permintaan atau ketertarikan Anda terhadap produk/layanan ini.' : 'Ajukan proposal penawaran Anda untuk proyek ini.';
@@ -15,7 +15,7 @@
             <h1 class="text-2xl font-bold text-slate-900">{{ $pageTitle }}</h1>
             <p class="text-slate-500 text-sm mt-1">Ke proyek: <span class="font-semibold text-slate-700">{{ $project->title }}</span></p>
         </div>
-        <a href="{{ route('projects.show', $project->id) }}" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition-colors shadow-sm">
+        <a wire:navigate href="{{ route('projects.show', $project->id) }}" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition-colors shadow-sm">
             Batal
         </a>
     </div>
@@ -107,14 +107,14 @@
                     <p class="text-xs text-slate-500 mb-3">
                         {{ $isKetertarikan ? 'Unggah spesifikasi kebutuhan, draft kontrak, atau dokumen pendukung (PDF/ZIP, Max 10MB).' : 'Unggah proposal lengkap, RAB, atau dokumen teknis pendukung (PDF/ZIP, Max 10MB).' }}
                     </p>
-                    <input type="file" name="attachment" accept=".pdf,.zip,.doc,.docx" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <input type="file" name="attachment" accept=".pdf,.zip,.doc,.docx" @change="validateFileSize" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 </div>
 
             </div>
 
             <!-- Footer -->
             <div class="px-6 md:px-8 py-5 bg-slate-50 border-t border-slate-200 flex flex-col-reverse md:flex-row justify-end items-center gap-3">
-                <a href="{{ route('projects.show', $project->id) }}" class="w-full md:w-auto px-6 py-3 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition-colors shadow-sm text-center">Batal</a>
+                <a wire:navigate href="{{ route('projects.show', $project->id) }}" class="w-full md:w-auto px-6 py-3 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition-colors shadow-sm text-center">Batal</a>
                 <button type="submit" class="w-full md:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
                     {{ $pageTitle }}
@@ -135,6 +135,13 @@ function proposalForm() {
                 this.selected = this.selected.filter(id => id !== e.target.value);
                 this.showWarning = true;
                 setTimeout(() => { this.showWarning = false; }, 3000);
+            }
+        },
+        validateFileSize(e) {
+            const file = e.target.files[0];
+            if (file && file.size > 10 * 1024 * 1024) { // 10MB limit
+                window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Ukuran lampiran maksimal adalah 10MB.', type: 'error' } }));
+                e.target.value = ''; // clear the input
             }
         }
     }

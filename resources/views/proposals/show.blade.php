@@ -2,8 +2,8 @@
 
 @section('content')
 @php
-    $isSenderUB = in_array(strtolower($proposal->company->skala_usaha ?? ''), ['menengah', 'besar']);
-    $isProjectUB = in_array(strtolower($proposal->project->company->skala_usaha ?? ''), ['menengah', 'besar']);
+    $isSenderUB = in_array(strtolower($proposal->company->skala_usaha ?? ''), ['besar']);
+    $isProjectUB = in_array(strtolower($proposal->project->company->skala_usaha ?? ''), ['besar']);
     $isKetertarikan = $isSenderUB && !$isProjectUB;
     
     $statusColor = match($proposal->status) {

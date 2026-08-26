@@ -99,7 +99,7 @@
                 @endif
             </div>
             
-            <div x-data="{ showCloseModal: false, showDeleteModal: false, openDropdown: false }" class="relative flex items-center justify-end md:justify-start shrink-0 w-full md:w-auto">
+            <div x-data="{ showCloseModal: false, showDeleteModal: false, openDropdown: false }" class="relative flex items-center justify-end md:justify-start shrink-0 w-auto">
                 
                 <!-- Desktop Full Buttons -->
                 <div class="hidden md:flex items-center gap-2">

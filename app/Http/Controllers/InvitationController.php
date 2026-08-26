@@ -58,6 +58,15 @@ class InvitationController extends Controller
             return response()->json(['success' => false, 'message' => 'Anda bukan pemilik proyek ini.'], 403);
         }
 
+        // Check if already sent a proposal
+        $existingProposal = \App\Models\Proposal::where('project_id', $project->id)
+            ->where('company_id', $request->invited_company_id)
+            ->first();
+
+        if ($existingProposal) {
+            return response()->json(['success' => false, 'type' => 'info', 'message' => 'Usaha ini sudah mengirimkan proposal ke proyek Anda.'], 422);
+        }
+
         // Check if already invited
         $existing = ProjectInvitation::where('project_id', $project->id)
             ->where('invited_company_id', $request->invited_company_id)
@@ -66,11 +75,11 @@ class InvitationController extends Controller
         if ($existing) {
             $msg = 'Vendor sudah diundang ke proyek ini.';
             if ($existing->status === 'accepted') {
-                $msg = 'Vendor ini telah menerima undangan Anda untuk proyek ini.';
+                $msg = 'Usaha ini telah mengirimkan proposalnya atas undangan Anda di proyek ini.';
             } elseif ($existing->status === 'rejected') {
-                $msg = 'Vendor ini sebelumnya telah menolak undangan untuk proyek ini.';
+                $msg = 'Usaha ini sebelumnya telah menolak undangan untuk proyek ini.';
             } elseif ($existing->status === 'pending') {
-                $msg = 'Menunggu respon dari vendor terkait undangan sebelumnya.';
+                $msg = 'Menunggu respon dari usaha terkait undangan sebelumnya.';
             }
             return response()->json(['success' => false, 'type' => 'info', 'message' => $msg], 422);
         }
