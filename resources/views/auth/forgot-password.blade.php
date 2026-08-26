@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Lupa Kata Sandi - KIS Berkah</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/logo-2.svg') }}" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style data-purpose="custom-utilities">
         /* Geometric background pattern for the right side */
