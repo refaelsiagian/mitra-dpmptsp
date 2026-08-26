@@ -64,6 +64,19 @@ Route::get('/api/villages/{district_id}', function ($district_id) {
     return \App\Models\Village::where('district_id', $district_id)->orderBy('name')->get();
 });
 
+Route::get('/api/check-nib/{nib}', function ($nib) {
+    $user = auth()->user();
+    $companyId = $user && $user->company ? $user->company->id : null;
+
+    $exists = \App\Models\Company::where('nib_number', $nib)
+        ->when($companyId, function($query) use ($companyId) {
+            $query->where('id', '!=', $companyId);
+        })
+        ->exists();
+
+    return response()->json(['exists' => $exists]);
+})->middleware('auth');
+
 
 
 

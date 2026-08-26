@@ -125,6 +125,10 @@
                             @include('verify.partials.step3')
                             @include('verify.partials.step4')
                             @include('verify.partials.scripts')
+                </form>
+            </div>
+        </div>
+    </main>
     <x-toast />
 </body>
 </html>

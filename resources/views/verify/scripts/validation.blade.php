@@ -6,12 +6,28 @@
                 if (!stepSection) return true;
                 
                 stepSection.querySelectorAll('.error-msg').forEach(el => el.remove());
-                stepSection.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+                stepSection.querySelectorAll('.border-red-500').forEach(el => {
+                    el.classList.remove('border-red-500');
+                    if(el.tagName.toLowerCase() === 'input' || el.tagName.toLowerCase() === 'button' || el.tagName.toLowerCase() === 'textarea') {
+                        el.classList.add('border-gray-300');
+                    }
+                });
                 
                 function showError(elementId, message, borderElementId = null) {
                     isValid = false;
-                    const el = document.getElementById(borderElementId || elementId);
-                    if (el) el.classList.add('border-red-500');
+                    let el = document.getElementById(borderElementId || elementId);
+                    
+                    if (el) {
+                        // If it's the hidden native select, target its Alpine button instead
+                        if (el.tagName.toLowerCase() === 'select') {
+                            const customBtn = el.nextElementSibling?.querySelector('button') || el.nextElementSibling;
+                            if (customBtn && customBtn.tagName.toLowerCase() === 'button') {
+                                el = customBtn;
+                            }
+                        }
+                        el.classList.remove('border-gray-300');
+                        el.classList.add('border-red-500');
+                    }
                     
                     const targetEl = document.getElementById(elementId);
                     if (targetEl) {
@@ -19,7 +35,10 @@
                         p.className = 'text-red-500 text-xs mt-1 error-msg';
                         p.textContent = message;
                         
-                        if (elementId === 'coordinate-input') {
+                        if (targetEl.tagName.toLowerCase() === 'select') {
+                            // targetEl is hidden select inside the custom form select component, append to its root wrapper
+                            targetEl.parentNode.appendChild(p);
+                        } else if (elementId === 'coordinate-input') {
                             targetEl.parentNode.parentNode.insertBefore(p, targetEl.parentNode.nextSibling);
                         } else if (elementId === 'kbli-search') {
                             const kbliContainer = document.getElementById('kbli-container');

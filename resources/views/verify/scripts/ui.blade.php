@@ -55,6 +55,28 @@
             btnNext.addEventListener('click', () => {
                 if (typeof validateStep === 'function' && !validateStep(currentStep)) return;
                 
+                if (currentStep === 2) {
+                    if (typeof window.isNibChecking !== 'undefined' && window.isNibChecking) {
+                        const nibInput = document.getElementById('nib-number');
+                        if (nibInput) nibInput.focus();
+                        return;
+                    }
+                    
+                    if (typeof window.isNibValid !== 'undefined' && !window.isNibValid) {
+                        const nibInput = document.getElementById('nib-number');
+                        if (nibInput) {
+                            nibInput.focus();
+                            // Flash the error
+                            const err = document.getElementById('nib-error-message');
+                            if(err) {
+                                err.classList.add('animate-pulse');
+                                setTimeout(() => err.classList.remove('animate-pulse'), 1000);
+                            }
+                        }
+                        return;
+                    }
+                }
+                
                 if (currentStep < totalSteps) {
                     // normally validate form fields here
                     if (currentStep === 1 && typeof enforcePKPRules === 'function') {
@@ -92,6 +114,23 @@
                         
                         document.getElementById('summary-pimpinan').textContent = document.getElementById('nama-pimpinan').value || '-';
                         document.getElementById('summary-jabatan').textContent = document.getElementById('jabatan-pimpinan').value || '-';
+                        
+                        // Kewarganegaraan & Identitas
+                        const wniRadio = document.querySelector('input[name="kewarganegaraan"][value="WNI"]');
+                        const isWNI = wniRadio && wniRadio.checked;
+                        
+                        if (isWNI) {
+                            document.getElementById('summary-kewarganegaraan').textContent = 'WNI (Warga Negara Indonesia)';
+                            document.getElementById('summary-label-identitas').textContent = 'NIK';
+                            document.getElementById('summary-identitas').textContent = document.getElementById('nik-pimpinan').value || '-';
+                        } else {
+                            const nationalitySelect = document.getElementById('nationality-pimpinan');
+                            const nationalityText = nationalitySelect.options[nationalitySelect.selectedIndex]?.text || '-';
+                            document.getElementById('summary-kewarganegaraan').textContent = 'WNA (' + nationalityText + ')';
+                            document.getElementById('summary-label-identitas').textContent = 'Nomor Paspor';
+                            document.getElementById('summary-identitas').textContent = document.getElementById('nik-pimpinan').value || '-';
+                        }
+
                         document.getElementById('summary-nib').textContent = document.getElementById('nib-number').value || '-';
                         document.getElementById('summary-npwp').textContent = document.getElementById('npwp-number').value || '-';
                         
@@ -102,10 +141,34 @@
                             document.getElementById('summary-pkp').innerHTML = `<span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded border border-gray-200 font-bold">BELUM PKP</span>`;
                         }
                         
+                        // Region summary helper
+                        const getRegionText = (type) => {
+                            const prov = document.getElementById('provinsi-' + type);
+                            const kab = document.getElementById('kabupaten-' + type);
+                            const kec = document.getElementById('kecamatan-' + type);
+                            const desa = document.getElementById('desa-' + type);
+                            
+                            const parts = [];
+                            if (desa && desa.value) parts.push(desa.options[desa.selectedIndex]?.text);
+                            if (kec && kec.value) parts.push(kec.options[kec.selectedIndex]?.text);
+                            if (kab && kab.value) parts.push(kab.options[kab.selectedIndex]?.text);
+                            if (prov && prov.value) parts.push(prov.options[prov.selectedIndex]?.text);
+                            
+                            return parts.join(', ');
+                        };
+                        
+                        document.getElementById('summary-region-kantor').textContent = getRegionText('kantor') || '-';
                         document.getElementById('summary-alamat-kantor').textContent = document.getElementById('alamat-kantor').value || '-';
                         
                         // Check if same location checkbox is checked
                         const isSame = document.getElementById('same-as-office')?.checked;
+                        
+                        if (isSame) {
+                            document.getElementById('summary-region-usaha').textContent = document.getElementById('summary-region-kantor').textContent;
+                        } else {
+                            document.getElementById('summary-region-usaha').textContent = getRegionText('usaha') || '-';
+                        }
+                        
                         document.getElementById('summary-alamat-usaha').textContent = isSame ? 
                             (document.getElementById('alamat-kantor').value || '-') : 
                             (document.getElementById('alamat-usaha').value || '-');
@@ -129,3 +192,126 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
+
+            // NIB Real-time Validation
+            window.isNibValid = true;
+            window.isNibChecking = false;
+            const nibInput = document.getElementById('nib-number');
+            const nibError = document.getElementById('nib-error-message');
+            if (nibInput && nibError) {
+                let nibTimeout = null;
+                
+                // Initialize state if it's already filled and invalid length
+                if (nibInput.value.length > 0 && nibInput.value.length < 13) {
+                    // Let normal validation handle this, we only check existence
+                }
+
+                nibInput.addEventListener('input', () => {
+                    const val = nibInput.value.replace(/[^0-9]/g, '');
+                    nibInput.value = val; // enforce numbers only
+                    
+                    // Reset styling immediately
+                    nibError.classList.add('hidden');
+                    nibInput.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                    nibInput.classList.add('border-gray-300', 'focus:border-blue-600', 'focus:ring-blue-600');
+                    window.isNibValid = true;
+                    window.isNibChecking = false;
+
+                    if (val.length === 13) {
+                        window.isNibChecking = true;
+                        window.isNibValid = false; // assume invalid until API returns true
+                        
+                        clearTimeout(nibTimeout);
+                        nibTimeout = setTimeout(async () => {
+                            try {
+                                const res = await fetch(`/api/check-nib/${val}`);
+                                const data = await res.json();
+                                if (data.exists) {
+                                    window.isNibValid = false;
+                                    nibError.classList.remove('hidden');
+                                    nibInput.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                                    nibInput.classList.remove('border-gray-300', 'focus:border-blue-600', 'focus:ring-blue-600');
+                                } else {
+                                    window.isNibValid = true;
+                                }
+                            } catch (e) {
+                                console.error('NIB check failed:', e);
+                                window.isNibValid = true; // allow if API fails
+                            } finally {
+                                window.isNibChecking = false;
+                            }
+                        }, 400);
+                    }
+                });
+            }
+
+            // Prevent Enter key from submitting the form prematurely
+            const verifyForm = document.getElementById('verify-form');
+            if (verifyForm) {
+                verifyForm.addEventListener('keydown', function(e) {
+                    // Only intercept Enter key
+                    if (e.key === 'Enter') {
+                        // Allow enter in textareas to create new lines
+                        if (e.target.tagName.toLowerCase() === 'textarea') {
+                            return;
+                        }
+                        
+                        // Prevent the default form submission
+                        e.preventDefault();
+                        
+                        // Map it to the 'Next' button if not on the last step
+                        if (currentStep < totalSteps) {
+                            btnNext.click();
+                        } else {
+                            // If on the last step, allow submission
+                            btnSubmit.click();
+                        }
+                    }
+                });
+                
+                // Ensure disabled fields are submitted
+                verifyForm.addEventListener('submit', function() {
+                    verifyForm.querySelectorAll('select:disabled').forEach(el => {
+                        el.disabled = false;
+                    });
+                });
+            }
+
+            // Skala Usaha -> Province lock logic
+            const skalaUsahaSelect = document.getElementById('skala-usaha');
+            if (skalaUsahaSelect) {
+                skalaUsahaSelect.addEventListener('change', function() {
+                    const notice = document.getElementById('umkm-notice');
+                    if (['mikro', 'kecil', 'menengah'].includes(this.value)) {
+                        if (notice) notice.classList.remove('hidden');
+                        ['provinsi-kantor', 'provinsi-usaha'].forEach(id => {
+                            const select = document.getElementById(id);
+                            if (select) {
+                                Array.from(select.options).forEach(opt => {
+                                    if (opt.text.trim().toUpperCase() === 'SUMATERA UTARA') {
+                                        if (select.value !== opt.value) {
+                                            select.value = opt.value;
+                                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                                        }
+                                        select.disabled = true;
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        if (notice) notice.classList.add('hidden');
+                        // If changed back to non-umkm, unlock the province selects
+                        ['provinsi-kantor', 'provinsi-usaha'].forEach(id => {
+                            const select = document.getElementById(id);
+                            if (select) {
+                                select.disabled = false;
+                            }
+                        });
+                    }
+                });
+                
+                // Trigger once on load to lock if it was pre-filled with UMKM
+                if (['mikro', 'kecil', 'menengah'].includes(skalaUsahaSelect.value)) {
+                    skalaUsahaSelect.dispatchEvent(new Event('change'));
+                }
+            }

@@ -77,7 +77,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Alamat Lengkap <span class="text-red-500">*</span></label>
-                                    <textarea name="alamat_kantor"  id="alamat-kantor" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" rows="2" placeholder="Detail alamat (Jalan, RT/RW, Gedung, Patokan)">{{ old('alamat_kantor', $kantorUtama->address ?? '') }}</textarea>
+                                    <textarea name="alamat_kantor"  id="alamat-kantor" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" rows="2" placeholder="Detail alamat (Jalan, RT/RW, Gedung, Patokan)">{{ old('alamat_kantor', $kantorUtama->address ?? '') }}</textarea>
                                 </div>
                                 @if(isset($feedbacks['alamat-kantor']))
                                     <div class="mt-2 text-sm text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
@@ -158,7 +158,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-600 mb-1">Alamat Lengkap Usaha <span class="text-red-500">*</span></label>
-                                        <textarea name="alamat_usaha"  id="alamat-usaha" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-600 bg-white" rows="2" placeholder="Detail alamat usaha/proyek">{{ old('alamat_usaha', $lokasiUsaha->address ?? '') }}</textarea>
+                                        <textarea name="alamat_usaha"  id="alamat-usaha" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" rows="2" placeholder="Detail alamat usaha/proyek">{{ old('alamat_usaha', $lokasiUsaha->address ?? '') }}</textarea>
                                     </div>
                                 </div>
                                 @if(isset($feedbacks['alamat-usaha']))
@@ -176,8 +176,10 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Koordinat Maps Lokasi Usaha <span class="text-red-500">*</span></label>
                                 <div class="flex gap-2">
-                                    <input name="coordinate_input" value="{{ old('coordinate_input', ($kantorUtama && $kantorUtama->latitude) ? $kantorUtama->latitude . ', ' . $kantorUtama->longitude : '') }}" class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 bg-white" type="text" placeholder="-6.200000, 106.816666" id="coordinate-input">
-                                    <button type="button" id="btn-open-map" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg border border-gray-300 flex items-center gap-2 transition-colors font-medium text-sm whitespace-nowrap">
+                                    <div class="relative rounded-lg shadow-sm flex-grow">
+                                        <input name="coordinate_input" value="{{ old('coordinate_input', ($kantorUtama && $kantorUtama->latitude) ? $kantorUtama->latitude . ', ' . $kantorUtama->longitude : '') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-white" type="text" placeholder="-6.200000, 106.816666" id="coordinate-input">
+                                    </div>
+                                    <button type="button" id="btn-open-map" class="shadow-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg border border-gray-300 flex items-center gap-2 transition-colors font-medium text-sm whitespace-nowrap">
                                         <i class="ph ph-map-pin-plus"></i> Ambil Titik Maps
                                     </button>
                                 </div>
@@ -190,7 +192,7 @@
                                         </div>
                                     </div>
                                 @endif
-                                <div id="map-preview-container" class="w-full h-48 bg-gray-100 rounded-lg mt-3 flex flex-col items-center justify-center text-gray-500 border border-gray-300 relative overflow-hidden z-0">
+                                <div id="map-preview-container" class="w-full h-48 bg-gray-100 rounded-lg mt-3 flex flex-col items-center justify-center text-gray-500 border border-gray-300 shadow-sm relative overflow-hidden z-0">
                                     <div id="map-preview-placeholder" class="flex flex-col items-center justify-center z-10 absolute inset-0 bg-gray-100">
                                         <i class="ph ph-map text-4xl mb-2 opacity-50"></i>
                                         <span class="text-sm">Tekan di sini atau Enter setelah tiap memasukkan koordinat untuk menampilkan preview, atau Ambil Titik Maps</span>

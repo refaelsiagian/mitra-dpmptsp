@@ -27,6 +27,12 @@
                                     <div class="text-gray-500">Penanggung Jawab</div>
                                     <div class="font-medium text-gray-900" id="summary-pimpinan">-</div>
                                     
+                                    <div class="text-gray-500">Kewarganegaraan</div>
+                                    <div class="font-medium text-gray-900" id="summary-kewarganegaraan">-</div>
+                                    
+                                    <div class="text-gray-500" id="summary-label-identitas">Identitas</div>
+                                    <div class="font-medium text-gray-900" id="summary-identitas">-</div>
+                                    
                                     <div class="text-gray-500">Jabatan</div>
                                     <div class="font-medium text-gray-900" id="summary-jabatan">-</div>
                                     
@@ -46,10 +52,16 @@
                                 <h3 class="font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">Informasi Lokasi</h3>
                                 <div class="grid grid-cols-2 gap-y-3 text-sm">
                                     <div class="text-gray-500">Alamat Kantor Utama</div>
-                                    <div class="font-medium text-gray-900" id="summary-alamat-kantor">-</div>
+                                    <div class="font-medium text-gray-900">
+                                        <div id="summary-region-kantor" class="text-xs text-blue-600 mb-1 font-semibold"></div>
+                                        <div id="summary-alamat-kantor">-</div>
+                                    </div>
                                     
                                     <div class="text-gray-500">Alamat Lokasi Usaha</div>
-                                    <div class="font-medium text-gray-900" id="summary-alamat-usaha">-</div>
+                                    <div class="font-medium text-gray-900">
+                                        <div id="summary-region-usaha" class="text-xs text-blue-600 mb-1 font-semibold"></div>
+                                        <div id="summary-alamat-usaha">-</div>
+                                    </div>
                                 </div>
                             </div>
                             

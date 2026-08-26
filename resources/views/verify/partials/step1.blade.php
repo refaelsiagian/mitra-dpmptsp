@@ -39,6 +39,7 @@
                                     <option value="menengah" {{ old('skala_usaha', $company->skala_usaha ?? '') == 'menengah' ? 'selected' : '' }}>Usaha Menengah</option>
                                     <option value="besar" {{ old('skala_usaha', $company->skala_usaha ?? '') == 'besar' ? 'selected' : '' }}>Usaha Besar</option>
                                 </x-form.select>
+                                <p id="umkm-notice" class="text-xs text-amber-600 mt-2 hidden"><i class="ph ph-info"></i> Pelaku Usaha UMKM (Mikro, Kecil, Menengah) wajib berlokasi di Sumatera Utara.</p>
                             </div>
                             
                             @php $isSubPelakuUsahaVisible = in_array(old('pelaku_usaha', $company->pelaku_usaha_type ?? ''), ['orang-perseorangan', 'badan-usaha', 'kantor-perwakilan', 'badan-usaha-luar-negeri']); @endphp

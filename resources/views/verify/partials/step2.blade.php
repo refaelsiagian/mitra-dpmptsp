@@ -107,13 +107,21 @@
                                             value="{{ $company->nib_number ?? '' }}" 
                                             placeholder="13 Digit Nomor NIB" 
                                         />
+                                        <div id="nib-error-message" class="mt-2 text-sm text-red-600 hidden bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
+                                            <i class="ph ph-warning-circle mt-0.5"></i>
+                                            <div>
+                                                <span class="font-bold text-xs uppercase tracking-wider block mb-0.5">NIB Ditolak</span>
+                                                NIB ini sudah terdaftar oleh perusahaan lain.
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                     <x-form.input 
                                         type="url" 
                                         name="nib_link" 
-                                        label="Link Dokumen NIB (Opsional)" 
+                                        label="Link Dokumen NIB" 
                                         id="nib-link" 
+                                        :required="true"
                                         value="{{ $company->nib_link ?? '' }}" 
                                         placeholder="Link Google Drive Dokumen NIB" 
                                         icon="ph-link"
@@ -151,8 +159,9 @@
                                     <x-form.input 
                                         type="url" 
                                         name="npwp_link" 
-                                        label="Link Dokumen NPWP (Opsional)" 
+                                        label="Link Dokumen NPWP" 
                                         id="npwp-link" 
+                                        :required="true"
                                         value="{{ $company->npwp_link ?? '' }}" 
                                         placeholder="Link Google Drive Kartu NPWP" 
                                         icon="ph-link"
