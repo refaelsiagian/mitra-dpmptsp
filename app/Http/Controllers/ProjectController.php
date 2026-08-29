@@ -18,40 +18,11 @@ class ProjectController extends Controller
         return view('company.project.create', compact('company', 'provinces'));
     }
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreProjectRequest $request)
     {
         $company = auth()->user()->company;
 
-        $validated = $request->validate([
-            'status' => 'nullable|in:draft,published,closed',
-            'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'ruang_lingkup' => 'required|string',
-            'estimated_value' => 'nullable|numeric',
-            'is_budget_negotiable' => 'nullable|boolean',
-            'image' => 'nullable|image|max:5120',
-            'province_id' => 'nullable|required_with:regency_id,district_id,village_id,address|string|max:255',
-            'regency_id' => 'nullable|required_with:province_id,district_id,village_id,address|string|max:255',
-            'district_id' => 'nullable|required_with:province_id,regency_id,village_id,address|string|max:255',
-            'village_id' => 'nullable|required_with:province_id,regency_id,district_id,address|string|max:255',
-            'address' => 'nullable|required_with:province_id,regency_id,district_id,village_id|string',
-            'offer_end_date' => 'nullable|date|after_or_equal:today',
-            'project_start_date' => 'nullable|date|after:offer_end_date',
-            'project_end_date' => 'nullable|date|after:project_start_date',
-            'metrics' => 'nullable|array',
-            'requirements' => 'required|array',
-            'offerings' => 'required|array',
-        ], [
-            'province_id.required_with' => 'Provinsi wajib diisi jika lokasi proyek lainnya diisi.',
-            'regency_id.required_with' => 'Kabupaten/Kota wajib diisi jika lokasi proyek lainnya diisi.',
-            'district_id.required_with' => 'Kecamatan wajib diisi jika lokasi proyek lainnya diisi.',
-            'village_id.required_with' => 'Desa/Kelurahan wajib diisi jika lokasi proyek lainnya diisi.',
-            'address.required_with' => 'Alamat lengkap wajib diisi jika lokasi proyek lainnya diisi.',
-            'offer_end_date.after_or_equal' => 'Batas penawaran tidak boleh lebih awal dari tanggal proyek diterbitkan (hari ini).',
-            'project_start_date.after' => 'Mulai pelaksanaan tidak boleh lebih awal dari batas penawaran.',
-            'project_end_date.after' => 'Selesai pelaksanaan tidak boleh lebih awal dari mulai pelaksanaan.',
-        ]);
+        $validated = $request->validated();
         
         $requirements = $request->input('requirements', []);
         $offerings = $request->input('offerings', []);
@@ -60,29 +31,18 @@ class ProjectController extends Controller
         $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable') ? 'true' : 'false';
 
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $content = file_get_contents($file->getPathname());
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = 'projects/images/' . $filename;
-            
-            \Illuminate\Support\Facades\Storage::disk('public')->put($path, $content);
-            $validated['image'] = $path;
+            $validated['image'] = $request->file('image')->store('projects/images', 'public');
         }
 
         // Handle file uploads (attachments)
         $attachments = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                // Read from getPathname() to avoid Windows/Laragon tmp issues
-                $content = file_get_contents($file->getPathname());
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = 'projects/' . $filename;
-                
-                \Illuminate\Support\Facades\Storage::disk('public')->put($path, $content);
-                
+                $path = $file->store('projects', 'public');
                 $attachments[] = [
                     'name' => $file->getClientOriginalName(),
                     'path' => $path,
+                    'type' => $file->getClientMimeType(),
                     'size' => $file->getSize(),
                 ];
             }
@@ -106,12 +66,7 @@ class ProjectController extends Controller
 
     public function show(\App\Models\Project $project)
     {
-        // Protect draft from being viewed by non-owners
-        if ($project->status === 'draft') {
-            if (!auth()->check() || !auth()->user()->company || auth()->user()->company->id !== $project->company_id) {
-                abort(404);
-            }
-        }
+        $this->authorize('view', $project);
 
         $invitation = null;
         if (auth()->check() && auth()->user()->company) {
@@ -126,66 +81,18 @@ class ProjectController extends Controller
 
     public function edit(\App\Models\Project $project)
     {
-        // Ensure user owns the project
-        if ($project->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        $this->authorize('update', $project);
         
         $company = auth()->user()->company;
         $provinces = \App\Models\Province::orderBy('name')->get();
         return view('company.project.edit', compact('project', 'company', 'provinces'));
     }
 
-    public function update(Request $request, \App\Models\Project $project)
+    public function update(\App\Http\Requests\UpdateProjectRequest $request, \App\Models\Project $project)
     {
-        // Ensure user owns the project
-        if ($project->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
+        $this->authorize('update', $project);
 
-        $validated = $request->validate([
-            'status' => 'nullable|in:draft,published,closed',
-            'type' => 'required|in:subkontrak,rantai_pasok,outsourcing,konstruksi,kso,perdagangan,distribusi',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'ruang_lingkup' => 'required|string',
-            'estimated_value' => 'nullable|numeric',
-            'is_budget_negotiable' => 'nullable|boolean',
-            'image' => 'nullable|image|max:5120',
-            'province_id' => 'nullable|required_with:regency_id,district_id,village_id,address|string|max:255',
-            'regency_id' => 'nullable|required_with:province_id,district_id,village_id,address|string|max:255',
-            'district_id' => 'nullable|required_with:province_id,regency_id,village_id,address|string|max:255',
-            'village_id' => 'nullable|required_with:province_id,regency_id,district_id,address|string|max:255',
-            'address' => 'nullable|required_with:province_id,regency_id,district_id,village_id|string',
-            'offer_end_date' => [
-                'nullable',
-                'date',
-                function ($attribute, $value, $fail) use ($project) {
-                    $newDate = \Carbon\Carbon::parse($value)->startOfDay();
-                    $oldDate = $project->offer_end_date ? \Carbon\Carbon::parse($project->offer_end_date)->startOfDay() : null;
-                    $today = \Carbon\Carbon::now()->startOfDay();
-                    
-                    if (!$oldDate || $newDate->notEqualTo($oldDate)) {
-                        if ($newDate->isBefore($today)) {
-                            $fail('Batas penawaran yang baru tidak boleh diatur ke masa lalu.');
-                        }
-                    }
-                }
-            ],
-            'project_start_date' => 'nullable|date|after:offer_end_date',
-            'project_end_date' => 'nullable|date|after:project_start_date',
-            'metrics' => 'nullable|array',
-            'requirements' => 'required|array',
-            'offerings' => 'required|array',
-        ], [
-            'province_id.required_with' => 'Provinsi wajib diisi jika lokasi proyek lainnya diisi.',
-            'regency_id.required_with' => 'Kabupaten/Kota wajib diisi jika lokasi proyek lainnya diisi.',
-            'district_id.required_with' => 'Kecamatan wajib diisi jika lokasi proyek lainnya diisi.',
-            'village_id.required_with' => 'Desa/Kelurahan wajib diisi jika lokasi proyek lainnya diisi.',
-            'address.required_with' => 'Alamat lengkap wajib diisi jika lokasi proyek lainnya diisi.',
-            'project_start_date.after' => 'Mulai pelaksanaan tidak boleh lebih awal dari batas penawaran.',
-            'project_end_date.after' => 'Selesai pelaksanaan tidak boleh lebih awal dari mulai pelaksanaan.',
-        ]);
+        $validated = $request->validated();
         
         $requirements = $request->input('requirements', []);
         $offerings = $request->input('offerings', []);
@@ -193,17 +100,10 @@ class ProjectController extends Controller
         $validated['is_budget_negotiable'] = $request->has('is_budget_negotiable') ? 'true' : 'false';
 
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $content = file_get_contents($file->getPathname());
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = 'projects/images/' . $filename;
-            
-            \Illuminate\Support\Facades\Storage::disk('public')->put($path, $content);
-            
             if ($project->image) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($project->image);
             }
-            $validated['image'] = $path;
+            $validated['image'] = $request->file('image')->store('projects/images', 'public');
         }
 
         // Handle file uploads (attachments)
@@ -248,6 +148,8 @@ class ProjectController extends Controller
 
     public function destroy(Request $request, \App\Models\Project $project)
     {
+        $this->authorize('delete', $project);
+        
         $project->delete();
         
         $redirectTo = $request->input('redirect_to', route('dashboard'));
@@ -258,5 +160,21 @@ class ProjectController extends Controller
         }
         
         return redirect($redirectTo)->with('success', 'Proyek berhasil dihapus.');
+    }
+
+    public function close(\App\Models\Project $project)
+    {
+        $this->authorize('update', $project);
+        $project->update(['status' => 'closed']);
+        return back()->with('success', 'Proyek berhasil ditutup dan dipindahkan ke Riwayat Anda.');
+    }
+
+    public function toggleVisibility(\App\Models\Project $project)
+    {
+        $this->authorize('update', $project);
+        $project->update(['is_public' => !$project->is_public]);
+        
+        $status = $project->is_public ? 'publik' : 'tersembunyi';
+        return back()->with('success', "Proyek berhasil diubah menjadi {$status}.");
     }
 }

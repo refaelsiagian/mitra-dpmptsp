@@ -69,4 +69,15 @@ class Company extends Model
     {
         return $this->hasMany(ProjectInvitation::class, 'invited_company_id');
     }
+
+    public function scopeMatchScale($query, $userScale)
+    {
+        if ($userScale === 'besar') {
+            return $query->whereIn('skala_usaha', ['mikro', 'kecil', 'menengah']);
+        } elseif (in_array($userScale, ['mikro', 'kecil', 'menengah'])) {
+            return $query->where('skala_usaha', 'besar');
+        }
+
+        return $query;
+    }
 }

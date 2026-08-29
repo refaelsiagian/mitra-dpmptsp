@@ -25,13 +25,9 @@ class ExploreController extends Controller
         $userScale = auth()->check() && auth()->user()->company ? auth()->user()->company->skala_usaha : null;
 
         // Fetch Vendors
-        $vendorsQuery = Company::with(['kblis', 'locations.regency'])->where('status', 'verified');
-
-        if ($userScale === 'besar') {
-            $vendorsQuery->whereIn('skala_usaha', ['mikro', 'kecil', 'menengah']);
-        } elseif (in_array($userScale, ['mikro', 'kecil', 'menengah'])) {
-            $vendorsQuery->where('skala_usaha', 'besar');
-        }
+        $vendorsQuery = Company::with(['kblis', 'locations.regency'])
+            ->where('status', 'verified')
+            ->matchScale($userScale);
 
         if ($search) {
             $vendorsQuery->where(function($q) use ($search) {
@@ -66,17 +62,8 @@ class ExploreController extends Controller
             ->where(function($q) {
                 $q->whereNull('offer_end_date')
                   ->orWhere('offer_end_date', '>=', now()->startOfDay());
-            });
-
-        if ($userScale === 'besar') {
-            $projectsQuery->whereHas('company', function($q) {
-                $q->whereIn('skala_usaha', ['mikro', 'kecil', 'menengah']);
-            });
-        } elseif (in_array($userScale, ['mikro', 'kecil', 'menengah'])) {
-            $projectsQuery->whereHas('company', function($q) {
-                $q->where('skala_usaha', 'besar');
-            });
-        }
+            })
+            ->matchScale($userScale);
 
         if ($search) {
             $projectsQuery->where(function($q) use ($search) {

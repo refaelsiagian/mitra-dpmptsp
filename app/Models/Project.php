@@ -80,4 +80,19 @@ class Project extends Model
     {
         return $this->belongsTo(Village::class);
     }
+
+    public function scopeMatchScale($query, $userScale)
+    {
+        if ($userScale === 'besar') {
+            return $query->whereHas('company', function($q) {
+                $q->whereIn('skala_usaha', ['mikro', 'kecil', 'menengah']);
+            });
+        } elseif (in_array($userScale, ['mikro', 'kecil', 'menengah'])) {
+            return $query->whereHas('company', function($q) {
+                $q->where('skala_usaha', 'besar');
+            });
+        }
+
+        return $query;
+    }
 }

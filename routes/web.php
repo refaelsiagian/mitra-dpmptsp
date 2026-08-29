@@ -54,15 +54,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 });
 
 // API Region Routes
-Route::get('/api/regencies/{province_id}', function ($province_id) {
-    return \App\Models\Regency::where('province_id', $province_id)->orderBy('name')->get();
-});
-Route::get('/api/districts/{regency_id}', function ($regency_id) {
-    return \App\Models\District::where('regency_id', $regency_id)->orderBy('name')->get();
-});
-Route::get('/api/villages/{district_id}', function ($district_id) {
-    return \App\Models\Village::where('district_id', $district_id)->orderBy('name')->get();
-});
+Route::get('/api/regencies/{province_id}', [\App\Http\Controllers\RegionController::class, 'regencies']);
+Route::get('/api/districts/{regency_id}', [\App\Http\Controllers\RegionController::class, 'districts']);
+Route::get('/api/villages/{district_id}', [\App\Http\Controllers\RegionController::class, 'villages']);
 
 Route::get('/api/check-nib/{nib}', function ($nib) {
     $user = auth()->user();
@@ -115,49 +109,11 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
 
 
 
-    Route::get('/dashboard', function () {
-        $company = auth()->user()->company;
-        $publishedProjects = $company ? $company->projects()
-            ->withCount('proposals')
-            ->withCount(['proposals as accepted_proposals_count' => function($q) {
-                $q->where('status', 'accepted');
-            }])
-            ->where('status', 'published')->latest()->get() : collect();
-        $draftProjects = $company ? $company->projects()->where('status', 'draft')->latest()->get() : collect();
-        $closedProjects = $company ? $company->projects()
-            ->withCount('proposals')
-            ->withCount(['proposals as accepted_proposals_count' => function($q) {
-                $q->where('status', 'accepted');
-            }])
-            ->where('status', 'closed')->latest()->get() : collect();
-        $sentProposals = $company ? $company->proposals()->with('project.company')->latest()->get() : collect();
-        $receivedProposals = $company ? \App\Models\Proposal::whereHas('project', function($q) use ($company) {
-            $q->where('company_id', $company->id);
-        })->with(['project', 'company'])->latest()->get() : collect();
-        
-        $receivedInvitations = $company ? $company->receivedInvitations()->with(['project', 'invitingCompany'])->latest()->get() : collect();
-        $sentInvitations = $company ? $company->sentInvitations()->with(['project', 'invitedCompany'])->latest()->get() : collect();
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-        return view('company.dashboard', compact('publishedProjects', 'draftProjects', 'closedProjects', 'sentProposals', 'receivedProposals', 'receivedInvitations', 'sentInvitations'));
-    })->name('dashboard');
+    Route::put('/projects/{project}/close', [\App\Http\Controllers\ProjectController::class, 'close'])->name('projects.close');
 
-    Route::put('/projects/{project}/close', function (\App\Models\Project $project) {
-        if (!auth()->check() || !auth()->user()->company || auth()->user()->company->id !== $project->company_id) {
-            abort(403);
-        }
-        $project->update(['status' => 'closed']);
-        return back()->with('success', 'Proyek berhasil ditutup dan dipindahkan ke Riwayat Anda.');
-    })->name('projects.close');
-
-    Route::put('/projects/{project}/toggle-visibility', function (\App\Models\Project $project) {
-        if ($project->company_id !== auth()->user()->company->id) {
-            abort(403);
-        }
-        $project->update(['is_public' => !$project->is_public]);
-        
-        $status = $project->is_public ? 'publik' : 'tersembunyi';
-        return back()->with('success', "Proyek berhasil diubah menjadi {$status}.");
-    })->name('projects.toggle-visibility');
+    Route::put('/projects/{project}/toggle-visibility', [\App\Http\Controllers\ProjectController::class, 'toggleVisibility'])->name('projects.toggle-visibility');
 
     // Settings Routes
     Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
