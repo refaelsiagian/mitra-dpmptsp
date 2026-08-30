@@ -32,6 +32,9 @@ class DashboardController extends Controller
                 ->withCount(['proposals as accepted_proposals_count' => function($q) {
                     $q->where('status', 'accepted');
                 }])
+                ->with(['proposals' => function($q) {
+                    $q->where('status', 'accepted')->with('company');
+                }])
                 ->where('status', 'closed')->latest()->get();
                 
             $sentProposals = $company->proposals()->with('project.company')->latest()->get();

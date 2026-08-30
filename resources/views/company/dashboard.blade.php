@@ -719,19 +719,24 @@
                                     @if($project->proposals && $project->proposals->where('status', 'accepted')->count() > 0)
                                         <div class="space-y-3">
                                             @foreach($project->proposals->where('status', 'accepted') as $proposal)
-                                                <a href="{{ route('vendor.show', $proposal->company->id) }}" class="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-slate-50 transition-colors group/partner">
-                                                    @if($proposal->company->logo)
-                                                        <img src="{{ Storage::url($proposal->company->logo) }}" alt="{{ $proposal->company->name }}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-sm">
-                                                    @else
-                                                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200 shrink-0 shadow-sm">
-                                                            {{ substr($proposal->company->name, 0, 1) }}
+                                                <div class="flex items-center justify-between p-2 -mx-2 rounded-lg hover:bg-slate-50 transition-colors group/partner">
+                                                    <a href="{{ route('vendor.show', $proposal->company->id) }}" class="flex items-center gap-3 w-full overflow-hidden">
+                                                        @if($proposal->company->logo)
+                                                            <img src="{{ Storage::url($proposal->company->logo) }}" alt="{{ $proposal->company->name }}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shadow-sm shrink-0">
+                                                        @else
+                                                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-xs border border-slate-200 shrink-0 shadow-sm">
+                                                                {{ substr($proposal->company->name, 0, 1) }}
+                                                            </div>
+                                                        @endif
+                                                        <div class="overflow-hidden">
+                                                            <p class="text-sm font-bold text-slate-900 truncate group-hover/partner:text-blue-600 transition-colors">{{ $proposal->company->name }}</p>
+                                                            <p class="text-xs text-slate-500 truncate">{{ $proposal->company->kblis->first()->description ?? 'Mitra Usaha' }}</p>
                                                         </div>
-                                                    @endif
-                                                    <div class="overflow-hidden">
-                                                        <p class="text-sm font-bold text-slate-900 truncate group-hover/partner:text-blue-600 transition-colors">{{ $proposal->company->name }}</p>
-                                                        <p class="text-xs text-slate-500 truncate">{{ $proposal->company->kblis->first()->description ?? 'Mitra Usaha' }}</p>
-                                                    </div>
-                                                </a>
+                                                    </a>
+                                                    <a wire:navigate href="{{ route('proposals.show', $proposal->id) }}" class="shrink-0 p-1.5 text-blue-600 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-colors ml-2" title="Lihat Proposal">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                    </a>
+                                                </div>
                                             @endforeach
                                         </div>
                                     @else
