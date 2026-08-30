@@ -153,7 +153,14 @@
                                 </a>
                             </h3>
                         </div>
-                        <p class="text-sm text-slate-600 mb-4 line-clamp-2">{{ Str::limit($partnership->project->description, 150) }}</p>
+                        @if($partnership->project->status === 'closed' && $partnership->project->is_public === false)
+                            <p class="text-sm text-slate-500 mb-4 italic flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                                Detail proyek telah disembunyikan oleh pemilik.
+                            </p>
+                        @else
+                            <p class="text-sm text-slate-600 mb-4 line-clamp-2">{{ Str::limit($partnership->project->description, 150) }}</p>
+                        @endif
                         
                         <div class="flex flex-wrap items-center gap-4 text-xs font-medium">
                             <a href="{{ route('vendor.show', $partnership->project->company->id) }}" class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100 hover:bg-slate-100 transition-colors">

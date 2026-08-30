@@ -6,6 +6,21 @@
     <!-- Top padding for layout balance -->
     <div class="pt-4"></div>
 
+    @php $isOwner = auth()->check() && auth()->user()->company && auth()->user()->company->id === $project->company_id; @endphp
+
+    @if($project->is_public === false && !$isOwner)
+        <div class="bg-white p-10 md:p-16 rounded-3xl shadow-sm border border-slate-200 text-center flex flex-col items-center justify-center min-h-[60vh] max-w-3xl mx-auto">
+            <div class="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-4">Proyek Privat</h2>
+            <p class="text-slate-500 text-base md:text-lg max-w-lg mx-auto mb-10 leading-relaxed">Pemilik proyek telah mengatur proyek ini menjadi privat. Detail proyek, dokumen, dan informasi lainnya tidak lagi tersedia untuk publik.</p>
+            <button onclick="window.history.back()" class="px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-colors shadow-sm inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Kembali
+            </button>
+        </div>
+    @else
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-24 lg:pb-0">
         
         <!-- Left Column (col-span-2) -->
@@ -407,6 +422,7 @@
             @endif
         </div>
     </div>
+    @endif
     @endif
 </div>
 @endsection

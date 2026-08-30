@@ -172,9 +172,17 @@ class ProjectController extends Controller
     public function toggleVisibility(\App\Models\Project $project)
     {
         $this->authorize('update', $project);
-        $project->update(['is_public' => !$project->is_public]);
         
-        $status = $project->is_public ? 'publik' : 'tersembunyi';
+        $newVisibility = !$project->is_public;
+        
+        \Illuminate\Support\Facades\DB::table('projects')
+            ->where('id', $project->id)
+            ->update([
+                'is_public' => \Illuminate\Support\Facades\DB::raw($newVisibility ? 'true' : 'false'),
+                'updated_at' => now()
+            ]);
+            
+        $status = $newVisibility ? 'publik' : 'tersembunyi';
         return back()->with('success', "Proyek berhasil diubah menjadi {$status}.");
     }
 }

@@ -632,6 +632,12 @@
                                         <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold border bg-slate-200 text-slate-700 border-slate-300">
                                             Selesai
                                         </div>
+                                        @if(!$project->is_public)
+                                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold border bg-slate-100 text-slate-500 border-slate-200" title="Proyek ini disembunyikan dari profil publik Anda">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                                            Privat
+                                        </div>
+                                        @endif
                                     </div>
                                     <h3 class="text-xl font-bold text-slate-900 mb-2">
                                         <a href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
