@@ -29,20 +29,10 @@ class VendorController extends Controller
             $query->where('status', 'accepted')->with('company');
         }]);
 
-        $myProjects = collect();
-        if (auth()->check() && auth()->user()->company) {
-            $myProjects = auth()->user()->company->projects()->where('status', 'published')->get();
-        }
-
-        $partnerships = \App\Models\Proposal::where('company_id', $company->id)
-            ->where('status', 'accepted')
-            ->whereHas('project', function($q) {
-                $q->whereIn('status', ['published', 'closed']);
-            })
-            ->with(['project.company', 'project.company.locations.regency'])
-            ->latest()
-            ->get();
-
-        return view('company.show', compact('company', 'myProjects', 'partnerships'));
+        $myProjects = auth()->check() && auth()->user()->company ? 
+                      auth()->user()->company->projects()->where('status', 'published')->get() : 
+                      collect();
+                      
+        return view('company.show', compact('company', 'myProjects'));
     }
 }

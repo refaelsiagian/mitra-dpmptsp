@@ -2,7 +2,7 @@
 
 @if($company->portfolios->count() > 0 || $partnerships->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
 <div x-show="activeTab === 'portfolios'" x-data="{ activePortoTab: 'internal' }" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6" wire:key="portfolios-header-{{ $company->id }}">
         <!-- Sub Tabs -->
         <div class="flex items-center gap-2 p-1.5 bg-slate-100 rounded-xl w-full sm:w-max">
             <button type="button" @click="activePortoTab = 'internal'" :class="activePortoTab === 'internal' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'" class="flex-1 sm:flex-none px-4 py-2 text-sm rounded-lg transition-all text-center whitespace-nowrap">
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Tab Content: Internal -->
-    <div x-show="activePortoTab === 'internal'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+    <div x-show="activePortoTab === 'internal'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" wire:key="portfolios-internal-{{ $company->id }}">
         @if($company->portfolios->count() === 0)
     <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -129,7 +129,7 @@
     </div>
 
     <!-- Tab Content: Kemitraan -->
-    <div x-show="activePortoTab === 'kemitraan'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+    <div x-show="activePortoTab === 'kemitraan'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" wire:key="portfolios-kemitraan-{{ $company->id }}">
         @if($partnerships->count() === 0)
         <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
             <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
