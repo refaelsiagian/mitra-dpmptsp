@@ -9,52 +9,52 @@ class DashboardController extends Controller
     public function index()
     {
         $company = auth()->user()->company;
-        $publishedProjects = collect();
-        $draftProjects = collect();
-        $closedProjects = collect();
-        $sentProposals = collect();
-        $receivedProposals = collect();
-        $receivedInvitations = collect();
-        $sentInvitations = collect();
+        $pendingReceivedCount = 0;
+        $pendingInvitesCount = 0;
+        $quickStats = ['activeCount' => 0, 'incomingCount' => 0, 'sentCount' => 0];
 
         if ($company) {
-            $publishedProjects = $company->projects()
-                ->withCount('proposals')
-                ->withCount(['proposals as accepted_proposals_count' => function($q) {
-                    $q->where('status', 'accepted');
-                }])
-                ->where('status', 'published')->latest()->get();
-                
-            $draftProjects = $company->projects()->where('status', 'draft')->latest()->get();
+            $isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']);
             
-            $closedProjects = $company->projects()
-                ->withCount('proposals')
-                ->withCount(['proposals as accepted_proposals_count' => function($q) {
-                    $q->where('status', 'accepted');
-                }])
-                ->with(['proposals' => function($q) {
-                    $q->where('status', 'accepted')->with('company');
-                }])
-                ->where('status', 'closed')->latest()->get();
-                
-            $sentProposals = $company->proposals()->with('project.company')->latest()->get();
-            
-            $receivedProposals = Proposal::whereHas('project', function($q) use ($company) {
+            // For the badge counts on the tabs, we only query the counts, not the heavy relationships!
+            $pendingReceivedCount = \App\Models\Proposal::whereHas('project', function($q) use ($company) {
                 $q->where('company_id', $company->id);
-            })->with(['project', 'company'])->latest()->get();
+            })->where('status', 'pending')->count();
             
-            $receivedInvitations = $company->receivedInvitations()->with(['project', 'invitingCompany'])->latest()->get();
-            $sentInvitations = $company->sentInvitations()->with(['project', 'invitedCompany'])->latest()->get();
+            $pendingInvitesCount = $isUMKM ? $company->receivedInvitations()->where('status', 'pending')->count() : 0;
+            
+            // Quick Stats counts
+            if ($isUMKM) {
+                $activeOffersCount = $company->projects()->where('status', 'published')->count();
+                $totalIncomingInterests = \App\Models\Proposal::whereHas('project', function($q) use ($company) {
+                    $q->where('company_id', $company->id);
+                })->count();
+                $totalSentProposals = $company->proposals()->count();
+                
+                $quickStats = [
+                    'activeCount' => $activeOffersCount,
+                    'incomingCount' => $totalIncomingInterests,
+                    'sentCount' => $totalSentProposals,
+                ];
+            } else {
+                $activeProcurementsCount = $company->projects()->where('status', 'published')->count();
+                $totalIncomingProposals = \App\Models\Proposal::whereHas('project', function($q) use ($company) {
+                    $q->where('company_id', $company->id);
+                })->count();
+                $totalSentInterests = $company->proposals()->count();
+                
+                $quickStats = [
+                    'activeCount' => $activeProcurementsCount,
+                    'incomingCount' => $totalIncomingProposals,
+                    'sentCount' => $totalSentInterests,
+                ];
+            }
         }
 
         return view('company.dashboard', compact(
-            'publishedProjects', 
-            'draftProjects', 
-            'closedProjects', 
-            'sentProposals', 
-            'receivedProposals', 
-            'receivedInvitations', 
-            'sentInvitations'
+            'pendingReceivedCount',
+            'pendingInvitesCount',
+            'quickStats'
         ));
     }
 }

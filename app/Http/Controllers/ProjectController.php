@@ -178,7 +178,7 @@ class ProjectController extends Controller
         \Illuminate\Support\Facades\DB::table('projects')
             ->where('id', $project->id)
             ->update([
-                'is_public' => \Illuminate\Support\Facades\DB::raw($newVisibility ? 'true' : 'false'),
+                'is_public' => $newVisibility,
                 'updated_at' => now()
             ]);
             
