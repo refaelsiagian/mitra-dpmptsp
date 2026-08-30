@@ -1,18 +1,29 @@
-@props(['company'])
+@props(['company', 'partnerships' => collect()])
 
-@if($company->portfolios->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
-<div x-show="activeTab === 'portfolios'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-base md:text-lg font-bold text-slate-900">Portofolio Proyek</h2>
+@if($company->portfolios->count() > 0 || $partnerships->count() > 0 || (auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id))
+<div x-show="activeTab === 'portfolios'" x-data="{ activePortoTab: 'internal' }" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <!-- Sub Tabs -->
+        <div class="flex items-center gap-2 p-1.5 bg-slate-100 rounded-xl w-full sm:w-max">
+            <button type="button" @click="activePortoTab = 'internal'" :class="activePortoTab === 'internal' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'" class="flex-1 sm:flex-none px-4 py-2 text-sm rounded-lg transition-all text-center whitespace-nowrap">
+                Portofolio Perusahaan
+            </button>
+            <button type="button" @click="activePortoTab = 'kemitraan'" :class="activePortoTab === 'kemitraan' ? 'bg-white text-slate-900 shadow-sm font-bold' : 'text-slate-500 hover:text-slate-700 font-medium'" class="flex-1 sm:flex-none px-4 py-2 text-sm rounded-lg transition-all text-center whitespace-nowrap">
+                Riwayat Kemitraan
+            </button>
+        </div>
+
         @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
-        <a wire:navigate href="{{ route('portfolios.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold rounded-lg transition-colors shadow-sm shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="md:w-4 md:h-4"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        <a wire:navigate href="{{ route('portfolios.create') }}" class="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm shrink-0 w-full sm:w-auto justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             Tambah Portofolio
         </a>
         @endif
     </div>
 
-    @if($company->portfolios->count() === 0)
+    <!-- Tab Content: Internal -->
+    <div x-show="activePortoTab === 'internal'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+        @if($company->portfolios->count() === 0)
     <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
@@ -115,5 +126,57 @@
         @endforeach
     </div>
     @endif
+    </div>
+
+    <!-- Tab Content: Kemitraan -->
+    <div x-show="activePortoTab === 'kemitraan'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+        @if($partnerships->count() === 0)
+        <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <p class="text-slate-500 mb-1 font-medium">Belum ada riwayat kemitraan.</p>
+        </div>
+        @else
+        <div class="space-y-4">
+            @foreach($partnerships as $partnership)
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-300 hover:shadow-md transition-all group">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                            <h3 class="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                                <a wire:navigate href="{{ route('projects.show', $partnership->project->id) }}">
+                                    {{ $partnership->project->title }}
+                                </a>
+                            </h3>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4 line-clamp-2">{{ Str::limit($partnership->project->description, 150) }}</p>
+                        
+                        <div class="flex flex-wrap items-center gap-4 text-xs font-medium">
+                            <a href="{{ route('vendor.show', $partnership->project->company->id) }}" class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100 hover:bg-slate-100 transition-colors">
+                                @if($partnership->project->company->logo)
+                                    <img src="{{ Storage::url($partnership->project->company->logo) }}" alt="{{ $partnership->project->company->name }}" class="w-6 h-6 rounded-full object-cover">
+                                @else
+                                    <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-[10px]">
+                                        {{ substr($partnership->project->company->name, 0, 1) }}
+                                    </div>
+                                @endif
+                                <span class="text-slate-700">Mitra dari <span class="font-bold text-slate-900">{{ $partnership->project->company->name }}</span></span>
+                            </a>
+                            <span class="text-slate-400 flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                Disetujui pada {{ $partnership->updated_at->format('d M Y') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @endif
+    </div>
 </div>
 @endif

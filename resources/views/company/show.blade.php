@@ -284,7 +284,7 @@
             @endif
 
             <!-- Tab Content: Portfolios -->
-            <x-company.portfolios :company="$company" />
+            <x-company.portfolios :company="$company" :partnerships="$partnerships" />
             
             <!-- Tab Content: Legalitas (Mobile Only) -->
             <div x-show="activeTab === 'legalitas'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" class="lg:hidden">
