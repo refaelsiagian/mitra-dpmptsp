@@ -43,6 +43,12 @@
                 {!! $theme['icon'] !!}
                 {{ $theme['label'] }}
             </span>
+            @if($project->is_pinned)
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200 tracking-wide" title="Disematkan di Profil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                Tersemat
+            </span>
+            @endif
             @if($project->is_expired)
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-red-700 tracking-wide">
                 Kadaluarsa
@@ -103,6 +109,16 @@
                 
                 <!-- Desktop Full Buttons -->
                 <div class="hidden md:flex items-center gap-2">
+                    <!-- Pin Project Form -->
+                    <form action="{{ route('projects.toggle-pin', $project->id) }}" method="POST" class="m-0">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="px-4 py-1.5 {{ $project->is_pinned ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50' }} border text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="{{ $project->is_pinned ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                            {{ $project->is_pinned ? 'Lepas Sematan' : 'Sematkan' }}
+                        </button>
+                    </form>
+
                     @if($project->status === 'published' && ($project->proposals_count ?? 0) > 0)
                     <button type="button" @click="showCloseModal = true" class="px-4 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors whitespace-nowrap text-center">
                         Tutup Proyek
@@ -129,6 +145,15 @@
                     <!-- Dropdown Menu -->
                     <div x-show="openDropdown" style="display: none;" class="absolute right-0 bottom-full mb-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-10" x-transition.opacity>
                         
+                        <form action="{{ route('projects.toggle-pin', $project->id) }}" method="POST" class="w-full m-0">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm {{ $project->is_pinned ? 'text-amber-700 hover:bg-amber-50' : 'text-slate-700 hover:bg-slate-50' }} transition-colors w-full text-left font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="{{ $project->is_pinned ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{{ $project->is_pinned ? 'text-amber-500' : 'text-slate-400' }}"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                                {{ $project->is_pinned ? 'Lepas Sematan' : 'Sematkan di Profil' }}
+                            </button>
+                        </form>
+
                         <a wire:navigate href="{{ route('projects.edit', $project->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors w-full text-left font-medium">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                             Edit Proyek

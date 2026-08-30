@@ -114,6 +114,7 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
     Route::put('/projects/{project}/close', [\App\Http\Controllers\ProjectController::class, 'close'])->name('projects.close');
 
     Route::put('/projects/{project}/toggle-visibility', [\App\Http\Controllers\ProjectController::class, 'toggleVisibility'])->name('projects.toggle-visibility');
+    Route::put('/projects/{project}/toggle-pin', [\App\Http\Controllers\ProjectController::class, 'togglePin'])->name('projects.toggle-pin');
 
     // Settings Routes
     Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');

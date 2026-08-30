@@ -32,6 +32,7 @@ class Project extends Model
         'offerings',
         'attachments',
         'is_public',
+        'is_pinned',
     ];
 
     protected $casts = [
@@ -44,6 +45,7 @@ class Project extends Model
         'offerings' => 'array',
         'attachments' => 'array',
         'is_public' => 'boolean',
+        'is_pinned' => 'boolean',
     ];
 
     public function company()

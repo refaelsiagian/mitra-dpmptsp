@@ -518,50 +518,21 @@
                         </button>
 
                         <!-- Modal Hapus Draft -->
-                        <template x-teleport="body">
-                            <div x-show="showDeleteDraftModal" 
-                                 x-transition:enter="transition ease-out duration-300"
-                                 x-transition:enter-start="opacity-0"
-                                 x-transition:enter-end="opacity-100"
-                                 x-transition:leave="transition ease-in duration-200"
-                                 x-transition:leave-start="opacity-100"
-                                 x-transition:leave-end="opacity-0"
-                                 class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
-                                 style="display: none;">
-                                 
-                                 <div x-show="showDeleteDraftModal"
-                                      @click.away="showDeleteDraftModal = false"
-                                      x-transition:enter="transition ease-out duration-300"
-                                      x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                      x-transition:leave="transition ease-in duration-200"
-                                      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                      class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
-                                    <div class="p-6 overflow-y-auto">
-                                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                                        </div>
-                                        <h3 class="text-xl font-black text-slate-900 mb-2">Hapus Draf Ini?</h3>
-                                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-                                            Apakah Anda yakin ingin menghapus draf <span class="font-bold">"{{ $draft->title ?: 'Tanpa Judul' }}"</span>? Tindakan ini tidak dapat dibatalkan.
-                                        </p>
-                                    </div>
-                                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
-                                        <button type="button" @click="showDeleteDraftModal = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
-                                            Batal
-                                        </button>
-                                        <form action="{{ route('projects.destroy', $draft->id) }}" method="POST" class="m-0">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
-                                                Ya, Hapus
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+                        <x-modal.confirm 
+                            showProperty="showDeleteDraftModal" 
+                            title="Hapus Draf Ini?">
+                            <p class="text-left">Apakah Anda yakin ingin menghapus draf <span class="font-bold">"{{ $draft->title ?: 'Tanpa Judul' }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
+                            
+                            <x-slot:actions>
+                                <form action="{{ route('projects.destroy', $draft->id) }}" method="POST" class="m-0 w-full sm:w-auto">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm">
+                                        Ya, Hapus
+                                    </button>
+                                </form>
+                            </x-slot:actions>
+                        </x-modal.confirm>
                     </div>
                     <a wire:navigate href="{{ route('projects.edit', $draft->id) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
@@ -648,7 +619,7 @@
                                         <a href="{{ route('projects.show', $project->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg transition-colors shadow-sm">
                                             Lihat Detail Proyek
                                         </a>
-                                        
+
                                         <!-- Toggle Visibility Form -->
                                         @if($project->is_public)
                                             <div x-data="{ showHideModal: false }">
@@ -658,50 +629,26 @@
                                                 </button>
 
                                                 <!-- Hide Modal -->
-                                                <template x-teleport="body">
-                                                    <div x-show="showHideModal" 
-                                                         x-transition:enter="transition ease-out duration-300"
-                                                         x-transition:enter-start="opacity-0"
-                                                         x-transition:enter-end="opacity-100"
-                                                         x-transition:leave="transition ease-in duration-200"
-                                                         x-transition:leave-start="opacity-100"
-                                                         x-transition:leave-end="opacity-0"
-                                                         class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
-                                                         style="display: none;">
-                                                         
-                                                         <div x-show="showHideModal"
-                                                              @click.away="showHideModal = false"
-                                                              x-transition:enter="transition ease-out duration-300"
-                                                              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                                              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                                              x-transition:leave="transition ease-in duration-200"
-                                                              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                                              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                                              class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative flex flex-col max-h-full">
-                                                            <div class="p-6 overflow-y-auto">
-                                                                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
-                                                                </div>
-                                                                <h3 class="text-xl font-black text-slate-900 mb-2">Sembunyikan Proyek?</h3>
-                                                                <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-                                                                    Proyek <span class="font-bold">"{{ $project->title }}"</span> tidak akan lagi ditampilkan di profil publik Anda. Namun, data dan riwayat kemitraan akan tetap tersimpan di dashboard ini.
-                                                                </p>
-                                                            </div>
-                                                            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
-                                                                <button type="button" @click="showHideModal = false" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">
-                                                                    Batal
-                                                                </button>
-                                                                <form action="{{ route('projects.toggle-visibility', $project->id) }}" method="POST" class="m-0">
-                                                                    @csrf
-                                                                    @method('PUT')
-                                                                    <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition-colors shadow-sm">
-                                                                        Ya, Sembunyikan
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </template>
+                                                <x-modal.confirm 
+                                                    showProperty="showHideModal" 
+                                                    title="Sembunyikan Proyek?"
+                                                    iconBgClass="bg-slate-100"
+                                                    iconTextClass="text-slate-600">
+                                                    <x-slot:icon>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                                                    </x-slot:icon>
+                                                    <p class="text-left">Proyek <span class="font-bold">"{{ $project->title }}"</span> tidak akan lagi ditampilkan di profil publik Anda. Namun, data dan riwayat kemitraan akan tetap tersimpan di dashboard ini.</p>
+                                                    
+                                                    <x-slot:actions>
+                                                        <form action="{{ route('projects.toggle-visibility', $project->id) }}" method="POST" class="m-0 w-full sm:w-auto">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button type="submit" class="w-full px-5 py-2.5 text-sm font-bold text-white bg-slate-800 hover:bg-slate-900 rounded-xl transition-colors shadow-sm">
+                                                                Ya, Sembunyikan
+                                                            </button>
+                                                        </form>
+                                                    </x-slot:actions>
+                                                </x-modal.confirm>
                                             </div>
                                         @else
                                             <form action="{{ route('projects.toggle-visibility', $project->id) }}" method="POST" class="m-0">

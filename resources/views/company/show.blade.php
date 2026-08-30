@@ -47,10 +47,14 @@
             <div x-show="activeTab === 'overview'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                 
                 @php
+                    $pinnedProject = $company->projects->where('is_pinned', true)->where('status', 'published')->first();
                     $pinnedOffering = $company->offerings->where('is_pinned', true)->first();
                 @endphp
 
-                <!-- Pinned Offering Box -->
+                <!-- Pinned Project Box (Highlights an Active Project) -->
+                <x-company.pinned-project :pinnedProject="$pinnedProject" />
+
+                <!-- Pinned Offering Box (Highlights a Service/Offering) -->
                 <x-company.pinned-offering :pinnedOffering="$pinnedOffering" />
                 
                 <!-- About Description Card -->

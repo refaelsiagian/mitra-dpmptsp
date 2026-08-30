@@ -185,4 +185,30 @@ class ProjectController extends Controller
         $status = $newVisibility ? 'publik' : 'tersembunyi';
         return back()->with('success', "Proyek berhasil diubah menjadi {$status}.");
     }
+
+    public function togglePin(\App\Models\Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $newPinStatus = !$project->is_pinned;
+
+        // If pinning, unpin all other projects for this company
+        if ($newPinStatus) {
+            \Illuminate\Support\Facades\DB::table('projects')
+                ->where('company_id', $project->company_id)
+                ->where('id', '!=', $project->id)
+                ->update(['is_pinned' => \Illuminate\Support\Facades\DB::raw('false')]);
+        }
+
+        // Toggle the target project
+        \Illuminate\Support\Facades\DB::table('projects')
+            ->where('id', $project->id)
+            ->update([
+                'is_pinned' => \Illuminate\Support\Facades\DB::raw($newPinStatus ? 'true' : 'false'),
+                'updated_at' => now()
+            ]);
+
+        $status = $newPinStatus ? 'disematkan' : 'dilepaskan dari sematan';
+        return back()->with('success', "Proyek berhasil {$status}.");
+    }
 }
