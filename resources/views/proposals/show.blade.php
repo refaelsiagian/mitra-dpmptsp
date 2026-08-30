@@ -33,7 +33,7 @@
                 Dikirim pada: <span class="font-semibold text-slate-700">{{ $proposal->created_at->format('d M Y, H:i') }}</span>
             </p>
         </div>
-        <a href="{{ url()->previous() }}" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition-colors shadow-sm">
+        <a wire:navigate href="{{ url()->previous() }}" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition-colors shadow-sm">
             Kembali
         </a>
     </div>
@@ -89,29 +89,109 @@
 
             <!-- Pinned Portfolios -->
             @if(is_array($proposal->pinned_portfolios) && count($proposal->pinned_portfolios) > 0)
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm" x-data="{ portfolioModalOpen: false, selectedPortfolio: null, lightboxOpen: false, lightboxImage: '' }">
                 <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">Portofolio yang Ditonjolkan</h3>
-                <div class="space-y-4">
+                
+                <!-- Thumbnail Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($proposal->pinned_portfolios as $portfolioId)
                         @php 
                             $portfolio = \App\Models\CompanyPortfolio::find($portfolioId); 
                         @endphp
                         @if($portfolio)
-                        <div class="flex items-start gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50">
-                            <div class="w-16 h-16 bg-slate-200 rounded-lg x-shrink-0 flex items-center justify-center overflow-hidden">
-                                @if($portfolio->image)
-                                    <img src="{{ Storage::url($portfolio->image) }}" alt="" class="w-full h-full object-cover">
+                            @php $imagePath = $portfolio->image_path ?? $portfolio->image; @endphp
+                            <div @click="selectedPortfolio = {{ $portfolio->id }}; portfolioModalOpen = true" class="aspect-video bg-slate-100 rounded-xl overflow-hidden cursor-pointer group relative border border-slate-200 shadow-sm">
+                                @if($imagePath)
+                                    <img src="{{ Storage::url($imagePath) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                    <div class="w-full h-full flex items-center justify-center text-slate-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                    </div>
                                 @endif
+                                
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                                    <span class="text-white font-bold text-sm truncate">{{ $portfolio->title }}</span>
+                                    <span class="text-white/80 text-xs mt-1 flex items-center gap-1 font-medium">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+                                        Buka Detail
+                                    </span>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="font-bold text-slate-900">{{ $portfolio->title }}</h4>
-                                <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ $portfolio->description }}</p>
-                            </div>
-                        </div>
                         @endif
                     @endforeach
+                </div>
+
+                <!-- Portfolio Detail Modals -->
+                @foreach($proposal->pinned_portfolios as $portfolioId)
+                    @php 
+                        $portfolio = \App\Models\CompanyPortfolio::find($portfolioId); 
+                    @endphp
+                    @if($portfolio)
+                    <div x-show="portfolioModalOpen && selectedPortfolio === {{ $portfolio->id }}" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" style="display: none;">
+                        <!-- Backdrop -->
+                        <div x-show="portfolioModalOpen && selectedPortfolio === {{ $portfolio->id }}" x-transition.opacity @click="portfolioModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+                        
+                        <!-- Modal Content -->
+                        <div x-show="portfolioModalOpen && selectedPortfolio === {{ $portfolio->id }}" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                             class="relative bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden z-10">
+                             
+                             <!-- Close Button -->
+                             <button @click="portfolioModalOpen = false" class="absolute top-4 right-4 z-20 bg-black/50 text-white rounded-full p-2 hover:bg-black/70 transition-colors border border-white/20 shadow-sm backdrop-blur-sm">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                             </button>
+
+                             <!-- Scrollable Area -->
+                             <div class="overflow-y-auto custom-scrollbar">
+                                 <!-- Cover Image -->
+                                 <div class="w-full h-64 sm:h-80 bg-slate-100 relative group cursor-pointer" @click="lightboxImage = '{{ Storage::url($portfolio->image_path ?? $portfolio->image) }}'; lightboxOpen = true">
+                                     @php $imagePath = $portfolio->image_path ?? $portfolio->image; @endphp
+                                     @if($imagePath)
+                                         <img src="{{ Storage::url($imagePath) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover">
+                                         <!-- Hover Overlay for Image -->
+                                         <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                             <div class="bg-white/20 backdrop-blur-sm p-3 rounded-full text-white shadow-sm border border-white/30">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+                                             </div>
+                                         </div>
+                                     @else
+                                         <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 gap-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                            <span class="text-sm font-medium">Tidak ada gambar</span>
+                                         </div>
+                                     @endif
+                                 </div>
+                                 
+                                 <!-- Text Content -->
+                                 <div class="p-6 sm:p-8">
+                                     <h3 class="text-2xl font-bold text-slate-900 mb-4">{{ $portfolio->title }}</h3>
+                                     
+                                     @if($portfolio->description)
+                                     <div class="text-slate-600 text-base leading-relaxed whitespace-pre-wrap">{!! nl2br(e($portfolio->description)) !!}</div>
+                                     @endif
+                                     
+                                     <div class="mt-8 pt-6 border-t border-slate-100 flex items-center text-sm text-slate-500 font-medium">
+                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-slate-400"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                         Ditambahkan pada {{ $portfolio->created_at->format('d M Y') }}
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                    @endif
+                @endforeach
+
+                <!-- Lightbox Modal (Full Image) -->
+                <div x-show="lightboxOpen" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 p-4" x-transition.opacity style="display: none;">
+                    <button @click="lightboxOpen = false" class="absolute top-6 right-6 text-white/70 hover:text-white p-2 transition-colors z-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                    <img :src="lightboxImage" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl relative z-10" @click.away="lightboxOpen = false">
                 </div>
             </div>
             @endif

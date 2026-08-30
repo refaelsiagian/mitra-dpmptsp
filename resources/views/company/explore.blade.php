@@ -17,7 +17,7 @@
 @endphp
 
 @section('content')
-<div x-data="{ showFilterModal: false }" class="h-full">
+<div x-data="{ showFilterModal: false, activeTab: '{{ request('tab') === 'projects' ? 'projects' : 'vendors' }}' }" class="h-full">
 <div class="max-w-5xl mx-auto flex flex-col h-full">
     
     <!-- Header Row 1: Title & Tabs -->
@@ -26,12 +26,16 @@
         
         <!-- Compact Marketplace Tab Bar -->
         <div class="bg-slate-200/80 p-1 rounded-xl flex items-center gap-1 self-start md:self-auto border border-slate-300/50 w-full sm:w-auto overflow-x-auto custom-scrollbar flex-nowrap">
-            <button id="tab-btn-vendors" onclick="switchTab('vendors')" class="flex-1 sm:flex-initial min-w-0 justify-center px-2 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 bg-white text-blue-700 shadow-sm text-center">
+            <button @click="activeTab = 'vendors'; document.getElementById('form-tab-input').value = 'vendors'; const url = new URL(window.location.href); url.searchParams.set('tab', 'vendors'); window.history.pushState({}, '', url);" 
+                :class="activeTab === 'vendors' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'" 
+                class="flex-1 sm:flex-initial min-w-0 justify-center px-2 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
                 <span class="truncate">{{ $tab1Label }}</span>
                 <span class="flex-shrink-0 px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-700 text-[10px] font-extrabold">{{ $vendors->total() }}</span>
             </button>
-            <button id="tab-btn-projects" onclick="switchTab('projects')" class="flex-1 sm:flex-initial min-w-0 justify-center px-2 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-white/50 text-center">
+            <button @click="activeTab = 'projects'; document.getElementById('form-tab-input').value = 'projects'; const url = new URL(window.location.href); url.searchParams.set('tab', 'projects'); window.history.pushState({}, '', url);" 
+                :class="activeTab === 'projects' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'" 
+                class="flex-1 sm:flex-initial min-w-0 justify-center px-2 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center gap-1.5 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 <span class="truncate">{{ $tab2Label }}</span>
                 <span class="flex-shrink-0 px-1.5 py-0.2 rounded-full bg-slate-300 text-slate-800 text-[10px] font-extrabold">{{ $projects->total() }}</span>
@@ -63,7 +67,7 @@
     </form>
 
     <!-- TAB FEED 1: VENDORS -->
-    <div id="feed-vendors" class="flex-1 overflow-y-auto pb-8 pr-2 custom-scrollbar transition-opacity duration-300">
+    <div x-show="activeTab === 'vendors'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" id="feed-vendors" class="flex-1 overflow-y-auto pb-8 pr-2 custom-scrollbar">
         <div class="flex flex-col gap-4" id="list-vendors">
             
             @forelse($vendors as $vendor)
@@ -91,7 +95,7 @@
     </div>
 
     <!-- TAB FEED 2: PROJECTS & OPPORTUNITIES -->
-    <div id="feed-projects" class="flex-1 overflow-y-auto pb-8 pr-2 custom-scrollbar transition-opacity duration-300 hidden">
+    <div x-show="activeTab === 'projects'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" id="feed-projects" class="flex-1 overflow-y-auto pb-8 pr-2 custom-scrollbar">
         <div class="flex flex-col gap-4" id="list-projects">
             
             @forelse($projects as $project)
@@ -127,42 +131,6 @@
 
 <!-- JavaScript Controllers -->
 <script>
-    function switchTab(tabId) {
-        // Update styling for tab buttons
-        document.getElementById('tab-btn-vendors').classList.remove('bg-white', 'text-blue-700', 'shadow-sm');
-        document.getElementById('tab-btn-vendors').classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/50');
-        
-        document.getElementById('tab-btn-projects').classList.remove('bg-white', 'text-blue-700', 'shadow-sm');
-        document.getElementById('tab-btn-projects').classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/50');
-        
-        // Add active state to clicked tab
-        document.getElementById(`tab-btn-${tabId}`).classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-white/50');
-        document.getElementById(`tab-btn-${tabId}`).classList.add('bg-white', 'text-blue-700', 'shadow-sm');
-        
-        // Hide all feeds
-        document.getElementById('feed-vendors').classList.add('hidden');
-        document.getElementById('feed-projects').classList.add('hidden');
-        
-        // Show active feed
-        const activeFeed = document.getElementById(`feed-${tabId}`);
-        activeFeed.classList.remove('hidden');
-        
-        // Update hidden form inputs
-        document.getElementById('form-tab-input').value = tabId;
-        
-        // Force refresh URL and reload to apply correct filters (Server Side Filtering)
-        const url = new URL(window.location.href);
-        url.searchParams.set('tab', tabId);
-        window.history.pushState({}, '', url);
-    }
-
-    // Initialize tabs on page load
-    document.addEventListener('livewire:navigated', () => {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('tab') === 'projects') {
-            switchTab('projects');
-        }
-    });
 </script>
 
     <!-- Filter Modal -->

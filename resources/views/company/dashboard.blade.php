@@ -254,7 +254,7 @@
                         <p class="text-xs text-slate-400 font-medium mb-0.5">{{ $isUMKM ? 'Anggaran Diajukan' : 'Nilai Penawaran' }}</p>
                         <p class="text-sm font-black text-slate-800">{{ $proposal->estimated_value ? 'Rp ' . number_format($proposal->estimated_value, 0, ',', '.') : 'TBA' }}</p>
                     </div>
-                    <a href="{{ route('proposals.show', $proposal->id) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
+                    <a wire:navigate href="{{ route('proposals.show', $proposal->id) }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors whitespace-nowrap">
                         Lihat & Review
                     </a>
                 </div>

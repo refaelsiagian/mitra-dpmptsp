@@ -170,7 +170,7 @@
                     </div>
                     
                     <x-slot:actions>
-                        <form action="{{ route('projects.close', $project->id) }}" method="POST" class="m-0 w-full">
+                        <form action="{{ route('projects.close', $project->id) }}" method="POST" class="m-0 w-full sm:w-auto">
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="redirect_to" value="{{ url()->current() }}">
@@ -189,7 +189,7 @@
                     <p class="text-left">Apakah Anda yakin ingin menghapus proyek <span class="font-bold">"{{ $project->title }}"</span>? Tindakan ini tidak dapat dibatalkan.</p>
                     
                     <x-slot:actions>
-                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0 w-full">
+                        <form action="{{ route('projects.destroy', $project->id) }}" method="POST" class="m-0 w-full sm:w-auto">
                             @csrf
                             @method('DELETE')
                             <input type="hidden" name="redirect_to" value="{{ url()->current() }}">

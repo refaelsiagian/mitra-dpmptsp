@@ -65,7 +65,7 @@
                     $closedProjects = $company->projects->where('status', 'closed');
                     $draftProjects = $company->projects->where('status', 'draft');
                     
-                    $activeCount = $publishedProjects->count() + $draftProjects->count();
+                    $activeCount = $publishedProjects->count();
                     $closedCount = $closedProjects->count();
                 @endphp
 
@@ -90,7 +90,7 @@
                     </div>
                 </div>
                 
-                <div x-show="activeProjectTab === 'aktif'" class="space-y-6">
+                <div x-show="activeProjectTab === 'aktif'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
                     @if($activeCount === 0)
                         <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 mt-2">
                             <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -106,7 +106,7 @@
                             @endif
                         </div>
                     @else
-                        @foreach($publishedProjects->merge($draftProjects) as $project)
+                        @foreach($publishedProjects as $project)
                     @php
                         $theme = match($project->type) {
                             'konstruksi' => [
@@ -149,14 +149,14 @@
                                 {!! $theme['icon'] !!}
                                 {{ $theme['label'] }}
                             </div>
-                            @if($project->status === 'draft')
-                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold border bg-slate-100 text-slate-600 border-slate-200">
-                                    Draf
+                            @if($project->is_expired)
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold border bg-rose-50 text-rose-700 border-rose-200">
+                                    Kedaluwarsa
                                 </div>
                             @endif
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 mb-2">
-                            <a href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
+                            <a wire:navigate href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
                         </h3>
                         <p class="text-slate-600 text-sm mb-5 leading-relaxed">{{ Str::limit($project->description, 150) }}</p>
                         
@@ -168,12 +168,12 @@
                                     <span class="font-bold text-blue-900">Rp {{ number_format($project->estimated_value, 0, ',', '.') }}</span>
                                 </div>
                                 @endif
-                                <div class="bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
-                                    <span class="block text-xs font-semibold text-emerald-600/70 mb-0.5">Status</span>
-                                    <span class="font-bold text-emerald-900">Terbuka</span>
+                                <div class="bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+                                    <span class="block text-xs font-semibold text-slate-500 mb-0.5">Batas Penawaran</span>
+                                    <span class="font-bold text-slate-900">{{ $project->offer_end_date ? $project->offer_end_date->format('d M Y') : 'Terbuka' }}</span>
                                 </div>
                             </div>
-                            <a href="{{ route('projects.show', $project->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors">
+                            <a wire:navigate href="{{ route('projects.show', $project->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-colors">
                                 Lihat Detail
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                             </a>
@@ -183,7 +183,7 @@
                     @endif
                 </div>
 
-                <div x-show="activeProjectTab === 'selesai'" style="display: none;" class="space-y-6">
+                <div x-show="activeProjectTab === 'selesai'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" class="space-y-6">
                     @if($closedCount === 0)
                         <div class="text-center p-10 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 mt-2">
                             <div class="w-12 h-12 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -242,7 +242,7 @@
                                                 </div>
                                             </div>
                                             <h3 class="text-xl font-bold text-slate-900 mb-2">
-                                                <a href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
+                                                <a wire:navigate href="{{ route('projects.show', $project->id) }}" class="hover:text-blue-600 transition-colors">{{ $project->title }}</a>
                                             </h3>
                                             <p class="text-slate-600 text-sm mb-0 leading-relaxed line-clamp-2">{{ Str::limit($project->description, 150) }}</p>
                                         </div>
