@@ -36,7 +36,7 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div wire:key="dashboard-published">
     <!-- Filter & Search Bar -->
     <div class="sticky top-0 z-20 bg-white/95 backdrop-blur-sm -mt-6 pt-6 -mx-6 px-6 pb-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div class="relative w-full max-w-sm">

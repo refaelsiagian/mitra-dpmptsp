@@ -31,7 +31,7 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div wire:key="dashboard-completed">
     @if($closedProjects->count() > 0)
         <div class="space-y-4">
             @foreach($closedProjects as $project)

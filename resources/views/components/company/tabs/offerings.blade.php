@@ -9,7 +9,13 @@ new class extends Component {
     public function with()
     {
         $publishedProjects = $this->company->projects()->where('status', 'published')->get();
-        $closedProjects = $this->company->projects()->where('status', 'closed')->get();
+        $closedProjects = $this->company->projects()
+            ->with(['proposals' => function($q) {
+                $q->where('status', 'accepted')->with('company.kblis');
+            }])
+            ->where('status', 'closed')
+            ->where('is_public', 'true')
+            ->get();
         
         return [
             'publishedProjects' => $publishedProjects,

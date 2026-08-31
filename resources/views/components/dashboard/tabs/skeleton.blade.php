@@ -1,4 +1,4 @@
-<div class="space-y-4 animate-pulse p-2">
+<div class="space-y-4 animate-pulse w-full">
     @for($i = 0; $i < 3; $i++)
     <div class="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 shadow-sm">
         <div class="flex flex-col md:flex-row justify-between gap-6">
