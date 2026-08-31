@@ -118,6 +118,10 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
     Route::put('/projects/{project}/toggle-visibility', [\App\Http\Controllers\ProjectController::class, 'toggleVisibility'])->name('projects.toggle-visibility');
     Route::put('/projects/{project}/toggle-pin', [\App\Http\Controllers\ProjectController::class, 'togglePin'])->name('projects.toggle-pin');
 
+});
+
+// Common Protected Routes (Both User and Admin)
+Route::middleware(['auth', 'verified'])->group(function () {
     // Settings Routes
     Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
     Route::put('/settings/email', [\App\Http\Controllers\SettingsController::class, 'updateEmail'])->name('settings.updateEmail');

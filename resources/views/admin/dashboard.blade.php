@@ -68,9 +68,15 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ route('admin.review', $company->id) }}" class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded text-sm font-medium transition-colors">
-                                    <i class="ph ph-magnifying-glass"></i> Review
-                                </a>
+                                @if($company->status === 'pending')
+                                    <a href="{{ route('admin.review', $company->id) }}" class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded text-sm font-medium transition-colors">
+                                        <i class="ph ph-magnifying-glass"></i> Review
+                                    </a>
+                                @else
+                                    <a href="{{ route('admin.review', $company->id) }}" class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-50 text-slate-600 hover:bg-slate-200 hover:text-slate-900 rounded text-sm font-medium transition-colors">
+                                        <i class="ph ph-eye"></i> Lihat Profil
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                     @empty
