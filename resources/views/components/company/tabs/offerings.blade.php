@@ -196,7 +196,7 @@ new class extends Component {
                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group mb-6 last:mb-0">
                         <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
                             <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-3">
+                                <div class="flex items-center gap-2 mb-3 flex-wrap">
                                     <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold border {{ $theme['badgeBg'] }} {{ $theme['badgeText'] }} {{ $theme['badgeBorder'] }}">
                                         {!! $theme['icon'] !!}
                                         {{ $theme['label'] }}

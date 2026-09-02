@@ -226,7 +226,7 @@
 
             <!-- Profil Admin -->
             <div class="relative w-full h-full">
-                <button @click="openProfileMenu = true" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors">
+                <button @click="openProfileMenu = !openProfileMenu" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     <span class="text-[10px] font-semibold">Profil</span>
                 </button>
@@ -268,6 +268,9 @@
                     </form>
                 </div>
             </div>
+            
+            <!-- Backdrop for Admin Profile Menu -->
+            <div x-show="openProfileMenu" style="display: none;" class="fixed inset-x-0 top-0 bottom-16 bg-slate-900/40 backdrop-blur-sm z-[40] md:hidden" @click="openProfileMenu = false"></div>
         @else
             <!-- Beranda / Dashboard -->
             <a wire:navigate href="/dashboard" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('dashboard') ? 'text-blue-600' : '' }}">
@@ -284,7 +287,7 @@
 
             <!-- Profil -->
             <div class="relative w-full h-full">
-                <button @click="openProfileMenu = true" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors">
+                <button @click="openProfileMenu = !openProfileMenu" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     <span class="text-[10px] font-semibold">Profil</span>
                 </button>
@@ -302,9 +305,8 @@
                      
                      <div class="flex items-center justify-between px-2 pb-3 mb-2 border-b border-slate-100">
                         <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block shrink-0"></span>
-                        <span class="font-bold text-slate-900 text-sm">Mitra DPMPTSP</span>
-                    </div>
+                            <img src="{{ asset('images/logo-1.svg') }}" alt="KIS Berkah" class="h-8 w-auto">
+                        </div>
                     <button @click="openProfileMenu = false" class="text-slate-400 hover:text-slate-600 bg-slate-50 p-1 rounded-full shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
                  </div>
 
@@ -346,7 +348,7 @@
             </div>
             
             <!-- Backdrop for Mobile Profile Menu -->
-            <div x-show="openProfileMenu" style="display: none;" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[55] md:hidden" @click="openProfileMenu = false"></div>
+            <div x-show="openProfileMenu" style="display: none;" class="fixed inset-x-0 top-0 bottom-16 bg-slate-900/40 backdrop-blur-sm z-[40] md:hidden" @click="openProfileMenu = false"></div>
         </div>
         @endif
     </nav>

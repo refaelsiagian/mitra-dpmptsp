@@ -2,7 +2,7 @@
 
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white">
     <div class="flex-1">
-        <div class="flex items-center gap-2 mb-2">
+        <div class="flex items-center gap-2 mb-2 flex-wrap">
             @php
                 $theme = match($project->type) {
                     'konstruksi' => [

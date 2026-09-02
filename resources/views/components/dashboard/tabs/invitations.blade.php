@@ -37,7 +37,7 @@ new class extends Component {
         @forelse($receivedInvitations as $invitation)
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white mb-4">
                 <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
                         @if($invitation->status === 'pending')
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-700 tracking-wide uppercase">Undangan Baru</span>
                         @elseif($invitation->status === 'accepted')
@@ -103,7 +103,7 @@ new class extends Component {
         @forelse($sentInvitations as $invitation)
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white mb-4">
                 <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
                         @if($invitation->status === 'pending')
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-700 tracking-wide uppercase">Menunggu Respons</span>
                         @elseif($invitation->status === 'accepted')

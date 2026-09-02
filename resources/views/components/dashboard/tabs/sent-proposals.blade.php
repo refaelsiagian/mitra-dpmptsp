@@ -124,7 +124,7 @@ new class extends Component {
         <!-- Sent Proposal Item -->
         <div class="proposal-terkirim-item flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 mb-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white" data-status="{{ $statusLabel }}">
             <div class="flex-1">
-                <div class="flex items-center gap-2 mb-2">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusColor }} tracking-wide uppercase">{{ $statusLabel }}</span>
                     <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Terkirim: {{ $proposal->created_at->format('d M Y') }}</span>
                 </div>

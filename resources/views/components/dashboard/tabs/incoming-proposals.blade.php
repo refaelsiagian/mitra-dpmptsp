@@ -139,7 +139,7 @@ new class extends Component {
         <!-- Received Proposal Item -->
         <div class="proposal-masuk-item flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 mb-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group bg-white" data-project-id="{{ $proposal->project_id }}" data-status="{{ $proposal->status }}">
             <div class="flex-1">
-                <div class="flex items-center gap-2 mb-2">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusColor }} tracking-wide uppercase">{{ $statusLabel }}</span>
                     @if($proposal->is_invited)
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-700 tracking-wide uppercase flex items-center gap-1 border border-indigo-200">
@@ -147,7 +147,7 @@ new class extends Component {
                             Jalur Undangan
                         </span>
                     @endif
-                    <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Diterima: {{ $proposal->created_at->format('d M Y') }}</span>
+                    <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Masuk: {{ $proposal->created_at->format('d M Y') }}</span>
                 </div>
                 <a href="{{ route('proposals.show', $proposal->id) }}" class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors block mb-1">
                     Dari: {{ $proposal->company->name }}

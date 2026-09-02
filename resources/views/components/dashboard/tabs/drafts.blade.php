@@ -23,7 +23,7 @@ new class extends Component {
     @forelse($draftProjects as $draft)
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 rounded-xl border border-slate-200 border-dashed hover:border-slate-300 transition-colors bg-slate-50/50 mb-4">
         <div class="flex-1">
-            <div class="flex items-center gap-2 mb-2">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-600 tracking-wide uppercase">Draft</span>
                 <span class="text-xs font-semibold text-slate-400 border-l border-slate-300 pl-2">Diedit terakhir: {{ $draft->updated_at->diffForHumans() }}</span>
             </div>
