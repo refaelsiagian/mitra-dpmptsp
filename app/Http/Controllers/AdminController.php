@@ -11,11 +11,7 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $companies = Company::with('user')
-            ->orderBy('created_at', 'desc')
-            ->get();
-            
-        return view('admin.dashboard', compact('companies'));
+        return view('admin.dashboard');
     }
 
     public function review(Company $company)
