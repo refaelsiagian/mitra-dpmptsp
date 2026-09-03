@@ -11,9 +11,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
                 </div>
                 <p class="text-slate-500 font-bold text-sm text-center mb-1">Belum ada deskripsi profil perusahaan</p>
-                <p class="text-slate-400 text-xs text-center max-w-xs mb-4">Tambahkan latar belakang, visi misi, dan layanan utama untuk menarik klien.</p>
-                
                 @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $company->id)
+                <p class="text-slate-400 text-xs text-center max-w-xs mb-4">Tambahkan latar belakang, visi misi, dan layanan utama untuk menarik klien.</p>
                 <a wire:navigate href="{{ route('company.profile.edit') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-xs rounded-lg transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                     Tambahkan Deskripsi

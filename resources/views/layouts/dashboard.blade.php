@@ -89,6 +89,10 @@
                 <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
                 <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Dashboard Admin</span>
             </a>
+            <a wire:navigate title="Eksplorasi" href="/explore" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative" :class="[(currentPath === '/explore' || currentPath.startsWith('/vendor') || currentPath.startsWith('/project')) ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold', expanded ? 'justify-start' : 'justify-center']">
+                <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Eksplorasi</span>
+            </a>
             @endif
         </nav>
         
@@ -222,6 +226,12 @@
             <a wire:navigate href="{{ route('admin.dashboard') }}" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->routeIs('admin.dashboard') ? 'text-blue-600' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->routeIs('admin.dashboard') ? 'fill-blue-50/50' : '' }}"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <span class="text-[10px] font-semibold">Dashboard</span>
+            </a>
+
+            <!-- Eksplorasi Admin -->
+            <a wire:navigate href="/explore" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'text-blue-600' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('explore') || request()->is('vendor*') || request()->is('project*') ? 'fill-blue-50/50' : '' }}"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <span class="text-[10px] font-semibold">Eksplorasi</span>
             </a>
 
             <!-- Profil Admin -->

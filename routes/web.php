@@ -77,9 +77,6 @@ Route::get('/api/check-nib/{nib}', function ($nib) {
 
 
 Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompanyVerification::class])->group(function () {
-    Route::get('/explore', [\App\Http\Controllers\ExploreController::class, 'index'])->name('explore');
-    Route::get('/vendor/{company}', [\App\Http\Controllers\VendorController::class, 'show'])->name('vendor.show')->whereNumber('company');
-
     Route::get('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'index'])->name('company.profile');
     Route::get('/company/profile/edit', [\App\Http\Controllers\CompanyProfileController::class, 'edit'])->name('company.profile.edit');
     Route::put('/company/profile', [\App\Http\Controllers\CompanyProfileController::class, 'update'])->name('company.profile.update');
@@ -94,7 +91,6 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
     // Projects
     Route::get('/projects/create', [\App\Http\Controllers\ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [\App\Http\Controllers\ProjectController::class, 'store'])->name('projects.store');
-    Route::get('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
     Route::get('/projects/{project}/edit', [\App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
     Route::put('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('projects.destroy');
@@ -102,7 +98,6 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
     // Proposals
     Route::get('/projects/{project}/proposals/create', [\App\Http\Controllers\ProposalController::class, 'create'])->name('proposals.create');
     Route::post('/projects/{project}/proposals', [\App\Http\Controllers\ProposalController::class, 'store'])->name('proposals.store');
-    Route::get('/proposals/{proposal}', [\App\Http\Controllers\ProposalController::class, 'show'])->name('proposals.show');
     Route::put('/proposals/{proposal}/status', [\App\Http\Controllers\ProposalController::class, 'updateStatus'])->name('proposals.updateStatus');
 
     // Invitations
@@ -118,6 +113,14 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
     Route::put('/projects/{project}/toggle-visibility', [\App\Http\Controllers\ProjectController::class, 'toggleVisibility'])->name('projects.toggle-visibility');
     Route::put('/projects/{project}/toggle-pin', [\App\Http\Controllers\ProjectController::class, 'togglePin'])->name('projects.toggle-pin');
 
+});
+
+// Common Protected Routes with Verification Check (Both User and Admin)
+Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckCompanyVerification::class])->group(function () {
+    Route::get('/explore', [\App\Http\Controllers\ExploreController::class, 'index'])->name('explore');
+    Route::get('/vendor/{company}', [\App\Http\Controllers\VendorController::class, 'show'])->name('vendor.show')->whereNumber('company');
+    Route::get('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'show'])->name('projects.show');
+    Route::get('/proposals/{proposal}', [\App\Http\Controllers\ProposalController::class, 'show'])->name('proposals.show');
 });
 
 // Common Protected Routes (Both User and Admin)

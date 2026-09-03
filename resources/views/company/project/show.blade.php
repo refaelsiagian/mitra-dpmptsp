@@ -368,8 +368,14 @@
                 </div>
                 
                 <!-- Calls to Action (Viewer Only) -->
-                @if(!(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id))
-                    <div class="flex flex-col gap-3">
+                @if(auth()->check() && auth()->user()->company && auth()->user()->company->id === $project->company_id)
+                    <div class="flex gap-3 mt-4 lg:hidden">
+                        <a wire:navigate href="{{ route('projects.edit', $project->id) }}" class="flex-1 py-3 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-center transition-colors">Edit</a>
+                        <button class="flex-1 py-3 bg-red-50 text-red-600 hover:bg-red-100 font-bold rounded-xl text-center transition-colors">Tutup</button>
+                    </div>
+                @else
+                    @can('submitProposal', $project)
+                    <div class="mt-6 hidden lg:block">
                         @php
                             $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['besar']) : false;
                             $buttonTextDesktop = $isViewerUB ? 'Kirim Ketertarikan' : 'Kirim Proposal';
@@ -391,38 +397,39 @@
                         </a>
                         @endif
                     </div>
+                    @endcan
                 @endif
-                
+            </div>
         </div>
-    </div>
-    
-    @if(!(auth()->user() && auth()->user()->company && auth()->user()->company->id === $project->company_id))
-    <!-- Mobile & Tablet Sticky CTA Bar (Hidden on Large Desktop) -->
-    <div class="lg:hidden fixed bottom-16 md:bottom-0 left-0 md:left-16 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40">
-        <div class="flex gap-3">
-            @php
-                $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['besar']) : false;
-                $buttonTextMobile = $isViewerUB ? 'Kirim Ketertarikan' : 'Kirim Proposal';
-            @endphp
-            @if($project->status === 'closed')
-            <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Ditutup
-            </button>
-            @elseif($project->is_expired)
-            <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Berakhir
-            </button>
-            @else
-            <a wire:navigate href="{{ route('proposals.create', $project->id) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
-                {{ $buttonTextMobile }}
-            </a>
-            @endif
+        
+        @can('submitProposal', $project)
+        <!-- Mobile & Tablet Sticky CTA Bar (Hidden on Large Desktop) -->
+        <div class="lg:hidden fixed bottom-16 md:bottom-0 left-0 md:left-16 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40">
+            <div class="flex gap-3">
+                @php
+                    $isViewerUB = auth()->check() && auth()->user()->company ? in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['besar']) : false;
+                    $buttonTextMobile = $isViewerUB ? 'Kirim Ketertarikan' : 'Kirim Proposal';
+                @endphp
+                @if($project->status === 'closed')
+                <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Ditutup
+                </button>
+                @elseif($project->is_expired)
+                <button disabled class="w-full py-3 bg-slate-200 text-slate-500 font-bold rounded-xl text-sm flex justify-center items-center gap-1.5 cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Berakhir
+                </button>
+                @else
+                <a wire:navigate href="{{ route('proposals.create', $project->id) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 text-sm transition-colors flex justify-center items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg>
+                    {{ $buttonTextMobile }}
+                </a>
+                @endif
+            </div>
         </div>
+        @endcan
     </div>
-    @endif
     @endif
 </div>
 @endsection
