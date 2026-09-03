@@ -20,8 +20,12 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email:rfc,dns'],
             'password' => ['required'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
         $remember = $request->has('remember-me');
@@ -55,9 +59,18 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
+            'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,}$/'],
             'confirm-password' => ['required', 'same:password'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid atau domain tidak ditemukan.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.regex' => 'Kata sandi harus mengandung kombinasi huruf, angka, dan simbol.',
+            'confirm-password.required' => 'Konfirmasi kata sandi wajib diisi.',
+            'confirm-password.same' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
         // Generate a simple name from email prefix since we don't ask for a name

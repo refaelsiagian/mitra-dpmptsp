@@ -19,6 +19,10 @@
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="font-sans text-gray-900 bg-white antialiased flex h-screen overflow-hidden">
 
@@ -33,7 +37,17 @@
     </div>
 
     <!-- Middle Area: Form Content -->
-    <div class="w-full max-w-md mx-auto my-auto">
+    <div class="w-full max-w-md mx-auto my-auto" x-data="{ 
+        password: '', 
+        confirmPassword: '', 
+        showPassword: false, 
+        showConfirmPassword: false,
+        get hasLength() { return this.password.length >= 8; },
+        get hasLetter() { return /[a-zA-Z]/.test(this.password); },
+        get hasNumber() { return /\d/.test(this.password); },
+        get hasSymbol() { return /[\W_]/.test(this.password); },
+        get isMatch() { return this.confirmPassword.length > 0 && this.password === this.confirmPassword; }
+    }">
         <div class="mb-6">
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Atur Ulang Kata Sandi</h2>
             <p class="text-gray-500 text-sm">Silakan masukkan email Anda dan kata sandi baru untuk akun Anda.</p>
@@ -45,31 +59,51 @@
             <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
             <fieldset class="space-y-4">
-                <!-- Validation Errors -->
-                @if ($errors->any())
-                    <div class="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-                        <ul class="list-disc pl-4 space-y-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-                
                 <!-- Email -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Email Address <span class="text-red-500">*</span></label>
                     <input class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors bg-gray-50" id="email" name="email" value="{{ old('email', $request->email) }}" required type="email" readonly/>
+                    @error('email')
+                        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+                    @enderror
                 </div>
                 
                 <!-- Password -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Kata Sandi Baru <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Min. 8 karakter" required autofocus type="password"/>
-                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" data-target="password" type="button">
-                            <i class="ph ph-eye-slash text-xl"></i>
+                        <input x-model="password" class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Min. 8 karakter" required autofocus :type="showPassword ? 'text' : 'password'"/>
+                        <button @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" type="button">
+                            <i class="ph ph-eye text-xl" x-show="showPassword" x-cloak></i>
+                            <i class="ph ph-eye-slash text-xl" x-show="!showPassword" x-cloak></i>
                         </button>
+                    </div>
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+                    @enderror
+
+                    <!-- Real-time Password Hints -->
+                    <div class="mt-2 grid grid-cols-2 gap-1 text-xs" x-show="password.length > 0" x-cloak>
+                        <div class="flex items-center gap-1.5 transition-colors" :class="hasLength ? 'text-green-600 font-medium' : 'text-slate-400'">
+                            <i class="ph ph-check-circle fill-green-600 text-sm" x-show="hasLength"></i>
+                            <i class="ph ph-circle text-sm" x-show="!hasLength"></i>
+                            8+ Karakter
+                        </div>
+                        <div class="flex items-center gap-1.5 transition-colors" :class="hasLetter ? 'text-green-600 font-medium' : 'text-slate-400'">
+                            <i class="ph ph-check-circle fill-green-600 text-sm" x-show="hasLetter"></i>
+                            <i class="ph ph-circle text-sm" x-show="!hasLetter"></i>
+                            Huruf (a-z)
+                        </div>
+                        <div class="flex items-center gap-1.5 transition-colors" :class="hasNumber ? 'text-green-600 font-medium' : 'text-slate-400'">
+                            <i class="ph ph-check-circle fill-green-600 text-sm" x-show="hasNumber"></i>
+                            <i class="ph ph-circle text-sm" x-show="!hasNumber"></i>
+                            Angka (0-9)
+                        </div>
+                        <div class="flex items-center gap-1.5 transition-colors" :class="hasSymbol ? 'text-green-600 font-medium' : 'text-slate-400'">
+                            <i class="ph ph-check-circle fill-green-600 text-sm" x-show="hasSymbol"></i>
+                            <i class="ph ph-circle text-sm" x-show="!hasSymbol"></i>
+                            Simbol (!@#)
+                        </div>
                     </div>
                 </div>
 
@@ -77,10 +111,21 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="password_confirmation">Konfirmasi Kata Sandi Baru <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password_confirmation" name="password_confirmation" placeholder="Ulangi kata sandi baru" required type="password"/>
-                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" data-target="password_confirmation" type="button">
-                            <i class="ph ph-eye-slash text-xl"></i>
+                        <input x-model="confirmPassword" class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password_confirmation" name="password_confirmation" placeholder="Ulangi kata sandi baru" required :type="showConfirmPassword ? 'text' : 'password'"/>
+                        <button @click="showConfirmPassword = !showConfirmPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" type="button">
+                            <i class="ph ph-eye text-xl" x-show="showConfirmPassword" x-cloak></i>
+                            <i class="ph ph-eye-slash text-xl" x-show="!showConfirmPassword" x-cloak></i>
                         </button>
+                    </div>
+                    @error('password_confirmation')
+                        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+                    @enderror
+
+                    <!-- Match Hint -->
+                    <div class="mt-2 text-xs flex items-center gap-1.5 transition-colors" x-show="confirmPassword.length > 0" x-cloak :class="isMatch ? 'text-green-600 font-medium' : 'text-red-500 font-medium'">
+                        <i class="ph ph-check-circle fill-green-600 text-sm" x-show="isMatch"></i>
+                        <i class="ph ph-x-circle text-sm" x-show="!isMatch"></i>
+                        <span x-text="isMatch ? 'Kata sandi cocok' : 'Kata sandi tidak cocok'"></span>
                     </div>
                 </div>
             </fieldset>
@@ -103,33 +148,5 @@
 </aside>
 <!-- END: Right Section (Pattern Background) -->
 
-<!-- Simple script for password toggle functionality -->
-<script data-purpose="form-interactions">
-    document.addEventListener('livewire:navigated', function() {
-        const toggleBtns = document.querySelectorAll('[data-purpose="toggle-password"]');
-        
-        toggleBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const passwordInput = document.getElementById(targetId);
-                
-                if (passwordInput) {
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
-                    
-                    const icon = this.querySelector('i');
-                    if (type === 'text') {
-                        icon.classList.remove('ph-eye-slash');
-                        icon.classList.add('ph-eye');
-                    } else {
-                        icon.classList.remove('ph-eye');
-                        icon.classList.add('ph-eye-slash');
-                    }
-                }
-            });
-        });
-    });
-</script>
 </body>
 </html>
-

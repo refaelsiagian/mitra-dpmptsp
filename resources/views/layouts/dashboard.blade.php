@@ -20,7 +20,10 @@
         /* Role-based visibility toggles */
         html.role_umkm .besar-only { display: none !important; }
         html.role_besar .umkm-only { display: none !important; }
+        /* Alpine cloak */
+        [x-cloak] { display: none !important; }
     </style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
         // Set the initial role BEFORE rendering the body to prevent layout shift
         const userRole = localStorage.getItem('userRole') || 'role_besar';

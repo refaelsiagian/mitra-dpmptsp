@@ -21,6 +21,9 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- AlpineJS for Toast -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="font-sans text-text bg-surface antialiased flex h-screen overflow-hidden">
 
@@ -35,7 +38,7 @@
     </div>
 
     <!-- Middle Area: Form Content -->
-    <div class="w-full max-w-md mx-auto my-auto">
+    <div class="w-full max-w-md mx-auto my-auto" x-data="{ showPassword: false }">
         <div class="mb-8">
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Login Akun</h2>
         </div>
@@ -43,30 +46,27 @@
             @csrf
         <!-- Account Credentials Section -->
             <fieldset class="space-y-4">
-                <!-- Validation Errors -->
-                @if ($errors->any())
-                    <div class="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-                        <ul class="list-disc pl-4 space-y-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Alamat Email <span class="text-red-500">*</span></label>
-                    <input class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="email" name="email" placeholder="Masukkan alamat email Anda" required="" type="email"/>
+                    <input class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan alamat email Anda" required="" type="email"/>
+                    @error('email')
+                        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+                    @enderror
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" for="password">Kata Sandi <span class="text-red-500">*</span></label>
                     <div class="relative">
-                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Masukkan kata sandi Anda" required="" type="password"/>
-                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" data-purpose="toggle-password" type="button">
-                            <i class="ph ph-eye-slash text-xl"></i>
+                        <input class="w-full px-4 py-2 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors" id="password" name="password" placeholder="Masukkan kata sandi Anda" required="" :type="showPassword ? 'text' : 'password'"/>
+                        <button @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" type="button">
+                            <i class="ph ph-eye text-xl" x-show="showPassword" x-cloak></i>
+                            <i class="ph ph-eye-slash text-xl" x-show="!showPassword" x-cloak></i>
                         </button>
                     </div>
+                    @error('password')
+                        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Forgot Password -->
@@ -85,7 +85,7 @@
             </div>
             <div class="text-center text-sm mt-4">
                 <span class="text-gray-500">Belum punya akun?</span>
-                <a wire:navigate class="font-medium text-blue-600 hover:underline" href="/">Daftar di sini</a>
+                <a wire:navigate class="font-medium text-blue-600 hover:underline" href="/register">Daftar di sini</a>
             </div>
         </form>
     </div>
@@ -99,32 +99,6 @@
 </aside>
 <!-- END: Right Section (Pattern Background) -->
 
-<!-- Simple script for password toggle functionality -->
-<script data-purpose="form-interactions">
-    document.addEventListener('livewire:navigated', function() {
-        const togglePasswordBtn = document.querySelector('[data-purpose="toggle-password"]');
-        const passwordInput = document.getElementById('password');
-        
-        if(togglePasswordBtn && passwordInput) {
-            togglePasswordBtn.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            // Toggle icon
-            const icon = this.querySelector('i');
-            if (type === 'text') {
-                icon.classList.remove('ph-eye-slash');
-                icon.classList.add('ph-eye');
-            } else {
-                icon.classList.remove('ph-eye');
-                icon.classList.add('ph-eye-slash');
-            }
-            });
-        }
-    });
-</script>
-
 <x-toast />
 </body>
 </html>
-

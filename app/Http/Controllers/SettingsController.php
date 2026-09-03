@@ -19,14 +19,14 @@ class SettingsController extends Controller
             'email' => [
                 'required',
                 'string',
-                'email',
+                'email:rfc,dns',
                 'max:255',
                 Rule::unique('users')->ignore($request->user()->id),
             ],
             'current_password_for_email' => ['required', 'current_password'],
         ], [
             'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'email.email' => 'Format email tidak valid atau domain tidak ditemukan.',
             'email.unique' => 'Email ini sudah digunakan.',
             'current_password_for_email.required' => 'Kata sandi saat ini wajib diisi.',
             'current_password_for_email.current_password' => 'Kata sandi saat ini salah.',
@@ -51,12 +51,13 @@ class SettingsController extends Controller
     {
         $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', 'confirmed'],
         ], [
             'current_password.required' => 'Kata sandi saat ini wajib diisi.',
             'current_password.current_password' => 'Kata sandi saat ini salah.',
             'password.required' => 'Kata sandi baru wajib diisi.',
             'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.regex' => 'Kata sandi harus mengandung kombinasi huruf, angka, dan simbol.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 

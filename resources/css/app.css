@@ -27,3 +27,9 @@
     scrollbar-width: none;
 }
 
+/* Hide native browser password reveal icon (Edge) */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none !important;
+}
+
