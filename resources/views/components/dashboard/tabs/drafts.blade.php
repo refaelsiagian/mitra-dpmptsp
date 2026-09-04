@@ -9,7 +9,7 @@ new class extends Component {
             
         return [
             
-            'isUMKM' => $isUMKM,'draftProjects' => $draftProjects
+            'isUMKM' => $company->isUMKM(),'draftProjects' => $draftProjects
         ];
     }
 

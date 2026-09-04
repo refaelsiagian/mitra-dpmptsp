@@ -5,19 +5,17 @@ new class extends Component {
     public function with()
     {
         $company = auth()->user()->company;
-        $isUMKM = $company->isUMKM();
-        
         $receivedInvitations = collect();
         $sentInvitations = collect();
         
-        if ($isUMKM) {
+        if ($company->isUMKM()) {
             $receivedInvitations = $company->receivedInvitations()->with(['project', 'invitingCompany'])->latest()->get();
         } else {
             $sentInvitations = $company->sentInvitations()->with(['project', 'invitedCompany'])->latest()->get();
         }
             
         return [
-            'isUMKM' => $isUMKM,
+            'isUMKM' => $company->isUMKM(),
             'receivedInvitations' => $receivedInvitations,
             'sentInvitations' => $sentInvitations,
         ];

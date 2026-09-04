@@ -9,8 +9,6 @@ new class extends Component {
     public function with()
     {
         $company = auth()->user()->company;
-        $isUMKM = $company->isUMKM();
-        
         $query = $company->proposals()->with('project.company');
         
         if ($this->status !== '') {
@@ -33,7 +31,7 @@ new class extends Component {
             
         return [
             
-            'isUMKM' => $isUMKM,'sentProposals' => $sentProposals
+            'isUMKM' => $company->isUMKM(),'sentProposals' => $sentProposals
         ];
     }
 

@@ -19,8 +19,6 @@ new class extends Component {
     public function with()
     {
         $company = auth()->user()->company;
-        $isUMKM = $company->isUMKM();
-        
         $query = \App\Models\Proposal::whereHas('project', function($q) use ($company) {
             $q->where('company_id', $company->id);
         })->with(['project', 'company']);
@@ -49,7 +47,7 @@ new class extends Component {
             
         return [
             
-            'isUMKM' => $isUMKM,'receivedProposals' => $receivedProposals,
+            'isUMKM' => $company->isUMKM(),'receivedProposals' => $receivedProposals,
             'allProposals' => $allProposals
         ];
     }

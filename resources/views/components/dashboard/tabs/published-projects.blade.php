@@ -9,8 +9,6 @@ new class extends Component {
     public function with()
     {
         $company = auth()->user()->company;
-        $isUMKM = $company->isUMKM();
-        
         $query = $company->projects()
             ->withCount('proposals')
             ->withCount(['proposals as accepted_proposals_count' => function($q) {
@@ -26,7 +24,7 @@ new class extends Component {
             
         return [
             
-            'isUMKM' => $isUMKM,'publishedProjects' => $publishedProjects
+            'isUMKM' => $company->isUMKM(),'publishedProjects' => $publishedProjects
         ];
     }
 
