@@ -6,7 +6,7 @@
     title: {{ json_encode(old('title', $project->title)) }},
     description: {{ json_encode(old('description', $project->description)) }},
     ruang_lingkup: {{ json_encode(old('ruang_lingkup', $project->ruang_lingkup)) }},
-    isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }},
+    isUmkm: {{ $company->isUMKM() ? 'true' : 'false' }},
     offerings: {{ json_encode(old('offerings', $project->offerings ?? [''])) }},
     requirements: {{ json_encode(old('requirements', $project->requirements ?? [''])) }},
     province_id: {{ json_encode(old('province_id', $project->province_id) ?? '') }},
@@ -84,7 +84,7 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         
         <div class="p-6 md:p-8 border-b border-slate-100 bg-slate-50">
-            @php $isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']); @endphp
+            @php $isUMKM = $company->isUMKM(); @endphp
             <h1 class="text-2xl font-bold text-slate-900">
                 {{ $isUMKM ? 'Edit Penawaran Kemitraan' : 'Edit Proyek / Pengadaan (RFP)' }}
             </h1>
@@ -347,7 +347,7 @@
                 @endif
                 <button type="submit" name="status" value="published" class="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
                     @php
-                        $isUmkm = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil', 'menengah']);
+                        $isUmkm = $company->isUMKM();
                         if ($project->status === 'draft') {
                             echo $isUmkm ? 'Tawarkan' : 'Terbitkan';
                         } else {

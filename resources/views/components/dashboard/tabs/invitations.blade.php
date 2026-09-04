@@ -2,23 +2,22 @@
 use Livewire\Component;
 
 new class extends Component {
-    public $isUMKM = false;
-    
     public function with()
     {
         $company = auth()->user()->company;
-        $this->isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']);
+        $isUMKM = $company->isUMKM();
         
         $receivedInvitations = collect();
         $sentInvitations = collect();
         
-        if ($this->isUMKM) {
+        if ($isUMKM) {
             $receivedInvitations = $company->receivedInvitations()->with(['project', 'invitingCompany'])->latest()->get();
         } else {
             $sentInvitations = $company->sentInvitations()->with(['project', 'invitedCompany'])->latest()->get();
         }
             
         return [
+            'isUMKM' => $isUMKM,
             'receivedInvitations' => $receivedInvitations,
             'sentInvitations' => $sentInvitations,
         ];

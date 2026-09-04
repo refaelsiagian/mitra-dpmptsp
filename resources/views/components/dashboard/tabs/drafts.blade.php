@@ -8,7 +8,8 @@ new class extends Component {
         $draftProjects = $company->projects()->where('status', 'draft')->latest()->get();
             
         return [
-            'draftProjects' => $draftProjects
+            
+            'isUMKM' => $isUMKM,'draftProjects' => $draftProjects
         ];
     }
 

@@ -2,12 +2,11 @@
 use Livewire\Component;
 
 new class extends Component {
-    public $isUMKM = false;
 
     public function with()
     {
         $company = auth()->user()->company;
-        $this->isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']);
+        $isUMKM = $company->isUMKM();
         
         $closedProjects = $company->projects()
             ->withCount('proposals')
@@ -20,7 +19,8 @@ new class extends Component {
             ->where('status', 'closed')->latest()->get();
             
         return [
-            'closedProjects' => $closedProjects
+            
+            'isUMKM' => $isUMKM,'closedProjects' => $closedProjects
         ];
     }
 

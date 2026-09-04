@@ -2,14 +2,14 @@
 use Livewire\Component;
 
 new class extends Component {
-    public $isUMKM = false;
+
     public $search = '';
     public $status = '';
     
     public function with()
     {
         $company = auth()->user()->company;
-        $this->isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']);
+        $isUMKM = $company->isUMKM();
         
         $query = $company->proposals()->with('project.company');
         
@@ -32,7 +32,8 @@ new class extends Component {
         $sentProposals = $query->latest()->get();
             
         return [
-            'sentProposals' => $sentProposals
+            
+            'isUMKM' => $isUMKM,'sentProposals' => $sentProposals
         ];
     }
 

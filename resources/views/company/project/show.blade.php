@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="max-w-6xl mx-auto pb-10" x-data="projectForm({ type: '{{ $project->type }}', isUmkm: {{ in_array(strtolower($project->company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }} })">
+<div class="max-w-6xl mx-auto pb-10" x-data="projectForm({ type: '{{ $project->type }}', isUmkm: {{ $project->company?->isUMKM() ? 'true' : 'false' }} })">
     
     <!-- Top padding for layout balance -->
     <div class="pt-4"></div>

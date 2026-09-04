@@ -13,7 +13,25 @@ class Company extends Model
         'is_npwp_same_as_nik' => 'boolean',
         'is_usaha_same_as_office' => 'boolean',
         'certifications' => 'array',
+        'is_verified' => 'boolean',
+        'verified_at' => 'datetime',
     ];
+
+    /**
+     * Check if the company is an UMKM (Mikro, Kecil, or Menengah)
+     */
+    public function isUMKM(): bool
+    {
+        return in_array(strtolower($this->skala_usaha ?? ''), ['mikro', 'kecil', 'menengah']);
+    }
+
+    /**
+     * Check if the company is a large enterprise (Usaha Besar)
+     */
+    public function isUsahaBesar(): bool
+    {
+        return strtolower($this->skala_usaha ?? '') === 'besar';
+    }
 
     public function user()
     {

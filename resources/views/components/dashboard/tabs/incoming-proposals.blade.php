@@ -3,7 +3,7 @@
 use Livewire\Component;
 
 new class extends Component {
-    public $isUMKM = false;
+
     public $search = '';
     public $status = 'pending';
     
@@ -19,7 +19,7 @@ new class extends Component {
     public function with()
     {
         $company = auth()->user()->company;
-        $this->isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']);
+        $isUMKM = $company->isUMKM();
         
         $query = \App\Models\Proposal::whereHas('project', function($q) use ($company) {
             $q->where('company_id', $company->id);
@@ -48,7 +48,8 @@ new class extends Component {
         })->get();
             
         return [
-            'receivedProposals' => $receivedProposals,
+            
+            'isUMKM' => $isUMKM,'receivedProposals' => $receivedProposals,
             'allProposals' => $allProposals
         ];
     }

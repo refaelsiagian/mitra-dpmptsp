@@ -6,7 +6,7 @@
     title: {{ json_encode(old('title', '')) }},
     description: {{ json_encode(old('description', '')) }},
     ruang_lingkup: {{ json_encode(old('ruang_lingkup', '')) }},
-    isUmkm: {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']) ? 'true' : 'false' }},
+    isUmkm: {{ $company->isUMKM() ? 'true' : 'false' }},
     offerings: [''],
     requirements: [''],
     province_id: {{ json_encode(old('province_id') ?? '') }},
@@ -64,7 +64,7 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         
         <div class="p-6 md:p-8 border-b border-slate-100 bg-slate-50">
-            @php $isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']); @endphp
+            @php $isUMKM = $company->isUMKM(); @endphp
             <h1 class="text-2xl font-bold text-slate-900">
                 {{ $isUMKM ? 'Form Penawaran Kemitraan' : 'Buat Proyek / Pengadaan (RFP)' }}
             </h1>
@@ -323,7 +323,7 @@
                     Simpan sebagai Draf
                 </button>
                 <button type="submit" name="status" value="published" class="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20">
-                    {{ in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil', 'menengah']) ? 'Tawarkan' : 'Terbitkan' }}
+                    {{ $company->isUMKM() ? 'Tawarkan' : 'Terbitkan' }}
                 </button>
             </div>
             

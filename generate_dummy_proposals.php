@@ -22,7 +22,7 @@ foreach ($projects as $project) {
     if (in_array(strtolower($ownerCompany->skala_usaha ?? ''), ['menengah', 'besar'])) {
         // Owner is UB, find UMKM
         $potentialSenders = $companies->filter(function($c) use ($ownerCompany) {
-            return $c->id !== $ownerCompany->id && in_array(strtolower($c->skala_usaha ?? ''), ['mikro', 'kecil']);
+            return $c->id !== $ownerCompany->id && $c->isUMKM();
         });
     } else {
         // Owner is UMKM, find UB

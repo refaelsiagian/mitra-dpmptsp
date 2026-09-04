@@ -71,7 +71,7 @@
     
     <div class="flex flex-col md:flex-row md:items-center gap-5 md:gap-6 mt-4 md:mt-0 pt-4 md:pt-0 border-t border-slate-100 md:border-t-0 md:border-l md:border-slate-200 md:pl-6">
         @php 
-            $isUMKM = auth()->check() && in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['mikro', 'kecil']);
+            $isUMKM = auth()->check() && auth()->user()->company?->isUMKM();
             $proposalLabel = $isUMKM ? 'Ketertarikan' : 'Proposal';
         @endphp
         <div class="flex items-center justify-around md:justify-start gap-6 w-full md:w-auto">

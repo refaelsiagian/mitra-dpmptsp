@@ -42,7 +42,7 @@ class VerifyStoreRequest extends FormRequest
                 'in:mikro,kecil,menengah,besar',
                 function ($attribute, $value, $fail) {
                     $pelaku = $this->input('pelaku_usaha');
-                    if ($pelaku === 'orang-perseorangan' && !in_array($value, ['mikro', 'kecil'])) {
+                    if ($pelaku === 'orang-perseorangan' && !in_array($value, ['mikro', 'kecil', 'menengah'])) {
                         $fail('Skala usaha untuk perseorangan harus Mikro atau Kecil.');
                     }
                     if (in_array($pelaku, ['kantor-perwakilan', 'badan-usaha-luar-negeri']) && $value !== 'besar') {

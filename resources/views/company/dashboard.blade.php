@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-6xl mx-auto pb-10">
     
-    @php $isUMKM = in_array(strtolower(auth()->user()->company->skala_usaha ?? ''), ['mikro', 'kecil']); @endphp
+    @php $isUMKM = auth()->user()->company?->isUMKM(); @endphp
     
     <!-- Page Header (Welcome Message) -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 md:mb-8">

@@ -3,13 +3,13 @@
 use Livewire\Component;
 
 new class extends Component {
-    public $isUMKM = false;
+
     public $search = '';
     
     public function with()
     {
         $company = auth()->user()->company;
-        $this->isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']);
+        $isUMKM = $company->isUMKM();
         
         $query = $company->projects()
             ->withCount('proposals')
@@ -25,7 +25,8 @@ new class extends Component {
         $publishedProjects = $query->latest()->get();
             
         return [
-            'publishedProjects' => $publishedProjects
+            
+            'isUMKM' => $isUMKM,'publishedProjects' => $publishedProjects
         ];
     }
 

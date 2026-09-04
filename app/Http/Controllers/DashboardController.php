@@ -14,7 +14,7 @@ class DashboardController extends Controller
         $quickStats = ['activeCount' => 0, 'incomingCount' => 0, 'sentCount' => 0];
 
         if ($company) {
-            $isUMKM = in_array(strtolower($company->skala_usaha ?? ''), ['mikro', 'kecil']);
+            $isUMKM = $company->isUMKM();
             
             // For the badge counts on the tabs, we only query the counts, not the heavy relationships!
             $pendingReceivedCount = \App\Models\Proposal::whereHas('project', function($q) use ($company) {
