@@ -26,7 +26,7 @@
                                 <option value="badan-usaha-luar-negeri" {{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'badan-usaha-luar-negeri' ? 'selected' : '' }}>Badan Usaha Luar Negeri</option>
                             </x-form.select>
                             
-                            <div id="container-skala-usaha" class="{{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') == 'kantor-perwakilan' ? '' : 'hidden' }}">
+                            <div id="container-skala-usaha" class="{{ old('pelaku_usaha', $company->pelaku_usaha_type ?? '') ? '' : 'hidden' }}">
                                 <x-form.select 
                                     name="skala_usaha" 
                                     label="Skala Usaha (sesuai NIB)" 

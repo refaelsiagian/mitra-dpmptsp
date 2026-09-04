@@ -106,6 +106,7 @@
                                             :required="true" 
                                             value="{{ $company->nib_number ?? '' }}" 
                                             placeholder="13 Digit Nomor NIB" 
+                                            feedbackKey="none"
                                         />
                                         <div id="nib-error-message" class="mt-2 text-sm text-red-600 hidden bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
                                             <i class="ph ph-warning-circle mt-0.5"></i>
@@ -125,6 +126,7 @@
                                         value="{{ $company->nib_link ?? '' }}" 
                                         placeholder="Link Google Drive Dokumen NIB" 
                                         icon="ph-link"
+                                        feedbackKey="nib-number"
                                     />
                                 </div>
                                 
@@ -145,15 +147,6 @@
                                         @error('npwp_number')
                                             <div class="mt-1 text-sm text-red-600 mb-3">{{ $message }}</div>
                                         @enderror
-                                        @if(isset($feedbacks['npwp-number']))
-                                            <div class="mt-2 mb-3 text-sm text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100 flex gap-2 items-start">
-                                                <i class="ph ph-warning-circle mt-0.5"></i> 
-                                                <div>
-                                                    <span class="font-bold text-xs uppercase tracking-wider block mb-0.5">Catatan Revisi</span>
-                                                    {{ $feedbacks['npwp-number']->message }}
-                                                </div>
-                                            </div>
-                                        @endif
                                     </div>
                                     
                                     <x-form.input 
@@ -165,6 +158,7 @@
                                         value="{{ $company->npwp_link ?? '' }}" 
                                         placeholder="Link Google Drive Kartu NPWP" 
                                         icon="ph-link"
+                                        feedbackKey="npwp-number"
                                     />
                                 </div>
                             </div>
@@ -177,7 +171,7 @@
                                     label="Apakah Perusahaan Anda PKP (Pengusaha Kena Pajak)?" 
                                     :required="true"
                                     :value="$company->is_pkp ?? null"
-                                    feedbackKey="pkp-yes"
+                                    feedbackKey="none"
                                     :options="['1' => 'Ya, Sudah PKP', '0' => 'Belum PKP']"
                                 />
                                 <div id="container-pkp-link" class="{{ old('is_pkp', $company->is_pkp ?? null) === true ? '' : 'hidden' }} mt-3">
@@ -189,6 +183,7 @@
                                         value="{{ $company->pkp_link ?? '' }}" 
                                         placeholder="Link Google Drive Dokumen / SPPKP" 
                                         icon="ph-link"
+                                        feedbackKey="pkp-yes"
                                     />
                                 </div>
                                 <p id="pkp-helper-text" class="text-xs text-amber-600 mt-2 hidden"><i class="ph ph-info"></i> Skala usaha Menengah/Besar wajib memiliki status PKP.</p>

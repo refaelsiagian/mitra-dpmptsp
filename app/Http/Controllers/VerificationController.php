@@ -31,7 +31,8 @@ class VerificationController extends Controller
         if ($company && $company->status === 'rejected') {
             $company->load(['locations', 'representatives', 'kblis', 'feedbacks']);
             $feedbacks = $company->feedbacks->keyBy('field_name');
-            return view('verify.index', compact('provinces', 'kblis', 'company', 'feedbacks'));
+            view()->share('feedbacks', $feedbacks);
+            return view('verify.index', compact('provinces', 'kblis', 'company'));
         }
         
         return view('verify.index', compact('provinces', 'kblis', 'company'));
