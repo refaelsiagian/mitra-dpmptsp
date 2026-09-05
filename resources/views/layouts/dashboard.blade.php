@@ -79,6 +79,11 @@
                 <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Eksplorasi</span>
             </a>
 
+            <a wire:navigate title="Pesan & Negosiasi" href="/messages" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative" :class="[currentPath.startsWith('/messages') ? 'bg-blue-50 text-blue-700 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold', expanded ? 'justify-start' : 'justify-center']">
+                <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span class="transition-all duration-300 whitespace-nowrap absolute left-14" :class="expanded ? 'visible opacity-100' : 'invisible opacity-0'">Pesan & Negosiasi</span>
+            </a>
+
 
 
             <a title="Pengaturan" href="#" class="flex items-center gap-4 px-3 py-3 rounded-xl text-sm transition-colors relative text-slate-500 hover:text-slate-900 hover:bg-slate-50 font-semibold" :class="expanded ? 'justify-start' : 'justify-center'">
@@ -301,6 +306,11 @@
                 <span class="text-[10px] font-semibold">Eksplorasi</span>
             </a>
 
+            <!-- Pesan -->
+            <a wire:navigate href="/messages" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-blue-600 transition-colors {{ request()->is('messages*') ? 'text-blue-600' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1 {{ request()->is('messages*') ? 'fill-blue-50/50' : '' }}"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span class="text-[10px] font-semibold">Pesan</span>
+            </a>
 
             <!-- Profil -->
             <div class="relative w-full h-full">

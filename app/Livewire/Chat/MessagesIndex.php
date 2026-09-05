@@ -80,7 +80,17 @@ class MessagesIndex extends Component
         $this->activeConversation->touch();
     }
 
-    #[On('echo-private:proposal.{activeProposalId},.MessageSent')]
+    public function getListeners()
+    {
+        if (!$this->activeProposalId) {
+            return [];
+        }
+        
+        return [
+            "echo-private:proposal.{$this->activeProposalId},.MessageSent" => 'onMessageSent',
+        ];
+    }
+
     public function onMessageSent($event)
     {
         // Just trigger a re-render

@@ -1,7 +1,7 @@
-<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 h-[calc(100vh-64px)] flex flex-col">
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg flex flex-1 border border-gray-200">
+<div class="-mx-4 -mt-4 -mb-24 md:m-0 h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col">
+    <div class="bg-white overflow-hidden shadow-sm md:rounded-2xl flex flex-1 md:border border-gray-200">
         <!-- Sidebar -->
-        <div class="w-1/3 border-r border-gray-200 flex flex-col bg-gray-50">
+        <div class="w-full md:w-1/3 md:border-r border-gray-200 flex-col bg-gray-50 {{ $this->activeConversation ? 'hidden md:flex' : 'flex' }}">
             <div class="p-4 border-b border-gray-200 bg-white">
                 <h2 class="text-lg font-semibold text-gray-800">Pesan & Negosiasi</h2>
             </div>
@@ -34,7 +34,7 @@
         </div>
 
         <!-- Chat Area -->
-        <div class="w-2/3 flex flex-col bg-white">
+        <div class="w-full md:w-2/3 flex-col bg-white {{ $this->activeConversation ? 'flex' : 'hidden md:flex' }}">
             @if($this->activeConversation)
                 @php
                     $isMeUMKM = $this->activeConversation->company_id === auth()->user()->company->id;
@@ -44,6 +44,9 @@
                 
                 <!-- Chat Header -->
                 <div class="p-4 border-b border-gray-200 bg-white flex items-center gap-3">
+                    <button wire:click="$set('activeProposalId', null)" class="md:hidden text-gray-500 hover:text-gray-700 p-1 -ml-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
                     <div class="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
                         @if($otherPartyAvatar)
                             <img src="{{ Storage::url($otherPartyAvatar) }}" alt="Logo" class="w-full h-full object-cover">
