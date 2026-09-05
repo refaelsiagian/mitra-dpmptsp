@@ -63,15 +63,59 @@
                 </div>
 
                 <!-- Messages container -->
-                <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50" x-data="{
+                    init() {
+                        this.scrollToBottom();
+                        const observer = new MutationObserver(() => this.scrollToBottom());
+                        observer.observe(this.$el, { childList: true, subtree: true });
+
+                        if (window.Echo) {
+                            if ($wire.activeProposalId) {
+                                this.subscribeToChannel($wire.activeProposalId);
+                            }
+
+                            $watch('$wire.activeProposalId', (newId, oldId) => {
+                                if (oldId) {
+                                    Echo.leave('proposal.' + oldId);
+                                }
+                                if (newId) {
+                                    this.subscribeToChannel(newId);
+                                }
+                            });
+                        }
+                    },
+                    subscribeToChannel(id) {
+                        Echo.private('proposal.' + id)
+                            .listen('.MessageSent', (e) => {
+                                $wire.$refresh();
+                            });
+                    },
+                    scrollToBottom() {
+                        this.$el.scrollTop = this.$el.scrollHeight;
+                    }
+                }">
+                    @php $currentDate = null; @endphp
                     @forelse($this->messages as $msg)
                         @php
+                            $msgDate = $msg->created_at->format('Y-m-d');
+                            $showDate = $msgDate !== $currentDate;
+                            $currentDate = $msgDate;
+                            
                             $isMyMessage = $msg->company_id === auth()->user()->company->id;
                         @endphp
+                        
+                        @if($showDate)
+                            <div class="flex justify-center my-4">
+                                <span class="text-[10px] px-3 py-1 bg-gray-200 text-gray-600 rounded-full font-medium shadow-sm">
+                                    {{ $msg->created_at->isToday() ? 'Hari Ini' : ($msg->created_at->isYesterday() ? 'Kemarin' : $msg->created_at->translatedFormat('d F Y')) }}
+                                </span>
+                            </div>
+                        @endif
+
                         <div class="flex {{ $isMyMessage ? 'justify-end' : 'justify-start' }}">
                             <div class="max-w-[75%] rounded-2xl px-4 py-2 {{ $isMyMessage ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm shadow-sm' }}">
                                 <p class="text-sm whitespace-pre-wrap">{{ $msg->body }}</p>
-                                <span class="text-[10px] mt-1 block {{ $isMyMessage ? 'text-blue-200' : 'text-gray-400' }}">
+                                <span class="text-[10px] mt-1 block {{ $isMyMessage ? 'text-right text-blue-200' : 'text-left text-gray-400' }}">
                                     {{ $msg->created_at->format('H:i') }}
                                 </span>
                             </div>

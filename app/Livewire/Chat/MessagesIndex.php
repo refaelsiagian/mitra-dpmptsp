@@ -80,22 +80,6 @@ class MessagesIndex extends Component
         $this->activeConversation->touch();
     }
 
-    public function getListeners()
-    {
-        if (!$this->activeProposalId) {
-            return [];
-        }
-        
-        return [
-            "echo-private:proposal.{$this->activeProposalId},.MessageSent" => 'onMessageSent',
-        ];
-    }
-
-    public function onMessageSent($event)
-    {
-        // Just trigger a re-render
-    }
-
     public function render()
     {
         return view('livewire.chat.messages-index');
