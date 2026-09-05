@@ -75,6 +75,15 @@
             @endif
         </div>
         @endif
+
+        @if(in_array($proposal->status, ['negotiating', 'accepted', 'rejected']))
+        <div class="flex flex-col md:flex-row flex-wrap items-stretch md:items-center gap-3 mt-2 md:mt-0 w-full md:w-auto">
+            <a href="{{ route('messages.index', ['proposal_id' => $proposal->id]) }}" wire:navigate class="w-full md:w-auto justify-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                Buka Chat
+            </a>
+        </div>
+        @endif
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">

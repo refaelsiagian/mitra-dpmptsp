@@ -58,6 +58,11 @@ class Company extends Model
         return $this->hasMany(Proposal::class);
     }
 
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
     public function locations()
     {
         return $this->hasMany(CompanyLocation::class);

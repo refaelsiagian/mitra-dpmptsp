@@ -107,6 +107,7 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
 
 
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/messages', \App\Livewire\Chat\MessagesIndex::class)->name('messages.index');
 
     Route::put('/projects/{project}/close', [\App\Http\Controllers\ProjectController::class, 'close'])->name('projects.close');
 
