@@ -1,7 +1,9 @@
 <div class="-mx-4 -mt-4 -mb-24 md:m-0 h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col">
     <div class="bg-white overflow-hidden shadow-sm md:rounded-2xl flex flex-1 md:border border-gray-200">
         <!-- Sidebar -->
-        <div class="w-full md:w-1/3 md:border-r border-gray-200 flex-col bg-gray-50 {{ $this->activeConversation ? 'hidden md:flex' : 'flex' }}">
+        <div class="w-full md:w-1/3 md:border-r border-gray-200 flex-col bg-gray-50 {{ $this->activeConversation ? 'hidden md:flex' : 'flex' }}"
+             wire:loading.class="!hidden md:!flex"
+             wire:target="selectConversation">
             <div class="p-4 border-b border-gray-200 bg-white">
                 <h2 class="text-lg font-semibold text-gray-800">Pesan & Negosiasi</h2>
             </div>
@@ -34,7 +36,15 @@
         </div>
 
         <!-- Chat Area -->
-        <div class="w-full md:w-2/3 flex-col bg-white {{ $this->activeConversation ? 'flex' : 'hidden md:flex' }}">
+        <div class="w-full md:w-2/3 flex-col bg-white relative {{ $this->activeConversation ? 'flex' : 'hidden md:flex' }}"
+             wire:loading.class="!flex"
+             wire:target="selectConversation">
+             
+            <!-- Loading Overlay -->
+            <div wire:loading.flex wire:target="selectConversation" class="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm items-center justify-center flex-col gap-3" style="display: none;">
+                <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <p class="text-blue-900 font-semibold animate-pulse">Memuat percakapan...</p>
+            </div>
             @if($this->activeConversation)
                 @php
                     $isMeUMKM = $this->activeConversation->company_id === auth()->user()->company->id;
@@ -63,12 +73,8 @@
                 </div>
 
                 <!-- Messages container -->
-                <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50" x-data="{
+                <div class="flex-1 overflow-y-auto p-4 flex flex-col-reverse gap-4 bg-slate-50" x-data="{
                     init() {
-                        this.scrollToBottom();
-                        const observer = new MutationObserver(() => this.scrollToBottom());
-                        observer.observe(this.$el, { childList: true, subtree: true });
-
                         if (window.Echo) {
                             if ($wire.activeProposalId) {
                                 this.subscribeToChannel($wire.activeProposalId);
@@ -89,28 +95,28 @@
                             .listen('.MessageSent', (e) => {
                                 $wire.$refresh();
                             });
-                    },
-                    scrollToBottom() {
-                        this.$el.scrollTop = this.$el.scrollHeight;
                     }
                 }">
-                    @php $currentDate = null; @endphp
-                    @forelse($this->messages as $msg)
+                    <!-- Optimistic Loading Bubble -->
+                    <div class="flex justify-end" wire:loading.flex wire:target="sendMessage" style="display: none;">
+                        <div class="max-w-[75%] rounded-2xl px-4 py-2 bg-blue-500 text-white rounded-tr-sm opacity-70">
+                            <p class="text-sm whitespace-pre-wrap" x-text="$wire.messageBody"></p>
+                            <span class="text-[10px] mt-1 flex items-center justify-end gap-1 text-blue-200">
+                                <svg class="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                Mengirim...
+                            </span>
+                        </div>
+                    </div>
+
+                    @forelse($this->messages as $index => $msg)
                         @php
                             $msgDate = $msg->created_at->format('Y-m-d');
-                            $showDate = $msgDate !== $currentDate;
-                            $currentDate = $msgDate;
+                            $nextMsg = $this->messages[$index + 1] ?? null;
+                            $nextMsgDate = $nextMsg ? $nextMsg->created_at->format('Y-m-d') : null;
                             
+                            $showDate = ($msgDate !== $nextMsgDate);
                             $isMyMessage = $msg->company_id === auth()->user()->company->id;
                         @endphp
-                        
-                        @if($showDate)
-                            <div class="flex justify-center my-4">
-                                <span class="text-[10px] px-3 py-1 bg-gray-200 text-gray-600 rounded-full font-medium shadow-sm">
-                                    {{ $msg->created_at->isToday() ? 'Hari Ini' : ($msg->created_at->isYesterday() ? 'Kemarin' : $msg->created_at->translatedFormat('d F Y')) }}
-                                </span>
-                            </div>
-                        @endif
 
                         <div class="flex {{ $isMyMessage ? 'justify-end' : 'justify-start' }}">
                             <div class="max-w-[75%] rounded-2xl px-4 py-2 {{ $isMyMessage ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm shadow-sm' }}">
@@ -120,6 +126,14 @@
                                 </span>
                             </div>
                         </div>
+
+                        @if($showDate)
+                            <div class="flex justify-center my-4">
+                                <span class="text-[10px] px-3 py-1 bg-gray-200 text-gray-600 rounded-full font-medium shadow-sm">
+                                    {{ $msg->created_at->isToday() ? 'Hari Ini' : ($msg->created_at->isYesterday() ? 'Kemarin' : $msg->created_at->translatedFormat('d F Y')) }}
+                                </span>
+                            </div>
+                        @endif
                     @empty
                         <div class="flex items-center justify-center h-full">
                             <div class="text-center text-gray-500 text-sm">

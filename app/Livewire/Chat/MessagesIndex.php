@@ -48,7 +48,7 @@ class MessagesIndex extends Component
 
         return Message::with('sender')
             ->where('proposal_id', $this->activeProposalId)
-            ->oldest()
+            ->latest()
             ->get();
     }
 
