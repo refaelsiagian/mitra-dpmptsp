@@ -125,7 +125,13 @@
                             @include('verify.partials.step2')
                             @include('verify.partials.step3')
                             @include('verify.partials.step4')
-                            @include('verify.partials.scripts')
+                            <script>
+                                window.VERIFY_DATA = {
+                                    kbliData: @json($kblis->map(fn($k) => ['id' => $k->code, 'nama' => $k->name])),
+                                    existingKblis: @json(old('kblis', isset($company) ? $company->kblis->pluck('code')->toArray() : []))
+                                };
+                            </script>
+                            @vite(['resources/js/verify/main.js'])
                 </form>
             </div>
         </div>
