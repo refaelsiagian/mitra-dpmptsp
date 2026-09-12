@@ -7,6 +7,7 @@ use App\Models\Proposal;
 use App\Models\Message;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Computed;
 
 #[Layout('layouts.dashboard')]
 class MessagesIndex extends Component
@@ -20,7 +21,8 @@ class MessagesIndex extends Component
         $this->activeProposalId = request()->query('proposal_id');
     }
 
-    public function getConversationsProperty()
+    #[Computed]
+    public function conversations()
     {
         $companyId = auth()->user()->company->id;
         
@@ -40,14 +42,16 @@ class MessagesIndex extends Component
             ->get();
     }
 
-    public function getActiveConversationProperty()
+    #[Computed]
+    public function activeConversation()
     {
         if (!$this->activeProposalId) return null;
         
         return $this->conversations->firstWhere('id', $this->activeProposalId);
     }
 
-    public function getMessagesProperty()
+    #[Computed]
+    public function messages()
     {
         if (!$this->activeProposalId) return collect();
 
@@ -58,16 +62,25 @@ class MessagesIndex extends Component
             ->get();
     }
 
+    public $firstUnreadMessageId = null;
+    public $unreadMessagesCount = 0;
+
     public function selectConversation($proposalId)
     {
         $this->activeProposalId = $proposalId;
         $this->messagesLimit = 50;
         
-        // Mark all unread messages from the other party as read
-        Message::where('proposal_id', $proposalId)
+        $myCompanyId = auth()->user()->company->id;
+        
+        $unreadQuery = Message::where('proposal_id', $proposalId)
             ->where('is_read', 'false')
-            ->where('company_id', '!=', auth()->user()->company->id)
-            ->update(['is_read' => 'true']);
+            ->where('company_id', '!=', $myCompanyId);
+            
+        $this->unreadMessagesCount = $unreadQuery->count();
+        $this->firstUnreadMessageId = (clone $unreadQuery)->orderBy('created_at', 'asc')->value('id');
+
+        // Mark all unread messages from the other party as read
+        $unreadQuery->update(['is_read' => 'true']);
     }
 
     public function loadMoreMessages()
@@ -100,15 +113,22 @@ class MessagesIndex extends Component
         $proposal->touch();
     }
 
+    public function pollChat()
+    {
+        // Dummy action to force Livewire to bypass state-change optimizations and re-render the view
+    }
+
     public function render()
     {
         if ($this->activeProposalId) {
+            // Automatically mark any incoming messages as read since the user is actively viewing this chat.
+            // This runs before the view evaluates computed properties, preventing the sidebar counter from flashing.
             Message::where('proposal_id', $this->activeProposalId)
                 ->where('is_read', 'false')
                 ->where('company_id', '!=', auth()->user()->company->id)
                 ->update(['is_read' => 'true']);
         }
-        
+
         return view('livewire.chat.messages-index');
     }
 }

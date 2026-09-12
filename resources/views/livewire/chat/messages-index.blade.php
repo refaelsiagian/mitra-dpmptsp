@@ -1,4 +1,4 @@
-<div class="-mx-4 -mt-4 -mb-24 md:m-0 h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col">
+<div wire:poll.keep-alive.2s="pollChat" class="-mx-4 -mt-4 -mb-24 md:m-0 h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col">
     <div class="bg-white overflow-hidden shadow-sm md:rounded-2xl flex flex-1 md:border border-gray-200" x-data>
         <!-- Sidebar -->
         <div class="w-full md:w-1/3 md:border-r border-gray-200 bg-gray-50 flex-col" :class="$wire.activeProposalId ? 'hidden md:flex' : 'flex'">
@@ -15,7 +15,6 @@
                     <button 
                         wire:key="conv-{{ $conversation->id }}"
                         wire:click="selectConversation({{ $conversation->id }})"
-                        x-on:click="$wire.activeProposalId = {{ $conversation->id }}"
                         class="w-full text-left p-3 rounded-lg flex flex-col gap-1 transition-colors border border-transparent"
                         :class="$wire.activeProposalId == {{ $conversation->id }} ? 'bg-blue-50 border-blue-200' : 'hover:bg-gray-100'"
                     >
@@ -126,17 +125,36 @@
                                 $isMyMessage = $msg->company_id === auth()->user()->company->id;
                             @endphp
 
-                            <div wire:key="msg-{{ $msg->id }}" class="flex {{ $isMyMessage ? 'justify-end' : 'justify-start' }}">
+                            <div wire:key="msg-{{ $msg->id }}-{{ $msg->is_read ? '1' : '0' }}" class="flex {{ $isMyMessage ? 'justify-end' : 'justify-start' }}">
                                 <div class="max-w-[75%] rounded-2xl px-4 py-2 {{ $isMyMessage ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-tl-sm shadow-sm' }}">
                                     <p class="text-sm whitespace-pre-wrap">{{ $msg->body }}</p>
-                                    <span class="text-[10px] mt-1 block {{ $isMyMessage ? 'text-right text-blue-200' : 'text-left text-gray-400' }}">
+                                    <span class="text-[10px] mt-1 flex items-center {{ $isMyMessage ? 'justify-end text-blue-200' : 'justify-start text-gray-400' }} gap-1">
                                         {{ $msg->created_at->format('H:i') }}
-                                        @if(!$isMyMessage && !$msg->is_read)
-                                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 ml-1"></span>
+                                        
+                                        @if($isMyMessage)
+                                            @if($msg->is_read)
+                                                <i class="ph ph-checks text-white text-sm"></i>
+                                            @else
+                                                <i class="ph ph-checks text-blue-300 text-sm opacity-80"></i>
+                                            @endif
+                                        @else
+                                            @if(!$msg->is_read)
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 ml-1"></span>
+                                            @endif
                                         @endif
                                     </span>
                                 </div>
                             </div>
+
+                            @if($this->firstUnreadMessageId === $msg->id)
+                                <div wire:key="unread-divider-{{ $msg->id }}" class="flex items-center justify-center my-4">
+                                    <div class="flex-1 border-t border-blue-200"></div>
+                                    <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full mx-2 shadow-sm uppercase tracking-wide">
+                                        {{ $this->unreadMessagesCount }} Pesan Belum Dibaca
+                                    </span>
+                                    <div class="flex-1 border-t border-blue-200"></div>
+                                </div>
+                            @endif
 
                             @if($showDate)
                                 <div wire:key="date-{{ $msg->id }}" class="flex justify-center my-4">
