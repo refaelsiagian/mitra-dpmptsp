@@ -1,4 +1,5 @@
-            function validateStep(step) {
+﻿import { selectedKbli } from './kbli.js';
+            export function validateStep(step) {
                 let isValid = true;
                 
                 // Helper to remove all existing errors for a given step
@@ -175,8 +176,7 @@
                     }
                     
                     const coordVal = document.getElementById('coordinate-input').value.trim();
-                    if (!coordVal) {
-                        showError('coordinate-input', 'Koordinat lokasi wajib diisi');
+                    if (!coordVal) {                        showError('coordinate-input', 'Koordinat lokasi wajib diisi');
                     } else if (!/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(coordVal)) {
                         showError('coordinate-input', 'Format koordinat tidak valid (contoh: -6.200000, 106.816666)');
                     } else {
