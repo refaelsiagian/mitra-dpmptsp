@@ -60,18 +60,7 @@ Route::get('/api/regencies/{province_id}', [\App\Http\Controllers\RegionControll
 Route::get('/api/districts/{regency_id}', [\App\Http\Controllers\RegionController::class, 'districts']);
 Route::get('/api/villages/{district_id}', [\App\Http\Controllers\RegionController::class, 'villages']);
 
-Route::get('/api/check-nib/{nib}', function ($nib) {
-    $user = auth()->user();
-    $companyId = $user && $user->company ? $user->company->id : null;
-
-    $exists = \App\Models\Company::where('nib_number', $nib)
-        ->when($companyId, function($query) use ($companyId) {
-            $query->where('id', '!=', $companyId);
-        })
-        ->exists();
-
-    return response()->json(['exists' => $exists]);
-})->middleware('auth');
+Route::get('/api/check-nib/{nib}', [\App\Http\Controllers\VerificationController::class, 'checkNib'])->middleware('auth');
 
 
 

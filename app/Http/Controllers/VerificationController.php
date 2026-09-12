@@ -165,4 +165,18 @@ class VerificationController extends Controller
             return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+    public function checkNib($nib)
+    {
+        $user = auth()->user();
+        $companyId = $user && $user->company ? $user->company->id : null;
+
+        $exists = \App\Models\Company::where('nib_number', $nib)
+            ->when($companyId, function($query) use ($companyId) {
+                $query->where('id', '!=', $companyId);
+            })
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
 }
