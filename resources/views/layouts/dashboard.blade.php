@@ -383,6 +383,44 @@
     <!-- Global Toast Notifications -->
     <x-toast />
     @livewireScripts
+    
+    @if(auth()->check())
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Echo) {
+                window.Echo.private('users.{{ auth()->id() }}')
+                    .listen('.MessageSent', (e) => {
+                        // Check if we are currently looking at this specific conversation in the chat UI
+                        const isChatPage = window.location.pathname.startsWith('/messages');
+                        
+                        // Using Livewire 3 global object to get active component state if available
+                        let activeProposalId = null;
+                        if (isChatPage && window.Livewire) {
+                            const chatComponent = window.Livewire.first();
+                            if (chatComponent) {
+                                activeProposalId = chatComponent.get('activeProposalId');
+                                // Instantly refresh the chat component to load the new message into the DOM (even if it's a background chat)
+                                chatComponent.$refresh();
+                            }
+                        }
+
+                        // If the user is looking at the active chat, do NOT show toast (since they already saw it pop up)
+                        if (isChatPage && activeProposalId == e.message.proposal_id) {
+                            return;
+                        }
+
+                        // Otherwise, show a global notification!
+                        window.dispatchEvent(new CustomEvent('show-toast', {
+                            detail: {
+                                message: 'Pesan Baru: ' + e.message.body,
+                                type: 'info'
+                            }
+                        }));
+                    });
+            }
+        });
+    </script>
+    @endif
 </body>
 </html>
 
