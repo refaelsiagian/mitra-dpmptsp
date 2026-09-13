@@ -155,6 +155,13 @@
                             </div>
                         @endif
                     </div>
+
+                    @if($this->activeConversation)
+                        <a href="{{ route('proposals.show', $this->activeConversation->id) }}" wire:navigate class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-medium text-xs transition-colors shrink-0 shadow-sm">
+                            <i class="ph ph-file-text text-sm"></i>
+                            <span class="hidden sm:inline">Lihat Proposal</span>
+                        </a>
+                    @endif
                 </div>
 
                 <!-- Messages container -->
