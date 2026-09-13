@@ -410,10 +410,18 @@
                         }
 
                         // Otherwise, show a global notification!
+                        const senderName = e.message.sender ? e.message.sender.name : 'Seseorang';
+                        const excerpt = e.message.body.length > 60 ? e.message.body.substring(0, 60) + '...' : e.message.body;
+                        
                         window.dispatchEvent(new CustomEvent('show-toast', {
                             detail: {
-                                message: 'Pesan Baru: ' + e.message.body,
-                                type: 'info'
+                                title: 'Pesan dari ' + senderName,
+                                message: excerpt,
+                                type: 'info',
+                                action: {
+                                    text: 'Lihat Pesan',
+                                    url: '/messages?proposal_id=' + e.message.proposal_id
+                                }
                             }
                         }));
                     });

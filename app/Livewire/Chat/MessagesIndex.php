@@ -86,26 +86,12 @@ class MessagesIndex extends Component
 
     public $firstUnreadMessageId = null;
     public $unreadMessagesCount = 0;
+    public $lastRenderedProposalId = null;
 
     public function selectConversation($proposalId)
     {
         $this->activeProposalId = $proposalId;
         $this->messagesLimit = 50;
-        
-        $myCompanyId = auth()->user()->company->id;
-        
-        $unreadQuery = Message::where('proposal_id', $proposalId)
-            ->where('is_read', 'false')
-            ->where('company_id', '!=', $myCompanyId);
-            
-        $this->unreadMessagesCount = $unreadQuery->count();
-        $this->firstUnreadMessageId = (clone $unreadQuery)->orderBy('created_at', 'asc')->value('id');
-
-        // Mark all unread messages from the other party as read
-        if ($this->unreadMessagesCount > 0) {
-            $unreadQuery->update(['is_read' => 'true']);
-            broadcast(new \App\Events\MessagesRead($proposalId))->toOthers();
-        }
     }
 
     public function loadMoreMessages()
@@ -135,6 +121,7 @@ class MessagesIndex extends Component
         $this->messageBody = '';
 
         // Broadcast to others
+        $message->load('sender');
         broadcast(new \App\Events\MessageSent($message))->toOthers();
 
         // Touch the proposal
@@ -149,16 +136,31 @@ class MessagesIndex extends Component
     public function render()
     {
         if ($this->activeProposalId) {
-            // Automatically mark any incoming messages as read since the user is actively viewing this chat.
-            // This runs before the view evaluates computed properties, preventing the sidebar counter from flashing.
-            $updatedCount = Message::where('proposal_id', $this->activeProposalId)
-                ->where('is_read', 'false')
-                ->where('company_id', '!=', auth()->user()->company->id)
-                ->update(['is_read' => 'true']);
+            // Detect conversation change or fresh URL load
+            if ($this->lastRenderedProposalId !== $this->activeProposalId) {
+                $this->firstUnreadMessageId = null;
+                $this->unreadMessagesCount = 0;
+            }
 
-            if ($updatedCount > 0) {
+            $myCompanyId = auth()->user()->company->id;
+            
+            $unreadQuery = Message::where('proposal_id', $this->activeProposalId)
+                ->where('is_read', 'false')
+                ->where('company_id', '!=', $myCompanyId);
+                
+            $unreadCount = $unreadQuery->count();
+
+            if ($unreadCount > 0) {
+                if (!$this->firstUnreadMessageId || $this->lastRenderedProposalId !== $this->activeProposalId) {
+                    $this->firstUnreadMessageId = (clone $unreadQuery)->orderBy('created_at', 'asc')->value('id');
+                    $this->unreadMessagesCount = $unreadCount;
+                }
+
+                $unreadQuery->update(['is_read' => 'true']);
                 broadcast(new \App\Events\MessagesRead($this->activeProposalId))->toOthers();
             }
+
+            $this->lastRenderedProposalId = $this->activeProposalId;
         }
 
         return view('livewire.chat.messages-index');
