@@ -1,5 +1,48 @@
-<div wire:poll.keep-alive.2s="pollChat" class="-mx-4 -mt-4 -mb-24 md:m-0 h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col">
-    <div class="bg-white overflow-hidden shadow-sm md:rounded-2xl flex flex-1 md:border border-gray-200" x-data>
+<div class="-mx-4 -mt-4 -mb-24 md:m-0 h-[calc(100dvh-4rem)] md:h-[calc(100vh-4rem)] flex flex-col">
+    <div class="bg-white overflow-hidden shadow-sm md:rounded-2xl flex flex-1 md:border border-gray-200" x-data="{
+        activeProposalId: @entangle('activeProposalId'),
+        currentChannel: null,
+        init() {
+            if (typeof Echo !== 'undefined') {
+                // Listen for global updates (sidebar badges)
+                Echo.private('users.{{ auth()->user()->id }}')
+                    .listen('.MessageSent', (e) => {
+                        $wire.$refresh();
+                    });
+
+                // Listen for room changes
+                this.$watch('activeProposalId', value => {
+                    if (this.currentChannel) {
+                        Echo.leave(this.currentChannel);
+                    }
+                    if (value) {
+                        this.currentChannel = 'proposal.' + value;
+                        Echo.private(this.currentChannel)
+                            .listen('.MessageSent', (e) => {
+                                $wire.$refresh();
+                            })
+                            .listen('.MessagesRead', (e) => {
+                                $wire.$refresh();
+                            });
+                    }
+                });
+                
+                // Initialize for first load if room is selected
+                if (this.activeProposalId) {
+                    this.currentChannel = 'proposal.' + this.activeProposalId;
+                    Echo.private(this.currentChannel)
+                        .listen('.MessageSent', (e) => {
+                            $wire.$refresh();
+                        })
+                        .listen('.MessagesRead', (e) => {
+                            $wire.$refresh();
+                        });
+                }
+            } else {
+                console.warn('Laravel Echo is not defined! Real-time features will not work.');
+            }
+        }
+    }">
         <!-- Sidebar -->
         <div class="w-full md:w-1/3 md:border-r border-gray-200 bg-gray-50 flex-col" :class="$wire.activeProposalId ? 'hidden md:flex' : 'flex'">
             <div class="p-4 border-b border-gray-200 bg-white">
