@@ -16,6 +16,7 @@ class MessagesIndex extends Component
     #[Url(as: 'proposal_id', history: true)]
     public $activeProposalId = null;
 
+    public $searchQuery = '';
     public $messageBody = '';
     public $messagesLimit = 50;
     public $authUserId = null;
@@ -29,11 +30,12 @@ class MessagesIndex extends Component
     public function conversations()
     {
         $companyId = auth()->user()->company->id;
+        $query = trim($this->searchQuery);
         
         return Proposal::with(['project.company', 'company'])
-            ->withCount(['messages as unread_count' => function($query) use ($companyId) {
-                $query->where('is_read', 'false')
-                      ->where('company_id', '!=', $companyId);
+            ->withCount(['messages as unread_count' => function($q) use ($companyId) {
+                $q->where('is_read', 'false')
+                  ->where('company_id', '!=', $companyId);
             }])
             ->where(function ($q) use ($companyId) {
                 $q->where('company_id', $companyId)
@@ -42,6 +44,21 @@ class MessagesIndex extends Component
                   });
             })
             ->whereIn('status', ['negotiating', 'accepted', 'rejected'])
+            ->when($query, function ($q) use ($query, $companyId) {
+                $q->where(function ($sub) use ($query, $companyId) {
+                    $sub->whereHas('project', function ($p) use ($query) {
+                        $p->where('title', 'ilike', '%' . $query . '%');
+                    })
+                    ->orWhereHas('company', function ($c) use ($query, $companyId) {
+                        $c->where('id', '!=', $companyId)
+                          ->where('name', 'ilike', '%' . $query . '%');
+                    })
+                    ->orWhereHas('project.company', function ($c) use ($query, $companyId) {
+                        $c->where('id', '!=', $companyId)
+                          ->where('name', 'ilike', '%' . $query . '%');
+                    });
+                });
+            })
             ->latest('updated_at')
             ->get();
     }
@@ -51,7 +68,8 @@ class MessagesIndex extends Component
     {
         if (!$this->activeProposalId) return null;
         
-        return $this->conversations->firstWhere('id', $this->activeProposalId);
+        return Proposal::with(['project.company', 'company'])
+            ->find($this->activeProposalId);
     }
 
     #[Computed]

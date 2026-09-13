@@ -44,12 +44,25 @@
         }
     }">
         <!-- Sidebar -->
-        <div class="w-full md:w-1/3 md:border-r border-gray-200 bg-gray-50 flex-col" :class="activeProposalId ? 'hidden md:flex' : 'flex'">
-            <div class="p-4 border-b border-gray-200 bg-white">
+        <div class="w-full md:w-1/3 md:border-r border-gray-200 bg-white flex-col" :class="activeProposalId ? 'hidden md:flex' : 'flex'">
+            <div class="p-4 pb-2 flex flex-col gap-4">
                 <h2 class="text-lg font-semibold text-gray-800">Pesan & Negosiasi</h2>
+                
+                <!-- Search Bar -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="ph ph-magnifying-glass text-gray-400"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        wire:model.live="searchQuery" 
+                        placeholder="Cari perusahaan atau proyek..." 
+                        class="w-full pl-10 pr-4 py-2 bg-gray-100 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-none shadow-none rounded-xl text-sm transition-colors placeholder-gray-400 text-gray-800"
+                    >
+                </div>
             </div>
             
-            <div class="overflow-y-auto flex-1 p-2 space-y-1 slim-scrollbar">
+            <div class="overflow-y-auto flex-1 p-2 pt-0 space-y-1 slim-scrollbar">
                 @forelse($this->conversations as $conversation)
                     @php
                         $isMeUMKM = $conversation->company_id === auth()->user()->company->id;
