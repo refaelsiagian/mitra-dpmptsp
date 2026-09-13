@@ -8,18 +8,20 @@ use App\Models\Message;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 
 #[Layout('layouts.dashboard')]
 class MessagesIndex extends Component
 {
+    #[Url(as: 'proposal_id', history: true)]
     public $activeProposalId = null;
+
     public $messageBody = '';
     public $messagesLimit = 50;
     public $authUserId = null;
 
     public function mount()
     {
-        $this->activeProposalId = request()->query('proposal_id');
         $this->authUserId = auth()->id();
     }
 

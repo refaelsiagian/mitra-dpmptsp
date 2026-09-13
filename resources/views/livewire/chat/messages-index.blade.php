@@ -44,7 +44,7 @@
         }
     }">
         <!-- Sidebar -->
-        <div class="w-full md:w-1/3 md:border-r border-gray-200 bg-gray-50 flex-col" :class="$wire.activeProposalId ? 'hidden md:flex' : 'flex'">
+        <div class="w-full md:w-1/3 md:border-r border-gray-200 bg-gray-50 flex-col" :class="activeProposalId ? 'hidden md:flex' : 'flex'">
             <div class="p-4 border-b border-gray-200 bg-white">
                 <h2 class="text-lg font-semibold text-gray-800">Pesan & Negosiasi</h2>
             </div>
@@ -58,8 +58,9 @@
                     <button 
                         wire:key="conv-{{ $conversation->id }}"
                         wire:click="selectConversation({{ $conversation->id }})"
+                        x-on:click="activeProposalId = {{ $conversation->id }}"
                         class="w-full text-left p-3 rounded-lg flex flex-col gap-1 transition-colors border border-transparent"
-                        :class="$wire.activeProposalId == {{ $conversation->id }} ? 'bg-blue-50 border-blue-200' : 'hover:bg-gray-100'"
+                        :class="activeProposalId == {{ $conversation->id }} ? 'bg-blue-50 border-blue-200' : 'hover:bg-gray-100'"
                     >
                         <div class="flex justify-between items-center w-full">
                             <span class="font-medium text-sm text-gray-900 truncate flex items-center gap-2">
@@ -84,7 +85,7 @@
             </div>
         </div>
 
-        <div class="w-full md:w-2/3 flex-col bg-white relative" :class="$wire.activeProposalId ? 'flex' : 'hidden md:flex'">
+        <div class="w-full md:w-2/3 flex-col bg-white relative" :class="activeProposalId ? 'flex' : 'hidden md:flex'">
              
             <!-- Absolute Full-Pane Skeleton Loader Overlay -->
             <div wire:loading.flex wire:target="selectConversation" class="absolute inset-0 bg-slate-50 z-20 flex-col" style="display: none;">
@@ -118,7 +119,7 @@
                 <!-- Header for active chat -->
                 <div class="p-4 flex items-center justify-between border-b border-gray-200 shrink-0">
                     <div class="flex items-center gap-3">
-                        <button x-on:click="$wire.activeProposalId = null" class="md:hidden text-gray-500 hover:bg-gray-100 p-2 rounded-full transition-colors -ml-2 shrink-0">
+                        <button x-on:click="activeProposalId = null" class="md:hidden text-gray-500 hover:bg-gray-100 p-2 rounded-full transition-colors -ml-2 shrink-0">
                             <i class="ph ph-caret-left text-xl"></i>
                         </button>
                         
