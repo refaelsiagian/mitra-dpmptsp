@@ -33,3 +33,23 @@ input::-ms-clear {
     display: none !important;
 }
 
+/* Slim Scrollbar */
+.slim-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.slim-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.slim-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+.slim-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
+.slim-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+

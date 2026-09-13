@@ -49,7 +49,7 @@
                 <h2 class="text-lg font-semibold text-gray-800">Pesan & Negosiasi</h2>
             </div>
             
-            <div class="overflow-y-auto flex-1 p-2 space-y-1">
+            <div class="overflow-y-auto flex-1 p-2 space-y-1 slim-scrollbar">
                 @forelse($this->conversations as $conversation)
                     @php
                         $isMeUMKM = $conversation->company_id === auth()->user()->company->id;
@@ -146,7 +146,7 @@
 
                 <!-- Messages container -->
                 <div class="flex-1 overflow-hidden bg-slate-50 relative">
-                    <div class="absolute inset-0 overflow-y-auto p-4 flex flex-col-reverse gap-4">
+                    <div class="absolute inset-0 overflow-y-auto p-4 flex flex-col-reverse gap-4 slim-scrollbar">
                         
                         <!-- Optimistic Loading Bubble -->
                         <div class="flex justify-end" wire:loading.flex wire:target="sendMessage" style="display: none;">
@@ -231,16 +231,30 @@
                 <div class="p-4 border-t border-gray-200 bg-white shrink-0">
                     @if($this->activeConversation)
                         @if($this->activeConversation->status === 'negotiating')
-                            <form wire:submit="sendMessage" class="flex gap-2">
-                                <input 
-                                    type="text" 
+                            <form 
+                                wire:submit="sendMessage" 
+                                class="flex gap-2 items-end" 
+                                x-data="{
+                                    resize() {
+                                        let el = $refs.messageInput;
+                                        el.style.height = 'auto';
+                                        el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+                                    }
+                                }"
+                                x-on:submit="setTimeout(() => { $refs.messageInput.value = ''; resize() }, 10)"
+                            >
+                                <textarea 
+                                    x-ref="messageInput"
                                     wire:model="messageBody"
                                     placeholder="Ketik pesan..." 
-                                    class="flex-1 rounded-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 px-4 shadow-sm text-sm disabled:opacity-50 disabled:bg-gray-100"
+                                    class="flex-1 rounded-2xl bg-gray-100 border-0 focus:ring-0 focus:outline-none focus:bg-gray-50 px-4 py-2.5 text-sm disabled:opacity-50 resize-none overflow-y-auto slim-scrollbar"
+                                    rows="1"
                                     required
                                     wire:loading.attr="disabled"
                                     wire:target="selectConversation"
-                                >
+                                    x-init="$watch('$wire.messageBody', () => { setTimeout(() => resize(), 10) })"
+                                    x-on:input="resize()"
+                                ></textarea>
                                 <button 
                                     type="submit"
                                     class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2.5 h-10 w-10 flex items-center justify-center transition-colors shadow-sm shrink-0 disabled:opacity-50"
