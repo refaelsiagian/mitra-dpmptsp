@@ -158,6 +158,7 @@ class MessagesIndex extends Component
 
                 $unreadQuery->update(['is_read' => 'true']);
                 broadcast(new \App\Events\MessagesRead($this->activeProposalId))->toOthers();
+                $this->dispatch('refresh-unread-badge');
             }
 
             $this->lastRenderedProposalId = $this->activeProposalId;
