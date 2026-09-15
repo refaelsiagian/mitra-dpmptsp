@@ -6,6 +6,9 @@
     $isProjectUB = in_array(strtolower($proposal->project->company->skala_usaha ?? ''), ['besar']);
     $isKetertarikan = $isSenderUB && !$isProjectUB;
     
+    $isProjectOwner = auth()->check() && auth()->user()->company && auth()->user()->company->id === $proposal->project->company_id;
+    $isSender = auth()->check() && auth()->user()->company && auth()->user()->company->id === $proposal->company_id;
+    
     $statusColor = match($proposal->status) {
         'pending' => 'bg-amber-100 text-amber-700',
         'reviewed' => 'bg-blue-100 text-blue-700',
@@ -50,31 +53,38 @@
             </div>
         </div>
         
-        @if(auth()->user()->company->id === $proposal->project->company_id)
-        <!-- Actions for Project Owner -->
+        <!-- Actions for Project Owner and Sender -->
         <div class="flex flex-col md:flex-row flex-wrap items-stretch md:items-center gap-3 mt-2 md:mt-0 w-full md:w-auto">
-            @if(in_array($proposal->status, ['reviewed', 'negotiating']))
-                @if($proposal->status === 'negotiating')
-                <button type="button" @click="showAcceptModal = true" class="w-full md:w-auto justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    Terima
-                </button>
-                @endif
+            @if($isProjectOwner)
+                @if(in_array($proposal->status, ['reviewed', 'negotiating']))
+                    @if($proposal->status === 'negotiating')
+                    <button type="button" @click="showAcceptModal = true" class="w-full md:w-auto justify-center px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Terima
+                    </button>
+                    @endif
 
-                <button type="button" @click="showRejectModal = true" class="w-full md:w-auto justify-center px-5 py-2.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    Tolak
-                </button>
-                
-                @if($proposal->status === 'reviewed')
-                <button type="button" @click="showNegotiationModal = true" class="w-full md:w-auto justify-center px-5 py-2.5 bg-white border border-blue-200 text-blue-600 hover:bg-blue-50 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    Mulai Negosiasi
-                </button>
+                    <button type="button" @click="showRejectModal = true" class="w-full md:w-auto justify-center px-5 py-2.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        Tolak
+                    </button>
+                    
+                    @if($proposal->status === 'reviewed')
+                    <button type="button" @click="showNegotiationModal = true" class="w-full md:w-auto justify-center px-5 py-2.5 bg-white border border-blue-200 text-blue-600 hover:bg-blue-50 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Mulai Negosiasi
+                    </button>
+                    @endif
                 @endif
             @endif
+
+            @if($isSender && $proposal->status === 'negotiating')
+                <a href="{{ route('proposals.edit-rab', $proposal->id) }}" wire:navigate class="w-full md:w-auto justify-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                    Revisi RAB & Penawaran
+                </a>
+            @endif
         </div>
-        @endif
     </div>
 
     <!-- Chat Banner -->
@@ -216,6 +226,11 @@
                     <img :src="lightboxImage" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl relative z-10" @click.away="lightboxOpen = false">
                 </div>
             </div>
+            @endif
+            
+            <!-- RAB Detail -->
+            @if($proposal->rab)
+                <x-rab-display :rab="$proposal->rab" />
             @endif
         </div>
 

@@ -300,6 +300,11 @@
                 @endif
             </div>
             
+            <!-- RAB Display -->
+            @if($project->rab)
+                <x-rab-display :rab="$project->rab" />
+            @endif
+            
         </div>
         
         <!-- Right Column (col-span-1) -->

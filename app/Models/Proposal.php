@@ -38,6 +38,11 @@ class Proposal extends Model
         return $this->hasMany(Message::class);
     }
 
+    public function rab()
+    {
+        return $this->hasOne(Rab::class);
+    }
+
     public function getIsInvitedAttribute()
     {
         return \App\Models\ProjectInvitation::where('project_id', $this->project_id)

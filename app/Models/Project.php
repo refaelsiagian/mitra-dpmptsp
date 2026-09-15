@@ -58,6 +58,11 @@ class Project extends Model
         return $this->hasMany(Proposal::class);
     }
 
+    public function rab()
+    {
+        return $this->hasOne(Rab::class);
+    }
+
     public function getIsExpiredAttribute()
     {
         return $this->offer_end_date && $this->offer_end_date->endOfDay()->isPast() && $this->status === 'published';

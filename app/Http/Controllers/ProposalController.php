@@ -55,6 +55,73 @@ class ProposalController extends Controller
             'status' => 'pending',
         ]);
 
+        $rabMode = $request->input('rab_mode', 'none');
+        $rabData = json_decode($request->input('rab_data'), true) ?? [];
+        
+        if ($rabMode === 'use_project' && $project->rab) {
+            $newRab = $proposal->rab()->create([
+                'title' => $project->rab->title,
+                'total_amount' => $project->rab->total_amount
+            ]);
+            
+            foreach ($project->rab->categories as $cat) {
+                $newCat = $newRab->categories()->create([
+                    'name' => $cat->name,
+                    'total_amount' => $cat->total_amount
+                ]);
+                
+                foreach ($cat->items as $item) {
+                    $newCat->items()->create([
+                        'name' => $item->name,
+                        'volume' => $item->volume,
+                        'unit' => $item->unit,
+                        'unit_price' => $item->unit_price,
+                        'total_price' => $item->total_price
+                    ]);
+                }
+            }
+            $proposal->update(['estimated_value' => $project->rab->total_amount]);
+        } elseif (($rabMode === 'create_new' || $rabMode === 'edit_project') && !empty($rabData)) {
+            $rabTotal = collect($rabData)->reduce(function ($sum, $cat) {
+                $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                    return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+                }, 0);
+                return $sum + $catTotal;
+            }, 0);
+            
+            if ($rabTotal > 0) {
+                $proposal->update(['estimated_value' => $rabTotal]);
+                
+                $rab = $proposal->rab()->create([
+                    'title' => 'Rencana Anggaran Biaya (RAB)',
+                    'total_amount' => $rabTotal
+                ]);
+                
+                foreach ($rabData as $cat) {
+                    if (empty($cat['name'])) continue;
+                    $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                        return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+                    }, 0);
+                    
+                    $category = $rab->categories()->create([
+                        'name' => $cat['name'],
+                        'total_amount' => $catTotal
+                    ]);
+                    
+                    foreach ($cat['items'] ?? [] as $item) {
+                        if (empty($item['name'])) continue;
+                        $category->items()->create([
+                            'name' => $item['name'],
+                            'volume' => $item['volume'] ?? 0,
+                            'unit' => $item['unit'] ?? null,
+                            'unit_price' => $item['unit_price'] ?? 0,
+                            'total_price' => ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0))
+                        ]);
+                    }
+                }
+            }
+        }
+
         // Auto-accept any pending invitations for this project and company
         \App\Models\ProjectInvitation::where('project_id', $project->id)
             ->where('invited_company_id', $user->company->id)
@@ -101,5 +168,85 @@ class ProposalController extends Controller
         $proposal->update(['status' => $validated['status']]);
 
         return back()->with('success', 'Status proposal berhasil diperbarui.');
+    }
+
+    public function editRab(Proposal $proposal)
+    {
+        $user = auth()->user();
+        if ($proposal->company_id !== $user->company->id) {
+            abort(403);
+        }
+        if ($proposal->status !== 'negotiating') {
+            return back()->with('error', 'Revisi RAB hanya dapat dilakukan pada tahap negosiasi.');
+        }
+        return view('proposals.edit-rab', compact('proposal'));
+    }
+
+    public function updateRab(Request $request, Proposal $proposal)
+    {
+        $user = auth()->user();
+        if ($proposal->company_id !== $user->company->id) {
+            abort(403);
+        }
+        if ($proposal->status !== 'negotiating') {
+            return back()->with('error', 'Revisi RAB hanya dapat dilakukan pada tahap negosiasi.');
+        }
+
+        $rabData = json_decode($request->input('rab_data'), true) ?? [];
+        $rabTotal = collect($rabData)->reduce(function ($sum, $cat) {
+            $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+            }, 0);
+            return $sum + $catTotal;
+        }, 0);
+
+        $proposal->update(['estimated_value' => $rabTotal > 0 ? $rabTotal : ($request->input('estimated_value') ?? 0)]);
+
+        if (!empty($rabData) && $rabTotal > 0) {
+            $rab = $proposal->rab()->firstOrCreate([
+                'title' => 'Rencana Anggaran Biaya (RAB)'
+            ]);
+            $rab->update(['total_amount' => $rabTotal]);
+            
+            $rab->categories()->delete();
+            
+            foreach ($rabData as $cat) {
+                if (empty($cat['name'])) continue;
+                $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                    return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+                }, 0);
+                
+                $category = $rab->categories()->create([
+                    'name' => $cat['name'],
+                    'total_amount' => $catTotal
+                ]);
+                
+                foreach ($cat['items'] ?? [] as $item) {
+                    if (empty($item['name'])) continue;
+                    $category->items()->create([
+                        'name' => $item['name'],
+                        'volume' => $item['volume'] ?? 0,
+                        'unit' => $item['unit'] ?? null,
+                        'unit_price' => $item['unit_price'] ?? 0,
+                        'total_price' => ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0))
+                    ]);
+                }
+            }
+        } else {
+            if ($proposal->rab) {
+                $proposal->rab->delete();
+            }
+        }
+
+        // Add system message to the conversation to notify the project owner
+        $conversation = \App\Models\Conversation::where('proposal_id', $proposal->id)->first();
+        if ($conversation) {
+            $conversation->messages()->create([
+                'company_id' => $user->company->id,
+                'body' => "📢 [SISTEM] RAB/Penawaran telah direvisi oleh " . $user->company->name . ". Silakan periksa detail proposal terbaru.",
+            ]);
+        }
+
+        return redirect()->route('proposals.show', $proposal->id)->with('success', 'RAB berhasil direvisi.');
     }
 }

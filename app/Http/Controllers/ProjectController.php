@@ -51,6 +51,15 @@ class ProjectController extends Controller
         $metrics = $request->input('metrics', []);
 
         $validated['status'] = $validated['status'] ?? 'published';
+        
+        $rabData = json_decode($request->input('rab_data'), true) ?? [];
+        $rabTotal = collect($rabData)->reduce(function ($sum, $cat) {
+            $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+            }, 0);
+            return $sum + $catTotal;
+        }, 0);
+        $validated['estimated_value'] = $rabTotal > 0 ? $rabTotal : ($request->input('estimated_value') ?? 0);
 
         $project = $company->projects()->create(array_merge($validated, [
             'attachments' => $attachments,
@@ -59,6 +68,36 @@ class ProjectController extends Controller
             'requirements' => array_values(array_filter($requirements)),
             'offerings' => array_values(array_filter($offerings)),
         ]));
+        
+        if (!empty($rabData) && $rabTotal > 0) {
+            $rab = $project->rab()->create([
+                'title' => 'Rencana Anggaran Biaya (RAB)',
+                'total_amount' => $rabTotal
+            ]);
+            
+            foreach ($rabData as $cat) {
+                if (empty($cat['name'])) continue;
+                $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                    return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+                }, 0);
+                
+                $category = $rab->categories()->create([
+                    'name' => $cat['name'],
+                    'total_amount' => $catTotal
+                ]);
+                
+                foreach ($cat['items'] ?? [] as $item) {
+                    if (empty($item['name'])) continue;
+                    $category->items()->create([
+                        'name' => $item['name'],
+                        'volume' => $item['volume'] ?? 0,
+                        'unit' => $item['unit'] ?? null,
+                        'unit_price' => $item['unit_price'] ?? 0,
+                        'total_price' => ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0))
+                    ]);
+                }
+            }
+        }
 
         $message = $validated['status'] === 'draft' ? 'Proyek berhasil disimpan sebagai draf!' : 'Proyek berhasil diterbitkan!';
         return redirect()->route('projects.show', $project->id)->with('success', $message);
@@ -122,6 +161,15 @@ class ProjectController extends Controller
 
         $metrics = $request->input('metrics', []);
 
+        $rabData = json_decode($request->input('rab_data'), true) ?? [];
+        $rabTotal = collect($rabData)->reduce(function ($sum, $cat) {
+            $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+            }, 0);
+            return $sum + $catTotal;
+        }, 0);
+        $validated['estimated_value'] = $rabTotal > 0 ? $rabTotal : ($request->input('estimated_value') ?? 0);
+
         // Prevent reverting a published project back to a draft
         $oldStatus = $project->status;
         if ($oldStatus === 'published' && ($validated['status'] ?? '') === 'draft') {
@@ -136,6 +184,42 @@ class ProjectController extends Controller
             'requirements' => array_values(array_filter($requirements)),
             'offerings' => array_values(array_filter($offerings)),
         ]));
+
+        if (!empty($rabData) && $rabTotal > 0) {
+            $rab = $project->rab()->firstOrCreate([
+                'title' => 'Rencana Anggaran Biaya (RAB)'
+            ]);
+            $rab->update(['total_amount' => $rabTotal]);
+            
+            $rab->categories()->delete(); // Database cascade will handle items
+            
+            foreach ($rabData as $cat) {
+                if (empty($cat['name'])) continue;
+                $catTotal = collect($cat['items'] ?? [])->reduce(function ($itemSum, $item) {
+                    return $itemSum + ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0));
+                }, 0);
+                
+                $category = $rab->categories()->create([
+                    'name' => $cat['name'],
+                    'total_amount' => $catTotal
+                ]);
+                
+                foreach ($cat['items'] ?? [] as $item) {
+                    if (empty($item['name'])) continue;
+                    $category->items()->create([
+                        'name' => $item['name'],
+                        'volume' => $item['volume'] ?? 0,
+                        'unit' => $item['unit'] ?? null,
+                        'unit_price' => $item['unit_price'] ?? 0,
+                        'total_price' => ((float)($item['volume'] ?? 0) * (float)($item['unit_price'] ?? 0))
+                    ]);
+                }
+            }
+        } else {
+            if ($project->rab) {
+                $project->rab->delete();
+            }
+        }
 
         if ($oldStatus === 'draft' && $validated['status'] === 'published') {
             $message = 'Proyek berhasil diterbitkan!';

@@ -129,3 +129,72 @@ function projectForm(config) {
         }
     }
 }
+
+document.addEventListener('alpine:init', () => {
+    Alpine.data('rabBuilder', (initialData) => ({
+        categories: [],
+        
+        init() {
+            // Handle initial data formatting if provided
+            if (initialData && Array.isArray(initialData) && initialData.length > 0) {
+                // Make sure IDs are assigned so Alpine :key works properly
+                this.categories = initialData.map(cat => ({
+                    ...cat,
+                    id: cat.id || this.generateId(),
+                    items: (cat.items || []).map(item => ({
+                        ...item,
+                        id: item.id || this.generateId(),
+                        volume: parseFloat(item.volume) || 0,
+                        unit_price: parseFloat(item.unit_price) || 0
+                    }))
+                }));
+            } else {
+                // Default empty state with 1 category
+                this.categories = [
+                    { id: this.generateId(), name: '', items: [{ id: this.generateId(), name: '', volume: 0, unit: '', unit_price: 0 }] }
+                ];
+            }
+        },
+        
+        generateId() {
+            return Date.now() + Math.random().toString(36).substr(2, 9);
+        },
+        
+        addCategory() {
+            this.categories.push({ 
+                id: this.generateId(), 
+                name: '', 
+                items: [{ id: this.generateId(), name: '', volume: 0, unit: '', unit_price: 0 }] 
+            });
+        },
+        
+        removeCategory(catIndex) {
+            if(confirm('Hapus kategori ini beserta seluruh isinya?')) {
+                this.categories.splice(catIndex, 1);
+            }
+        },
+        
+        addItem(catIndex) {
+            this.categories[catIndex].items.push({ id: this.generateId(), name: '', volume: 0, unit: '', unit_price: 0 });
+        },
+        
+        removeItem(catIndex, itemIndex) {
+            this.categories[catIndex].items.splice(itemIndex, 1);
+        },
+        
+        getCategoryTotal(catIndex) {
+            if (!this.categories[catIndex] || !this.categories[catIndex].items) return 0;
+            return this.categories[catIndex].items.reduce((sum, item) => {
+                return sum + ((parseFloat(item.volume) || 0) * (parseFloat(item.unit_price) || 0));
+            }, 0);
+        },
+        
+        get grandTotal() {
+            return this.categories.reduce((sum, cat, index) => sum + this.getCategoryTotal(index), 0);
+        },
+        
+        formatCurrency(val) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
+        }
+    }));
+});

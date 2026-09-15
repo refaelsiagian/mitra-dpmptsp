@@ -6,7 +6,7 @@
     <title>KIS Berkah - Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/logo-2.svg') }}" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="{{ asset('js/project-form.js') }}" data-navigate-track></script>
+    <script src="{{ asset('js/project-form.js') }}?v={{ time() + 1 }}" data-navigate-track></script>
     <!-- Livewire -->
     @livewireStyles
     <!-- Fonts -->

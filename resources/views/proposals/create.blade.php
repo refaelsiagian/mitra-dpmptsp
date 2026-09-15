@@ -51,17 +51,92 @@
                     <textarea name="cover_letter" rows="5" required class="block w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">{{ old('cover_letter') }}</textarea>
                 </div>
 
-                <!-- Estimated Value -->
+                <!-- RAB Options -->
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Nilai Penawaran (Opsional)</label>
-                    <p class="text-xs text-slate-500 mb-3">
-                        {{ $isKetertarikan ? 'Jika Anda memiliki anggaran spesifik untuk permintaan ini, masukkan di sini.' : 'Jika Anda ingin mengajukan harga spesifik, masukkan di sini.' }}
-                    </p>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <span class="text-slate-500 font-bold">Rp</span>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Rencana Anggaran Biaya (RAB) / Nilai Penawaran <span class="text-red-500">*</span></label>
+                    <p class="text-xs text-slate-500 mb-4">Pilih bagaimana Anda ingin menyusun anggaran biaya untuk penawaran ini.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        @if($project->rab)
+                        <label class="relative flex items-start p-4 cursor-pointer rounded-xl border-2 transition-all duration-200" :class="rabMode === 'use_project' ? 'border-blue-600 bg-blue-50' : 'border-slate-200 bg-white hover:border-blue-300'">
+                            <div class="flex items-center h-5">
+                                <input type="radio" name="rab_mode" value="use_project" x-model="rabMode" class="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-600 focus:ring-2">
+                            </div>
+                            <div class="ml-3 text-sm flex-1">
+                                <span class="font-bold text-slate-900 block">Setujui RAB Proyek</span>
+                                <span class="text-slate-500 block text-xs mt-1">Gunakan estimasi RAB bawaan proyek (Rp {{ number_format($project->rab->total_amount, 0, ',', '.') }}).</span>
+                            </div>
+                        </label>
+                        
+                        <label class="relative flex items-start p-4 cursor-pointer rounded-xl border-2 transition-all duration-200" :class="rabMode === 'edit_project' ? 'border-blue-600 bg-blue-50' : 'border-slate-200 bg-white hover:border-blue-300'">
+                            <div class="flex items-center h-5">
+                                <input type="radio" name="rab_mode" value="edit_project" x-model="rabMode" class="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-600 focus:ring-2">
+                            </div>
+                            <div class="ml-3 text-sm flex-1">
+                                <span class="font-bold text-slate-900 block">Sesuaikan RAB Proyek</span>
+                                <span class="text-slate-500 block text-xs mt-1">Modifikasi rincian RAB bawaan dari proyek sebagai dasar.</span>
+                            </div>
+                        </label>
+                        @endif
+                        
+                        <label class="relative flex items-start p-4 cursor-pointer rounded-xl border-2 transition-all duration-200" :class="rabMode === 'create_new' ? 'border-blue-600 bg-blue-50' : 'border-slate-200 bg-white hover:border-blue-300'">
+                            <div class="flex items-center h-5">
+                                <input type="radio" name="rab_mode" value="create_new" x-model="rabMode" class="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-600 focus:ring-2">
+                            </div>
+                            <div class="ml-3 text-sm flex-1">
+                                <span class="font-bold text-slate-900 block">Buat RAB Sendiri</span>
+                                <span class="text-slate-500 block text-xs mt-1">Susun rincian RAB dari awal secara detail.</span>
+                            </div>
+                        </label>
+                        
+                    </div>
+                    
+                    <!-- Project Value Display -->
+                    <div x-show="rabMode === 'use_project'" style="display: none;" x-transition class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Total Nilai Penawaran</label>
+                        <p class="text-xs text-slate-500 mb-3">Nilai ini otomatis disalin dari RAB proyek yang dibuat oleh pemilik proyek.</p>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <span class="text-slate-500 font-bold">Rp</span>
+                            </div>
+                            <input type="number" name="estimated_value" value="{{ $project->rab ? $project->rab->total_amount : 0 }}" readonly class="block w-full pl-12 pr-4 py-3 bg-slate-100 border border-slate-300 rounded-xl text-slate-500 focus:outline-none">
                         </div>
-                        <input type="number" name="estimated_value" value="{{ old('estimated_value') }}" class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors">
+                    </div>
+                    
+                    <!-- RAB Builder Container -->
+                    <div x-show="rabMode === 'create_new' || rabMode === 'edit_project'" style="display: none;" x-transition>
+                        
+                        <template x-if="rabMode === 'create_new'">
+                            <x-rab-builder />
+                        </template>
+                        
+                        @if($project->rab)
+                        <template x-if="rabMode === 'edit_project'">
+                            @php
+                                $initialRab = [];
+                                $project->rab->load('categories.items');
+                                foreach($project->rab->categories as $cat) {
+                                    $items = [];
+                                    foreach($cat->items as $item) {
+                                        $items[] = [
+                                            'id' => $item->id,
+                                            'name' => $item->name,
+                                            'volume' => $item->volume,
+                                            'unit' => $item->unit,
+                                            'unit_price' => $item->unit_price
+                                        ];
+                                    }
+                                    $initialRab[] = [
+                                        'id' => $cat->id,
+                                        'name' => $cat->name,
+                                        'items' => $items
+                                    ];
+                                }
+                            @endphp
+                            <x-rab-builder :initialData="$initialRab" />
+                        </template>
+                        @endif
+                        
                     </div>
                 </div>
 
@@ -127,6 +202,7 @@
 <script>
 function proposalForm() {
     return {
+        rabMode: '{{ $project->rab ? "use_project" : "create_new" }}',
         selected: [],
         showWarning: false,
         limitSelection(e) {

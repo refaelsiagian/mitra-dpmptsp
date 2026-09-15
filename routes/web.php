@@ -88,6 +88,8 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
     Route::get('/projects/{project}/proposals/create', [\App\Http\Controllers\ProposalController::class, 'create'])->name('proposals.create');
     Route::post('/projects/{project}/proposals', [\App\Http\Controllers\ProposalController::class, 'store'])->name('proposals.store');
     Route::put('/proposals/{proposal}/status', [\App\Http\Controllers\ProposalController::class, 'updateStatus'])->name('proposals.updateStatus');
+    Route::get('/proposals/{proposal}/edit-rab', [\App\Http\Controllers\ProposalController::class, 'editRab'])->name('proposals.edit-rab');
+    Route::put('/proposals/{proposal}/rab', [\App\Http\Controllers\ProposalController::class, 'updateRab'])->name('proposals.update-rab');
 
     // Invitations
     Route::post('/invitations', [\App\Http\Controllers\InvitationController::class, 'store'])->name('invitations.store');
