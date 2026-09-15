@@ -227,11 +227,6 @@
                 </div>
             </div>
             @endif
-            
-            <!-- RAB Detail -->
-            @if($proposal->rab)
-                <x-rab-display :rab="$proposal->rab" />
-            @endif
         </div>
 
         <div class="lg:col-span-2 space-y-6 lg:space-y-8">
@@ -245,12 +240,10 @@
                 <h3 class="text-sm font-medium text-slate-400 mb-1">Penyelenggara:</h3>
                 <p class="font-semibold text-slate-200 mb-6">{{ $proposal->project->company->name ?? 'Tidak Diketahui' }}</p>
 
-                <div class="pt-4 border-t border-slate-800">
-                    <h3 class="text-sm font-medium text-slate-400 mb-1">{{ $isKetertarikan ? 'Anggaran Diajukan' : 'Nilai Penawaran' }}</h3>
-                    <p class="text-xl font-black text-white">
-                        {{ $proposal->estimated_value ? 'Rp ' . number_format($proposal->estimated_value, 0, ',', '.') : 'TBA / Sesuai Kesepakatan' }}
-                    </p>
-                </div>
+                <h3 class="text-sm font-medium text-slate-400 mb-1">Nilai Proyek</h3>
+                <p class="text-xl font-black text-white">
+                    {{ $proposal->project->estimated_value ? 'Rp ' . number_format($proposal->project->estimated_value, 0, ',', '.') : 'TBA / Sesuai Kesepakatan' }}
+                </p>
             </div>
             
             <!-- Sender Info -->
@@ -258,8 +251,57 @@
                 <h3 class="text-sm font-medium text-slate-500 mb-1">Pengirim:</h3>
                 <p class="font-bold text-slate-900 mb-4">{{ $proposal->company->name }}</p>
                 
+                <h3 class="text-sm font-medium text-slate-500 mb-1">{{ $isKetertarikan ? 'Anggaran Diajukan' : 'Nilai Penawaran' }}</h3>
+                <p class="text-xl font-black text-slate-800">
+                    {{ $proposal->estimated_value ? 'Rp ' . number_format($proposal->estimated_value, 0, ',', '.') : 'TBA / Sesuai Kesepakatan' }}
+                </p>
+
+                @php
+                    $hasProjectRab = $proposal->project->rab !== null;
+                    $hasProposalRab = $proposal->rab !== null;
+                    $isRabAdjusted = false;
+                    if ($hasProjectRab && $hasProposalRab) {
+                        $isRabAdjusted = $proposal->rab->total_amount !== $proposal->project->rab->total_amount;
+                    }
+                @endphp
+
+                @if($isProjectOwner && $hasProjectRab && $hasProposalRab)
+                    <div class="mt-5">
+                        @if($isRabAdjusted)
+                            <p class="text-xs text-amber-600 mb-2.5 flex items-center gap-1.5 font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                Mengajukan penyesuaian RAB
+                            </p>
+                            <a href="{{ route('proposals.compare-rab', $proposal->id) }}" wire:navigate class="w-full justify-center px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                Bandingkan RAB
+                            </a>
+                        @else
+                            <p class="text-xs text-emerald-600 mb-2.5 flex items-center gap-1.5 font-medium">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                Setuju dengan RAB Anda
+                            </p>
+                            <a href="{{ route('proposals.compare-rab', $proposal->id) }}" wire:navigate class="w-full justify-center px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Lihat RAB
+                            </a>
+                        @endif
+                    </div>
+                @elseif($isProjectOwner && !$hasProjectRab && $hasProposalRab)
+                    <div class="mt-5 pt-5">
+                        <p class="text-xs text-blue-600 mb-2.5 flex items-center gap-1.5 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                            Melampirkan usulan RAB
+                        </p>
+                        <a href="{{ route('proposals.compare-rab', $proposal->id) }}" wire:navigate class="w-full justify-center px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Lihat RAB
+                        </a>
+                    </div>
+                @endif
+                
                 @if($proposal->attachment)
-                <div class="pt-4 border-t border-slate-100">
+                <div class="pt-4 mt-4">
                     <h3 class="text-sm font-medium text-slate-500 mb-3">Dokumen Lampiran</h3>
                     <a href="{{ Storage::url($proposal->attachment) }}" target="_blank" class="w-full py-3 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>

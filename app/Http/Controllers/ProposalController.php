@@ -249,4 +249,20 @@ class ProposalController extends Controller
 
         return redirect()->route('proposals.show', $proposal->id)->with('success', 'RAB berhasil direvisi.');
     }
+
+    public function compareRab(Proposal $proposal)
+    {
+        $user = auth()->user();
+        
+        // Only project owner can compare RAB
+        if ($proposal->project->company_id !== $user->company->id) {
+            abort(403);
+        }
+
+        if (!$proposal->rab || !$proposal->project->rab) {
+            return back()->with('error', 'Tidak dapat membandingkan RAB karena salah satu pihak tidak memiliki data RAB.');
+        }
+
+        return view('proposals.compare-rab', compact('proposal'));
+    }
 }

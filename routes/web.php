@@ -90,6 +90,7 @@ Route::middleware(['auth', 'verified', 'user', \App\Http\Middleware\CheckCompany
     Route::put('/proposals/{proposal}/status', [\App\Http\Controllers\ProposalController::class, 'updateStatus'])->name('proposals.updateStatus');
     Route::get('/proposals/{proposal}/edit-rab', [\App\Http\Controllers\ProposalController::class, 'editRab'])->name('proposals.edit-rab');
     Route::put('/proposals/{proposal}/rab', [\App\Http\Controllers\ProposalController::class, 'updateRab'])->name('proposals.update-rab');
+    Route::get('/proposals/{proposal}/compare-rab', [\App\Http\Controllers\ProposalController::class, 'compareRab'])->name('proposals.compare-rab');
 
     // Invitations
     Route::post('/invitations', [\App\Http\Controllers\InvitationController::class, 'store'])->name('invitations.store');

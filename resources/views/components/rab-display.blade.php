@@ -1,18 +1,17 @@
-@props(['rab'])
+@props(['rab', 'hideTitle' => false, 'noCard' => false])
 
 @if($rab && $rab->categories->count() > 0)
-<div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mt-6">
+<div class="{{ $noCard ? '' : 'bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mt-6' }}">
+    @if(!$hideTitle)
     <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
         <div>
             <h3 class="text-lg font-bold text-slate-900">{{ $rab->title ?? 'Rencana Anggaran Biaya (RAB)' }}</h3>
             <p class="text-sm text-slate-500">Rincian detail anggaran biaya yang diajukan.</p>
         </div>
-        <div class="px-4 py-2 bg-emerald-50 text-emerald-700 font-bold rounded-xl border border-emerald-200">
-            Total: Rp {{ number_format($rab->total_amount, 0, ',', '.') }}
-        </div>
     </div>
+    @endif
     
-    <div class="overflow-x-auto rounded-xl border border-slate-200">
+    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-200 pb-2">
         <table class="w-full text-sm text-left text-slate-600 min-w-[700px]">
             <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
                 <tr>
@@ -30,7 +29,7 @@
                     <td class="px-2 py-3 text-center font-bold text-blue-700 border-r border-slate-200">{{ $cIndex + 1 }}</td>
                     <td class="px-2 py-3 font-bold text-slate-800 border-r border-slate-200" colspan="4">{{ $category->name }}</td>
                     <td class="px-2 py-3 text-right font-bold text-blue-700 bg-blue-50/30 border-r border-slate-200 whitespace-nowrap">
-                        Rp {{ number_format($category->total_amount, 0, ',', '.') }}
+                        Rp{{ number_format($category->total_amount, 0, ',', '.') }}
                     </td>
                 </tr>
                 @forelse($category->items as $iIndex => $item)
@@ -53,17 +52,14 @@
     </div>
 
     <!-- Grand Total Section -->
-    <div class="mt-6 flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
+    <div class="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <p class="text-sm font-bold text-slate-500 uppercase tracking-wider">Total Rencana Anggaran</p>
             <p class="text-xs text-slate-400">Penjumlahan otomatis dari seluruh kategori utama di atas.</p>
         </div>
-        <div class="bg-slate-800 text-white rounded-xl px-6 py-4 shadow-sm border border-slate-700 min-w-[250px] text-right relative overflow-hidden">
-            <!-- Decorative Accent -->
-            <div class="absolute inset-y-0 left-0 w-1 bg-emerald-500"></div>
-            
-            <p class="text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Grand Total</p>
-            <p class="text-xl md:text-2xl font-bold text-emerald-400 tracking-tight">Rp{{ number_format($rab->total_amount, 0, ',', '.') }}</p>
+        <div class="text-right">
+            <p class="text-xs font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Grand Total</p>
+            <p class="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Rp{{ number_format($rab->total_amount, 0, ',', '.') }}</p>
         </div>
     </div>
 </div>

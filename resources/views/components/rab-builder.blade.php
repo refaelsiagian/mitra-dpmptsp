@@ -30,7 +30,7 @@
         </button>
     </div>
 
-    <div class="w-full border border-slate-200 rounded-xl overflow-x-auto bg-white shadow-sm">
+    <div class="w-full border border-slate-200 rounded-xl overflow-x-auto custom-scrollbar pb-2 bg-white shadow-sm">
         <table class="w-full min-w-[800px] text-sm text-left text-slate-600">
             <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
                 <tr>
@@ -110,18 +110,15 @@
         </table>
     </div>
 
-    <!-- Grand Total Section -->
-    <div class="mt-6 flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
-        <div>
-            <p class="text-sm font-bold text-slate-500 uppercase tracking-wider">Total Rencana Anggaran</p>
-            <p class="text-xs text-slate-400">Penjumlahan otomatis dari seluruh kategori utama di atas.</p>
+        <!-- Grand Total -->
+        <div class="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <p class="text-sm font-bold text-slate-500 uppercase tracking-wider">Total Rencana Anggaran</p>
+                <p class="text-xs text-slate-400">Penjumlahan otomatis dari seluruh kategori utama di atas.</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs font-bold text-slate-500 mb-0.5 uppercase tracking-wider">Grand Total</p>
+                <p class="text-xl md:text-2xl font-black text-slate-800 tracking-tight" x-text="formatCurrency(grandTotal)"></p>
+            </div>
         </div>
-        <div class="bg-slate-800 text-white rounded-xl px-6 py-4 shadow-sm border border-slate-700 min-w-[250px] text-right relative overflow-hidden">
-            <!-- Decorative Accent -->
-            <div class="absolute inset-y-0 left-0 w-1 bg-emerald-500"></div>
-            
-            <p class="text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider">Grand Total</p>
-            <p class="text-xl md:text-2xl font-bold text-emerald-400 tracking-tight" x-text="formatCurrency(grandTotal)"></p>
-        </div>
-    </div>
 </div>
